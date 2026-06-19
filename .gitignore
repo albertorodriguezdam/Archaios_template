@@ -1,0 +1,9 @@
+.vscode/
+bin/
+*.class
+log/
+saves/
+config/
+lib/
+backup/
+*.jar

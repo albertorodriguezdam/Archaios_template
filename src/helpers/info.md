@@ -1,0 +1,1 @@
+En este paquete se encuentran los componentes, las clases auxiliares del sistema que realizan las operaciones repetitivas del mismo.

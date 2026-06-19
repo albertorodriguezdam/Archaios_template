@@ -1,0 +1,1 @@
+En este paquete se encuentran la clase principal del sistema y los paquetes comunes.
