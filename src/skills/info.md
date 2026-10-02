@@ -1,1 +1,0 @@
-En este paquete se encuentran las clases de las habilidades de los arqueólogos.

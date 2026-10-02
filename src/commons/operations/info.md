@@ -1,1 +1,0 @@
-En este paquete se encuentran las clases que hacen la lógica de las opciones principales del menú.
