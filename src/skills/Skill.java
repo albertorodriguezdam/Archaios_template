@@ -18,7 +18,12 @@ public class Skill {
     /**Lista de habilidades que son incompatibles con otras al mismo tiempo. */
     private List<Skill> incompatibilidades;
 
-    /**Constructor base de la clase Skill */
+    /**
+     * Constructor base de la clase Skill.
+     * @param nombre El nombre identificativo de la habilidad.
+     * @param descripcion Descripción de lo que hace la habilidd.
+     * @param tipo El tipo de habilidad.
+    */
     public Skill(String nombre, String descripcion, String tipo){
 
         this.nombre=nombre;
@@ -28,7 +33,18 @@ public class Skill {
         this.incompatibilidades=new ArrayList<>();
     }
 
-    /**Getters básicos de la clases. */
+    /**
+     * Constructor que inicializa una habilidad a partir de su tipo enumerado.
+     * Convierte el tipo a su representación textual.
+     * @param nombre El nombre identificativo de la habilidad.
+     * @param descripcion Descripción de lo que hace la habilidd.
+     * @param tipo El tipo de habilidad según la enumeración.
+    */
+    public Skill(String nombre, String descripcion, ESkillType tipo){
+        this(nombre, descripcion, tipo !=null ? tipo.toString() : "");
+    }
+
+    /**Getters básicos de la clase Skill. */
     public String getNombre() {
         return nombre;
     }
@@ -42,31 +58,37 @@ public class Skill {
     }
 
     public List<Skill> getDependencias() {
-        return dependencias;
+        return Collections.unmodifiableList(dependencias);
     }
 
     public List<Skill> getIncompatibilidades() {
-        return incompatibilidades;
+        return Collections.unmodifiableList(incompatibilidades);
     }
 
     /**
-     * @param skill objeto de tipo Skill 
      * Añade una Skill en la lista de dependencias,
-     *  solo sino es null y sino la contiene. */
+     * solo sino es null y sino la contiene.
+     * @param skill objeto de tipo Skill. 
+     */
     public void addDependencia(Skill skill){
         if (skill!=null&& !this.dependencias.contains(skill)) {
             this.dependencias.add(skill); 
+
+            if (!skill.incompatibilidades.contains(this)) {
+            skill.incompatibilidades.add(this);
+            }
         }
     }
 
     /**
-     * @param skill objeto de tipo Skill 
      * Añade una Skill en la lista de incompatibilidades,
      * solo sino es null y sino la contiene, 
      * además esta incompatibilidad es bidireccional, 
      * lo que significa que al añadirlo a la lista de incompatibilidades de una,
      * automáticamente se añade a la lista de imcompatibilidades, 
-     * de la Skill con la que se está comparando. */
+     * de la Skill con la que se está comparando. 
+     * @param skill objeto de tipo Skill.
+     */
     public void addIncompatibilidad(Skill skill){
 
         if (skill!=null && this.incompatibilidades.contains(skill)) {
@@ -79,11 +101,78 @@ public class Skill {
         }
     }
 
-    /**Devuelve la lista de terrenos que añade o modifica esta habilidad. */
+    /**
+     * @return Devuelve la lista inmutable o vacía de terrenos que añade. 
+     */
     public List<String> getTerrenos(){
         return Collections.emptyList();
     }
 
+    /**Bonos de tesoros (Skill tesoros)*/
+
+    /**
+     * Devuelve la cantidad adicional de tesoros aleatorios que se deben generar en el tablero.
+     * @return catidad de tesoros aleatorios extra, 0 por defecto.
+     */
+    public int getExtraRandomTesoros(){
+        return 0; 
+    }
+
+    /**
+     * Devuelve la cantidad adicional de tesoros comunes que se deben generar en el tablero.
+     * @return catidad de tesoros comunes extra, 0 por defecto.
+     */
+    public int getExtraComunTesoros(){
+        return 0; 
+    }
+    
+    /**
+     * Devuelve la cantidad adicional de tesoros infrecuentes que se deben generar en el tablero.
+     * @return catidad de tesoros infrecuentes extra, 0 por defecto.
+     */
+    public int getExtraInfrecuenteTesoros(){
+        return 0; 
+    }
+
+    /**
+     * Devuelve la cantidad adicional de tesoros raros que se deben generar en el tablero.
+     * @return catidad de tesoros raros extra, 0 por defecto.
+     */
+    public int getExtraRaroTesoros(){
+        return 0; 
+    }
+    
+    /**
+     * Devuelve el porcentaje adicional aplicado a la base de generación de tesoros, 
+     * de tipo infrecuente.
+     * @return incremento de la probabilidad, 0 por defecto.
+     */
+    public int getExtraInfrecuenteProb(){
+        return 0; 
+    }
+
+    /**
+     * Devuelve el porcentaje adicional aplicado a la base de generación de tesoros, 
+     * de tipo raro.
+     * @return incremento de la probabilidad, 0 por defecto.
+     */
+    public int getExtraRaroProb(){
+        return 0; 
+    }
+
+    /**Bonos de excavación (Skill excavación)[SIN HCER] */
+
+    /**Bonos de terreno (Skill terreno)[SIN HACER] */
+
+
+    /**
+     * Devueleve el objeto Skill en forma de String.
+     * @return Skill a texto.
+     */
+    @Override
+    public String toString() {
+        return nombre + " (" + tipo + "): " + descripcion;
+    }
     
 }
 
