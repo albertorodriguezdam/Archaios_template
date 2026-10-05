@@ -179,6 +179,26 @@ public class Skill {
 
     /**Bonos de excavación (Skill excavación)[SIN HCER] */
 
+    public int getExtraActions(){
+        return 0; 
+    }
+
+    public int getExtraActionsPercent(){
+        return 0; 
+    }
+
+    public int getEmptyCellsReveled(){
+        return 0; 
+    }
+
+    public int getCellsReveled(){
+        return 0; 
+    }
+
+    public boolean hashInvetigation(){
+        return false; 
+    }
+
     /**Bonos de terreno (Skill terreno)[SIN HACER] */
 
 

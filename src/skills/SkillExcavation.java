@@ -93,5 +93,29 @@ public class SkillExcavation extends Skill{
         return new SkillExcavation(name, description, 0, 0, 0, 0, true); 
     }
 
+    @Override 
+    public int getExtraActions(){
+        return extraActions; 
+    }
+
+    @Override
+    public int getExtraActionsPercent(){
+        return extraActionsPercent; 
+    }
+
+    @Override
+    public int getEmptyCellsReveled(){
+        return emptyCellsReveled; 
+    }
+
+    @Override
+    public int getCellsReveled(){
+        return cellsReveled; 
+    }
+
+    @Override
+    public boolean hashInvetigation(){
+        return false; 
+    }
 
 }
