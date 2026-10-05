@@ -1,6 +1,11 @@
 package skills;
 
-public class SkillTesoros extends Skill{
+/**
+ * @author Alberto Rodríguez Domínguez
+ * SkillTesoros
+ */
+
+public class SkillTreasures extends Skill{
 
     /**Cantidad aleatoria extra. */
     private int extraRandom; 
@@ -18,7 +23,7 @@ public class SkillTesoros extends Skill{
     /**
      * Constructor base de la clase SkillTesoros.
      * @param nombre El nombre identificativo de la habilidad.
-     * @param descripcion Descripción de lo que hace la habilidd.
+     * @param descripcion Descripción de lo que hace la habilidad.
      * @param extraRandom Cantidad aleatoria extra.
      * @param extraComun Cantidad común extra.
      * @param extraInfrecuente antidad infrecuente extra.
@@ -26,7 +31,7 @@ public class SkillTesoros extends Skill{
      * @param extraInfrecuenteProb Cantidad de probabilidad infrecuente extra.
      * @param extraRaroProb Cantidad de probabilidad rara extra.
      */
-    public SkillTesoros(String nombre, String descripcion, int extraRandom, int extraComun, 
+    public SkillTreasures(String nombre, String descripcion, int extraRandom, int extraComun, 
                         int extraInfrecuente, int extraRaro, int extraInfrecuenteProb, int extraRaroProb){
 
             super(nombre, descripcion, ESkillType.TREASURE); 
@@ -41,21 +46,21 @@ public class SkillTesoros extends Skill{
     /**
      * Constructor para habilidades que solo otorgan tesoros aleatorios (Extra I, II, III).
      */
-    public SkillTesoros(String nombre, String descripcion, int extraRandom) {
+    public SkillTreasures(String nombre, String descripcion, int extraRandom) {
         this(nombre, descripcion, extraRandom, 0, 0, 0, 0, 0);
     }
 
     /**
      * Constructor para habilidades de rareza fija (Aprendiz, Experto, Maestro).
      */
-    public SkillTesoros(String nombre, String descripcion, int extraComun, int extraInfrecuente, int extraRaro) {
+    public SkillTreasures(String nombre, String descripcion, int extraComun, int extraInfrecuente, int extraRaro) {
         this(nombre, descripcion, 0, extraComun, extraInfrecuente, extraRaro, 0, 0);
     }
 
     /**
      * Constructor para habilidades de incremento de probabilidad (Especialistas).
      */
-    public SkillTesoros(String nombre, String descripcion, int extraInfrecuenteProb, int extraRaroProb) {
+    public SkillTreasures(String nombre, String descripcion, int extraInfrecuenteProb, int extraRaroProb) {
         this(nombre, descripcion, 0, 0, 0, 0, extraInfrecuenteProb, extraRaroProb);
     }
 
@@ -64,7 +69,7 @@ public class SkillTesoros extends Skill{
      * @return catidad de tesoros aleatorios extra.
      */
     @Override 
-    public int getExtraRandomTesoros(){
+    public int getExtraRandomTreasures(){
         return extraRandom; 
     }
 
@@ -73,7 +78,7 @@ public class SkillTesoros extends Skill{
      * @return catidad de tesoros comunes extra.
      */
     @Override 
-    public int getExtraComunTesoros(){
+    public int getExtraCommonTreasures(){
         return extraComun; 
     }
 
@@ -82,7 +87,7 @@ public class SkillTesoros extends Skill{
      * @return catidad de tesoros infrecuentes extra.
      */
     @Override 
-    public int getExtraInfrecuenteTesoros(){
+    public int getExtraUncommonTreasures(){
         return extraInfrecuente; 
     }
 
@@ -91,7 +96,7 @@ public class SkillTesoros extends Skill{
      * @return catidad de tesoros raros extra.
      */
     @Override 
-    public int getExtraRaroTesoros(){
+    public int getExtraRareTreasures(){
         return extraRaro; 
     }
     
@@ -101,7 +106,7 @@ public class SkillTesoros extends Skill{
      * @return incremento de la probabilidad.
      */
     @Override 
-    public int getExtraInfrecuenteProb(){
+    public int getExtraUncommonProb(){
         return extraInfrecuenteProb; 
     }
 
@@ -111,7 +116,7 @@ public class SkillTesoros extends Skill{
      * @return incremento de la probabilidad.
      */
     @Override 
-    public int getExtraRaroProb(){
+    public int getExtraRareProb(){
         return extraRaroProb; 
     }
 }
