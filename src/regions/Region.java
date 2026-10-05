@@ -6,6 +6,10 @@ import java.util.List;
 import treasures.ETreasureRarity;
 import treasures.Treasure;
 
+/**
+ * Clase base para todas las regiones
+ * @author jagoldar
+ */
 public abstract class Region {
     /**El código identificativo de la región */
     protected static String code;
