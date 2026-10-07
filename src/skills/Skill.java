@@ -87,13 +87,9 @@ public class Skill {
      * solo sino es null y sino la contiene.
      * @param skill objeto de type Skill. 
      */
-    public void addDependencie(Skill skill){
+    public void addDependency(Skill skill){
         if (skill!=null&& !this.dependecies.contains(skill)) {
             this.dependecies.add(skill); 
-
-            if (!skill.incompatibilities.contains(this)) {
-            skill.incompatibilities.add(this);
-            }
         }
     }
 
@@ -108,7 +104,7 @@ public class Skill {
      */
     public void addIncompatibility(Skill skill){
 
-        if (skill!=null && this.incompatibilities.contains(skill)) {
+        if (skill!=null && !this.incompatibilities.contains(skill)) {
 
             this.incompatibilities.add(skill);
 
@@ -179,23 +175,38 @@ public class Skill {
 
     /**Bonos de excavación (Skill excavación)[SIN HCER] */
 
+    /**
+     * @return Cantidad de acciones extra.
+     */
     public int getExtraActions(){
         return 0; 
     }
 
+    /**
+     * @return Cantidad de porcentaje extra, sobre la cantidad de acciones que posee el arqueólogo.
+     */
     public int getExtraActionsPercent(){
         return 0; 
     }
 
-    public int getEmptyCellsReveled(){
+    /**
+     * @return Cantidad de celdas vacías reveladas.
+     */
+    public int getEmptyCellsRevealed(){
         return 0; 
     }
 
-    public int getCellsReveled(){
+    /**
+     * @return Cantidad de celdas con interrogación que te indican una pista.
+     */
+    public int getCellsRevealed(){
         return 0; 
     }
 
-    public boolean hashInvetigation(){
+    /**
+     * @return Marcador que determina si el arqueólogo puede hacer un desglose de los tesoros de cada rareza que hay.
+     */
+    public boolean hasInvestigation(){
         return false; 
     }
 

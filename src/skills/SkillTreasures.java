@@ -103,7 +103,7 @@ public class SkillTreasures extends Skill{
     /**
      * Devuelve el porcentaje adicional aplicado a la base de generación de tesoros, 
      * de tipo infrecuente.
-     * @return incremento de la probabilidad.
+     * @return incremento de la probabilidad de tesoros infrecuentes.
      */
     @Override 
     public int getExtraUncommonProb(){
@@ -113,7 +113,7 @@ public class SkillTreasures extends Skill{
     /**
      * Devuelve el porcentaje adicional aplicado a la base de generación de tesoros, 
      * de tipo raro.
-     * @return incremento de la probabilidad.
+     * @return incremento de la probabilidad de tesoros raros.
      */
     @Override 
     public int getExtraRareProb(){
