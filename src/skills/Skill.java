@@ -23,7 +23,7 @@ public class Skill {
 
     /**
      * Constructor base de la clase Skill.
-     * @param name El name identificativo de la habilidad.
+     * @param name El nombre identificativo de la habilidad.
      * @param description Descripción de lo que hace la habilidd.
      * @param type El type de habilidad.
     */
@@ -209,9 +209,6 @@ public class Skill {
     public boolean hasInvestigation(){
         return false; 
     }
-
-    /**Bonos de terreno (Skill terreno)[SIN HACER] */
-
 
     /**
      * Devueleve el objeto Skill en forma de String.
