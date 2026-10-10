@@ -58,6 +58,36 @@ public class Archeologist {
     }
 
     /**
+     * Añade experiencia al arqueólogo, a partir de la experiencia ganada,
+     * en el caso de subir de nivel se indica la cantidad de niveles aumentados.
+     * @param xpGained Cantidad de experiencia ganada por el arqueólogo.
+     * @return La cantidad de niveles que ha subido el arqueólogo gracias a la experiencia ganada.
+     */
+    public int addXp(int xpGained){
+        int uploadedLevels=0; 
+
+        if (xpGained>0) {
+
+            this.xp+=xpGained; 
+
+            while (level<5&&this.xp>=getXpToUpLevel()) {
+                this.xp-=getXpToUpLevel(); 
+                this.level++;
+                uploadedLevels++;
+                updateTerrainByLevel();
+            }
+
+            return uploadedLevels; 
+        } else {
+            return uploadedLevels; 
+        }
+    }
+
+    private void updateTerrainByLevel(){
+
+    }
+
+    /**
      * Obtención del nombre del arqueólogo.
      * @return Nombre del arqueólogo.
      */
