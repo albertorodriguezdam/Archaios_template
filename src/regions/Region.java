@@ -5,6 +5,7 @@ import java.util.List;
 
 import treasures.ETreasureRarity;
 import treasures.Treasure;
+import helpers.UtilsHelper;
 
 /**
  * Clase base para todas las regiones
@@ -42,18 +43,62 @@ public abstract class Region {
         return this.treasureList;
     }
 
-    // TODO: Devuelve un tesoro aleatorio
+    /**
+     * Obtiene un tesoro de forma aleatoria de la lista de 
+     * tesoros disponibles en la región
+     * 
+     * @return El tesoro ubicado en la posición obtenida.
+     */
     public Treasure getRandomTreasure() {
-        return null;
+        
+        if (treasureList == null || treasureList.isEmpty()) {
+            return null;
+        }
+        
+        List<Integer> randomIdx = UtilsHelper.genRandomIdxs(1, treasureList.size());
+        int index = randomIdx.get(0);
+
+        return treasureList.get(index);
     }
 
-    // TODO: Devuelve los tesoros de una rareza concreta
+    /**
+     * Obtiene una lista con los tesoros de la región que coinciden
+     * con la rareza especificada.
+     * 
+     * @param rarity La rareza de los tesoros a buscar
+     * @return La lista de tesoros que coinciden con la rareza especificada
+     */
     public List<Treasure> getTreasuresByRarity(ETreasureRarity rarity) {
-        return null;
+        
+        ArrayList<Treasure> rarityTreasuresList = new ArrayList<>();
+
+        for (Treasure t : treasureList) {
+            if (t.getRarity() == rarity) {
+                rarityTreasuresList.add(t);
+            }
+        }
+
+        return rarityTreasuresList;
     }
 
-    // TODO: Devuelve un tesoro aleatorio de una rareza concreta
+    /**
+     * Obtiene un tesoro de forma aleatoria entre aquellos que 
+     * coinciden con una rareza especificada.
+     * 
+     * @param rarity La rareza del tesoro a buscar
+     * @return El tesoro aleatorio que coincide con la rareza especificada
+     */
     public Treasure getRandomTreasureByRarity(ETreasureRarity rarity) {
-        return null;
+        
+        List<Treasure> filteredList = getTreasuresByRarity(rarity);
+
+        if (filteredList.isEmpty()) {
+            return null;
+        }
+
+        List<Integer> randomIdx = UtilsHelper.genRandomIdxs(1, filteredList.size());
+        int index = randomIdx.get(0);
+        
+        return filteredList.get(index);
     }
 }
