@@ -8,19 +8,19 @@ public enum ETerrainSize {
 	MEDIUM("mediano", 2, 3, 1, 0, true, 5),
 	LARGE("grande", 4, 5, 3, 1, true, 10);
 
-	/** El nombre del tamaño. */
+	//El nombre del tamaño. 
 	private String txt;
-	/** El nivel mínimo del arqueólogo para excavar en este tamaño. */
+	// El nivel mínimo del arqueólogo para excavar en este tamaño. 
 	private int requiredLevel;
-	/** El número mínimo de tesoros comunes garantizados. */
+	// El número mínimo de tesoros comunes garantizados. 
 	private int minCommon;
-	/** El número mínimo de tesoros infrecuentes garantizados. */
+	// El número mínimo de tesoros infrecuentes garantizados.
 	private int minUncommon;
-	/** El número mínimo de tesoros raros garantizados. */
+	// El número mínimo de tesoros raros garantizados.
 	private int minRare;
-	/** Si en este tamaño pueden aparecer tesoros raros. */
+	// Si en este tamaño pueden aparecer tesoros raros.
 	private boolean allowsRare;
-	/** La experiencia extra que gana el arqueólogo al excavar en este tamaño. */
+	// La experiencia extra que gana el arqueólogo al excavar en este tamaño.
 	private int extraExp;
 
 	/**
