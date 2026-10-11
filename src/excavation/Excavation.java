@@ -105,4 +105,12 @@ public class Excavation {
 	private void showInvestigation(){
 		
 	}
+	
+	public void excavate(){
+
+	}
+
+	public void finish(){
+		
+	}
 }
