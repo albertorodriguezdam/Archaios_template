@@ -1,5 +1,10 @@
 package treasures;
 
+import java.util.List;
+import java.lang.StringBuilder;
+
+import helpers.UtilsHelper;
+
 /**
  * La base del tesoro
  * @author jagoldar
@@ -136,6 +141,33 @@ public class Treasure {
      */
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    /**
+     * Genera el código completo de una parte aleatoria del tesoro,
+     * añadiendo al código base el número de parte con cuatro dígitos.
+     * 
+     * @return El código completo de la parte generada o null si el tesoro no tiene partes
+     */
+    public String getRandomPartCode() {
+
+        if (parts <= 0) {
+            return null;
+        }
+
+        List<Integer> randomIdx = UtilsHelper.genRandomIdxs(1, parts);
+        int partNumber = randomIdx.get(0) + 1;
+
+        String partNumberText = Integer.toString(partNumber);
+        int necessaryZeros = 4 - partNumberText.length();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < necessaryZeros; i++) {
+            sb.append("0");
+        }
+        sb.append(partNumberText);
+
+        return getCode() + "_" + sb.toString();
     }
 
     @Override 

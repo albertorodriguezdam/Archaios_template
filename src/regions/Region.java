@@ -12,9 +12,7 @@ import helpers.UtilsHelper;
  * @author jagoldar
  */
 public abstract class Region {
-    /**El código identificativo de la región */
-    protected static String code;
-    /**La lista de tesoros que sen encuentran en una región */
+    /**La lista de tesoros que se encuentran en una región */
     protected List<Treasure> treasureList;
 
     /**Constructor por defecto */
@@ -22,22 +20,11 @@ public abstract class Region {
         this.treasureList = new ArrayList<>();
     }
 
-    /**
-     * @return El código identificativo de la región
-     */
-    public static String getCode() {
-        return code;
-    }
+    /**Devuelve el código identificativo de la región */
+    public abstract String getCode();
 
     /**
-     * @param code El código identificativo de la región
-     */
-    public static void setCode(String code) {
-        Region.code = code;
-    }
-
-    /**
-     * @return La lista de tesoros que sen encuentran en una región
+     * @return La lista de tesoros que se encuentran en una región
      */
     public List<Treasure> getTreasures() {
         return this.treasureList;
