@@ -17,7 +17,7 @@ public class Skill {
     /**Tipo de habilidad: puede ser de terreno, excavación o tesoros. */
     private String type; 
     /**Lista de habilidades que el arqueólogo debe haber aprendido antes de conseguir una en concreto. */
-    private List<Skill> dependecies; 
+    private List<Skill> dependencies; 
     /**Lista de habilidades que son incompatibles con otras al mismo tiempo. */
     private List<Skill> incompatibilities;
 
@@ -32,7 +32,7 @@ public class Skill {
         this.name=name;
         this.description=description;
         this.type=type;
-        this.dependecies=new ArrayList<>();
+        this.dependencies=new ArrayList<>();
         this.incompatibilities=new ArrayList<>();
     }
 
@@ -71,8 +71,8 @@ public class Skill {
     /**
      * @return Lista no modificable de dependencias entre habilidades.
      */
-    public List<Skill> getDependecies() {
-        return Collections.unmodifiableList(dependecies);
+    public List<Skill> getDependencies() {
+        return Collections.unmodifiableList(dependencies);
     }
 
     /**
@@ -83,13 +83,13 @@ public class Skill {
     }
 
     /**
-     * Añade una Skill en la lista de dependecies,
+     * Añade una Skill en la lista de dependencies,
      * solo sino es null y sino la contiene.
      * @param skill objeto de type Skill. 
      */
     public void addDependency(Skill skill){
-        if (skill!=null&& !this.dependecies.contains(skill)) {
-            this.dependecies.add(skill); 
+        if (skill!=null&& !this.dependencies.contains(skill)) {
+            this.dependencies.add(skill); 
         }
     }
 
@@ -192,14 +192,14 @@ public class Skill {
     /**
      * @return Cantidad de celdas vacías reveladas.
      */
-    public int getEmptyCellsRevealed(){
+    public int getEmptyCellsReveled(){
         return 0; 
     }
 
     /**
      * @return Cantidad de celdas con interrogación que te indican una pista.
      */
-    public int getCellsRevealed(){
+    public int getScanHints(){
         return 0; 
     }
 

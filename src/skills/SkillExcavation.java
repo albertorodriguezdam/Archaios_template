@@ -13,7 +13,7 @@ public class SkillExcavation extends Skill{
     /**Cantidad de celdas vacías reveladas. */
     private int emptyCellsRevealed; 
     /**Cantidad de celdas con interrogación que te indican una pista. */
-    private int cellsRevealed; 
+    private int scanHints; 
     /**Marcador que determina si el arqueólogo puede hacer un desglose de los tesoros de cada rareza que hay. */
     private boolean investigation; 
 
@@ -28,13 +28,13 @@ public class SkillExcavation extends Skill{
      * @param investigation Cantidad de tesoros de cada rareza.
      */
     public SkillExcavation(String name, String description, int extraActions, int extraActionsPercent, 
-                        int emptyCellsRevealed, int cellsRevealed, boolean investigation){
+                        int emptyCellsRevealed, int scanHints, boolean investigation){
 
                 super(name, description, ESkillType.EXCAVATION); 
                 this.extraActions=extraActions; 
                 this.extraActionsPercent=extraActionsPercent; 
                 this.emptyCellsRevealed=emptyCellsRevealed; 
-                this.cellsRevealed=cellsRevealed; 
+                this.scanHints=scanHints; 
                 this.investigation=investigation; 
     }
 
@@ -78,8 +78,8 @@ public class SkillExcavation extends Skill{
      * @param cellsReveled Cantidad de celdas con interrogación que te indican una pista.
      * @return Objeto SkillExcavation(Escaneo A, B, C o D).
      */
-    public static SkillExcavation createScan(String name, String description, int cellsRevealed){
-        return new SkillExcavation(name, description, 0, 0, 0, cellsRevealed, false); 
+    public static SkillExcavation createScan(String name, String description, int scanHints){
+        return new SkillExcavation(name, description, 0, 0, 0, scanHints, false); 
     }
     
     /**
@@ -116,7 +116,7 @@ public class SkillExcavation extends Skill{
      * @return Cantidad de celdas vacías reveladas.
      */
     @Override
-    public int getEmptyCellsRevealed(){
+    public int getEmptyCellsReveled(){
         return emptyCellsRevealed; 
     }
 
@@ -125,8 +125,8 @@ public class SkillExcavation extends Skill{
      * @return Cantidad de celdas con interrogación que te indican una pista.
      */
     @Override
-    public int getCellsRevealed(){
-        return cellsRevealed; 
+    public int getScanHints(){
+        return scanHints; 
     }
 
     /**

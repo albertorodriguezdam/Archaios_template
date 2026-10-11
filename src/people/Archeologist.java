@@ -26,9 +26,9 @@ public class Archeologist {
     private  String rarity; 
 
     /**
-     * Constructor base de la clase Arqueólogo, que inicializa el nievl y experiencia a 0,
+     * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
      * las dos listas a ArrayList y añade el único terreno disponible al instanciar
-     * un nuevo arqueólogo: "COMUN".
+     * un nuevo arqueólogo: "pequeño".
      * @param name Nombre del arqueólogo.
      * @param rarity Rareza del arqueólogo (Común, infrecuente o raro).
      */
@@ -36,14 +36,14 @@ public class Archeologist {
         this.name = name;
         this.level = 0;
         this.xp = 0;
-        this.rarity = (rarity != null) ? rarity : "COMUN";
+        this.rarity = (rarity != null) ? rarity.toUpperCase() : "COMUN";
         this.skills = new ArrayList<>();
         this.terrains = new ArrayList<>();
         this.terrains.add("Pequeño");
     }
 
     /**
-     * Constructor para arqeuólogos de rareza común por defecto.
+     * Constructor para arqueólogos de rareza común por defecto.
      * @param name Nombre del arqueólogo.
      */
     public Archeologist(String name){
@@ -121,9 +121,9 @@ public class Archeologist {
             points=level*10; 
         } 
 
-        if ("INFRECUENTE".equalsIgnoreCase(rarity)) {
+        if ("INFRECUENTE".equals(rarity)) {
             points+=10; 
-        } else if ("RARO".equalsIgnoreCase(rarity)) {
+        } else if ("RARO".equals(rarity)) {
             points+=20; 
         }
 
@@ -150,7 +150,7 @@ public class Archeologist {
             }
         }
 
-        return skills.containsAll(skill.getDependecies()); 
+        return skills.containsAll(skill.getDependencies()); 
     }
 
     /**
@@ -158,8 +158,10 @@ public class Archeologist {
      * en caso de ser una habilidad de terreno, añade la modificación de terreno 
      * a la lista de terrenos.
      * @param skill Habilidad para aprender el arqueólogo.
+     * @return True si la habilidad ha sido aprendida por el arqueólogo.
+     * @return False si la habilidad no ha sido aprendida por el arqueólogo.
      */
-    public void learnSkill(Skill skill){
+    public boolean learnSkill(Skill skill){
 
         if (canLearn(skill)) {
             this.skills.add(skill); 
@@ -169,8 +171,221 @@ public class Archeologist {
                     this.terrains.add(t);
                 }
             }
+
+            return true; 
+        } else {
+            return false; 
         }
     }
+
+    /**
+     * Comprueba la cantidad total de acciones extra del arqueólogo,
+     * a partir de su lista de habilidades. Una vez alcanzado el nivel 5
+     * la experiencia obtenida aumenta los bonos, en este caso acciones,
+     * aumenta 1 cada 25 de experiencia.
+     * @return Cantidad total de acciones extra del arqueólogo.
+     */
+    public int getTotalExtraActions(){
+
+        int total=0;
+
+        for (Skill s : skills) {
+            total+=s.getExtraActions(); 
+        }
+
+        if (level==5) {
+            total+=(xp/25); 
+        }
+
+        return total; 
+    }
+
+    /**
+     * Calcula el porcentaje sumado sobre la cantidad de acciones totales, 
+     * a partir de la lista de habilidades.
+     * @return Porcentaje total de acciones añadidas, sobre las que ya le pertenecen al arqueólogo.
+     */
+    public int getTotalExtraActionsPercent(){
+
+        int total=0;
+
+        for (Skill s : skills) {
+            total+=s.getExtraActionsPercent(); 
+        }
+
+        return total; 
+    }
+
+    /**
+     * Calcula la cantidad de tesoros aleatorios extra que pueden aparecer 
+     * a la hora de excavar, a partir de la lista de habilidades.
+     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
+     * en este caso la aparición de tesoros aleatorios, aumenta 1 cada 50 de experiencia.
+     * @return Cantidad de tesoros aleatorios extra que podrán aparecer en la cuadrícula de excavación.
+     */
+    public int getTotalRandomTreasures(){
+
+         int total=0;
+
+        for (Skill s : skills) {
+            total+=s.getExtraRandomTreasures(); 
+        }
+
+        if (level==5) {
+            total+=(xp/50); 
+        }
+
+        return total;
+    }
+
+    /**
+     * Calcula la cantidad de tesoros comunes extra que pueden aparecer 
+     * a la hora de excavar, a partir de la lista de habilidades.
+     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
+     * en este caso la aparición de tesoros comunes, aumenta 1 cada 50 de experiencia.
+     * @return Cantidad de tesoros comunes extra que podrán aparecer en la cuadrícula de excavación.
+     */
+    public int getTotalCommonTreasures(){
+
+         int total=0;
+
+        for (Skill s : skills) {
+            total+=s.getExtraCommonTreasures(); 
+        }
+
+        if (level==5) {
+            total+=(xp/50); 
+        }
+
+        return total;
+    }
+
+    /**
+     * Calcula la cantidad de tesoros infrecuentes extra que pueden aparecer 
+     * a la hora de excavar, a partir de la lista de habilidades.
+     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
+     * en este caso la aparición de tesoros infrecuentes, aumenta 1 cada 100 de experiencia.
+     * @return Cantidad de tesoros infrecuentes extra que podrán aparecer en la cuadrícula de excavación.
+     */
+    public int getTotalUncommonTreasures(){
+
+         int total=0;
+
+        for (Skill s : skills) {
+            total+=s.getExtraUncommonTreasures(); 
+        }
+
+        if (level==5) {
+            total+=(xp/100); 
+        }
+
+        return total;
+    }
+
+    /**
+     * Calcula la cantidad de tesoros raros extra que pueden aparecer 
+     * a la hora de excavar, a partir de la lista de habilidades.
+     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
+     * en este caso la aparición de tesoros raros, aumenta 1 cada 200 de experiencia.
+     * @return Cantidad de tesoros raros extra que podrán aparecer en la cuadrícula de excavación.
+     */
+    public int getTotalRareTreasures(){
+
+         int total=0;
+
+        for (Skill s : skills) {
+            total+=s.getExtraRareTreasures(); 
+        }
+
+        if (level==5) {
+            total+=(xp/200); 
+        }
+
+        return total;
+    }
+
+    /**
+     * Calculo del aumento total de probabilidad de obtención de tesoros infrecuentes, 
+     * a partir de la lista de habilidades.
+     * @return Aumento total de la probabilidad de obtención de tesoros infrecuentes.
+     */
+    public int getTotalUncommonProb(){
+
+        int total=0; 
+
+        for (Skill s : skills) {
+            total+=s.getExtraUncommonProb(); 
+        }
+
+        return total; 
+    }
+
+    /**
+     * Calculo del aumento total de probabilidad de obtención de tesoros raros, 
+     * a partir de la lista de habilidades.
+     * @return Aumento total de la probabilidad de obtención de tesoros raros.
+     */
+    public int getTotalRareProb(){
+
+        int total=0; 
+
+        for (Skill s : skills) {
+            total+=s.getExtraRareProb(); 
+        }
+
+        return total; 
+    }
+
+    /**
+     * Obtención de la cantidad de casillas totales vacías, 
+     * a partir de la lista de habilidades.
+     * @return Cantidad total de casillas reveladas vacías.
+     */
+    public int getTotalEmptyCellsReveled(){
+
+        int total=0; 
+
+        for (Skill s : skills) {
+            total+=s.getEmptyCellsReveled();
+        }
+
+        return total; 
+    }
+
+    /**
+     * Obtención de la cantidad de casillas totales con interrogación, 
+     * a partir de la lista de habilidades.
+     * @return Cantidad total de casillas con interrogación.
+     */
+    public int getTotalScanHints(){
+
+        int total=0; 
+
+        for (Skill s : skills) {
+            total+=s.getScanHints();
+        }
+
+        return total; 
+    }
+
+    /**
+     * Se obtiene si el arqueólogo tiene la habilidad de investigación, 
+     * a partir de la lista de habilidades.
+     * @return True si tiene la habilidad de investigación.
+     * @return False si no tiene la habilidad de investigación.
+     */
+    public boolean hasInvestigation() {
+
+        for (Skill s : skills) {
+
+            if (s.hasInvestigation()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Obtención del nombre del arqueólogo.
@@ -200,7 +415,7 @@ public class Archeologist {
      * Obtención de la lista de habilidades disponibles del arqueólogo.
      * @return Lista inmutable de las habilidades disponibles del arqueólogo.
      */
-    public List<Skill> getHabilities() {
+    public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
     }
 
@@ -220,5 +435,14 @@ public class Archeologist {
         return rarity;
     }
 
-    
+    /**    
+     * Método que devuelve el objeto arqueólogo en una String.
+     * @see java.lang.Object#toString()
+     */
+    @Override 
+    public  String toString(){
+        return name + " [Nivel: " + level + " | XP: " + xp + "/" + (level < 5 ? getXpToNextLevel() : "MAX") + "]"
+                + " - Rareza: " + rarity
+                + " - Terrenos: " + terrains;
+    }
 }
