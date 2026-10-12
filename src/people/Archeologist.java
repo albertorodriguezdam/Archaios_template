@@ -201,19 +201,19 @@ public class Archeologist {
     }
 
     /**
-     * Calcula el porcentaje sumado sobre la cantidad de acciones totales, 
+     * Claculo del porcentaje de acciones que aumenta el arqueólogo, 
      * a partir de la lista de habilidades.
-     * @return Porcentaje total de acciones añadidas, sobre las que ya le pertenecen al arqueólogo.
+     * @return Multiplicador de acciones, 1.0 si no hay bonificaciones.
      */
-    public int getTotalExtraActionsPercent(){
+    public double getActionsMultiplier(){
 
-        int total=0;
+        double multiplier=1.0; 
 
         for (Skill s : skills) {
-            total+=s.getExtraActionsPercent(); 
+            multiplier*=1.0+s.getExtraActionsPercent()/100.0; 
         }
 
-        return total; 
+        return multiplier; 
     }
 
     /**
