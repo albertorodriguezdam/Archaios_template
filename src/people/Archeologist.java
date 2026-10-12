@@ -20,8 +20,10 @@ public class Archeologist {
     private int xp; 
     /**Lista de habilidades pertenecientes al arqueólogo. */
     private List<Skill> skills; 
-    /**Lista de terrenos accesibles para el arqueólogo. */
-    private List<String> terrains; 
+    /**Lista de tamaños de terrenos accesibles para el arqueólogo. */
+    private List<String> terrainsSize; 
+    /**Lista de formatos de terrenos accesibles para el arqueólogo. */
+    private List<String> terrainsFormats;
     /**Rareza del arqueólogo (Común, infrecuente o raro). */
     private  String rarity; 
 
@@ -38,8 +40,10 @@ public class Archeologist {
         this.xp = 0;
         this.rarity = (rarity != null) ? rarity.toUpperCase() : "COMUN";
         this.skills = new ArrayList<>();
-        this.terrains = new ArrayList<>();
-        this.terrains.add("Pequeño");
+        this.terrainsSize = new ArrayList<>();
+        this.terrainsFormats=new ArrayList<>(); 
+        this.terrainsSize.add("Pequeño");
+        this.terrainsFormats.add("Cuadrado"); 
     }
 
     /**
@@ -51,10 +55,10 @@ public class Archeologist {
     }
 
     /**
-     * método de obtención de la cantidad de experiencia restante del arqueólogo,
+     * Método de obtención de la cantidad de experiencia total,
      * para subir al siguiente nivel. En el caso de que el arqueólogo alacance el nivel máximo
      * (nivel 5), devolverá 0.
-     * @return Cantidad de xp restante para subir de nivel, si es nivel máximo devuelve 0; 
+     * @return Cantidad de xp total para subir de nivel, si es nivel máximo devuelve 0; 
      */
     public int getXpToNextLevel(){
 
@@ -97,14 +101,14 @@ public class Archeologist {
      */
     private void updateTerrainByLevel(){
 
-        if (this.level >= 2 && !this.terrains.contains("Mediano")) {
+        if (this.level >= 2 && !this.terrainsSize.contains("Mediano")) {
 
-        this.terrains.add("Mediano");
+        this.terrainsSize.add("Mediano");
         }
 
-        if (this.level >= 4 && !this.terrains.contains("Grande")) {
+        if (this.level >= 4 && !this.terrainsSize.contains("Grande")) {
 
-            this.terrains.add("Grande");
+            this.terrainsSize.add("Grande");
         }
     }
 
@@ -167,12 +171,13 @@ public class Archeologist {
             this.skills.add(skill); 
 
             for (String t : skill.getTerrains()) {
-                if (!this.terrains.contains(t)) {
-                    this.terrains.add(t);
+                if (!this.terrainsFormats.contains(t)) {
+                    this.terrainsFormats.add(t);
                 }
             }
 
             return true; 
+
         } else {
             return false; 
         }
@@ -420,11 +425,19 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de la lista de terrenos disponibles del arqueólogo.
-     * @return Lista inmutable de los terrenos disponibles del arqueólogo.
+     * Obtención de la lista de tamaños de terrenos disponibles del arqueólogo.
+     * @return Lista inmutable de los tamaños de terrenos disponibles del arqueólogo.
      */
-    public List<String> getTerrains() {
-        return Collections.unmodifiableList(terrains);
+    public List<String> getTerrainsSize() {
+        return Collections.unmodifiableList(terrainsSize);
+    }
+
+    /**
+     * Obtención de la lista de fromatos de terrenos disponibles del arqueólogo.
+     * @return Lista inmutable de los formatos de terrenos disponibles del arqueólogo.
+     */
+    public List<String> getTerrainsFormats() {
+        return Collections.unmodifiableList(terrainsFormats);
     }
 
     /**
@@ -443,6 +456,6 @@ public class Archeologist {
     public  String toString(){
         return name + " [Nivel: " + level + " | XP: " + xp + "/" + (level < 5 ? getXpToNextLevel() : "MAX") + "]"
                 + " - Rareza: " + rarity
-                + " - Terrenos: " + terrains;
+                + " - Terrenos: " + terrainsSize;
     }
 }
