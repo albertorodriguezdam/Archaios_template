@@ -6,10 +6,13 @@ import java.util.Map;
 import regions.Region;
 
 /**
+ * Repositorio encargado de registrar y gestionar las regiones del sistema.
+ * Permite almacenar y consultar regiones mediante su código identificativo.
+ * 
  * @author jagoldar
  */
 public class RegionRepository {
-    
+
     /**
      * Almacena las regiones registradas en el sistema, asociando
      * el código identificativo de cada región con su objeto Region.
@@ -19,7 +22,7 @@ public class RegionRepository {
 
     /**
      * Registra una nueva región en el repositorio utilizando su código
-     * identificativo con clave.
+     * identificativo como clave.
      * 
      * @param region La región a registrar.
      */

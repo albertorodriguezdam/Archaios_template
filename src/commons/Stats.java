@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import commons.repositories.RegionRepository;
+import commons.repositories.TreasureRepository;
+import helpers.CodeHelper;
 import helpers.UtilsHelper;
 import regions.Region;
+import treasures.ETreasureType;
 import treasures.Treasure;
 
 /**
@@ -51,8 +56,135 @@ public class Stats {
         treasures.put(treasureCode, currentFinds + 1);
     }
 
-    // TODO: Las estadísticas de los tesoros encontrados
-    public void getStatsTreasures() {}
+    /**
+     * Muestra por consola los tesoros encontrados, agrupados por región
+     * y ordenados alfabéticamente según su código identificativo.
+     *
+     * Obtiene las regiones a partir de los códigos de los tesoros registrados
+     * y recupera la información de cada tesoro mediante TreasureRepository.
+     *
+     * Los tesoros divididos en varias partes se muestran con su nombre,
+     * seguido de los códigos completos de las piezas encontradas y sus
+     * respectivas cantidades. Los tesoros de una sola parte se muestran
+     * directamente con su nombre y el número de veces que se han encontrado.
+     */
+    public void showTreasuresByRegion() {
+
+        if (treasures.isEmpty()) { 
+            System.out.println("No hay tesoros registrados");
+            return;
+        }
+        Set<String> regionCodes = new TreeSet<>();
+
+        for (String treasureCode : treasures.keySet()) {
+            String regionCode = CodeHelper.getRegion(treasureCode);
+            regionCodes.add(regionCode);
+        }
+
+        for (String regionCode : regionCodes) {
+            System.out.println("---------- " + regionCode + " ----------");
+
+            String previousBaseCode = "";
+
+            for (String treasureCode : new TreeSet<>(treasures.keySet())) {
+                if (treasureCode.startsWith(regionCode + "_")) {
+                    String baseCode = CodeHelper.getFullTreasure(treasureCode);
+                    Treasure currentTreasure = TreasureRepository.getTreasure(baseCode);
+
+                    if (currentTreasure == null) { 
+                        System.out.println("No se ha encontrado el tesoro cuyo código es: " + baseCode);
+                        continue;
+                    }
+
+                    if (!baseCode.equals(previousBaseCode)) {
+                        previousBaseCode = baseCode;
+
+                        if (currentTreasure.getParts() > 1) {
+                            System.out.println("-" + currentTreasure.getTxt() + ":");
+                        }
+                    }
+
+                    if (currentTreasure.getParts() > 1) {
+                        int findCount = treasures.get(treasureCode);
+                        System.out.println("    " + treasureCode + ": " + findCount);
+                    } else {
+                        int findCount = treasures.get(treasureCode);
+                        System.out.println("-" + currentTreasure.getTxt() + ": " + findCount);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Muestra por consola las estadísticas de los tesoros encontrados,
+     * agrupándolos por tipo y ordenándolos alfabéticamente según su código.
+     *
+     * Identifica los tipos mediante CodeHelper y recupera los objetos
+     * Treasure correspondientes desde TreasureRepository.
+     *
+     * Los tesoros divididos en varias partes se muestran con su nombre,
+     * seguido de los códigos completos de las piezas encontradas y sus
+     * respectivas cantidades. Los tesoros de una sola parte se muestran
+     * directamente con su nombre y número de hallazgos.
+     */
+    public void showTreasuresByType() {
+
+        if (treasures.isEmpty()) { 
+            System.out.println("No hay tesoros registrados");
+            return;
+        }
+        Set<String> typeCodes = new TreeSet<>();
+
+        for (String treasureCode : treasures.keySet()) {
+            String typeCode = CodeHelper.getType(treasureCode);
+            typeCodes.add(typeCode);
+        }
+
+        for (String typeCode : typeCodes) {
+
+            String typeName = typeCode;
+
+            for (ETreasureType treasureType : ETreasureType.values()) {
+                if (treasureType.getCode().equals(typeCode)) {
+                    typeName = UtilsHelper.ucfirst(treasureType.toString());
+                    break;
+                }
+            }
+
+            System.out.println("---------- " + typeName + " ----------");
+
+            String previousBaseCode = "";
+
+            for (String treasureCode : new TreeSet<>(treasures.keySet())) {
+                if (CodeHelper.getType(treasureCode).equals(typeCode)) {
+                    String baseCode = CodeHelper.getFullTreasure(treasureCode);
+                    Treasure currentTreasure = TreasureRepository.getTreasure(baseCode);
+
+                    if (currentTreasure == null) {
+                        System.out.println("No se ha encontrado el tesoro cuyo código es: " + baseCode);
+                        continue;
+                    }
+
+                    if (!baseCode.equals(previousBaseCode)) {
+                        previousBaseCode = baseCode;
+
+                        if (currentTreasure.getParts() > 1) {
+                            System.out.println("-" + currentTreasure.getTxt() + ":");
+                        }
+                    }
+
+                    if (currentTreasure.getParts() > 1) {
+                        int findCount = treasures.get(treasureCode);
+                        System.out.println("    " + treasureCode + ": " + findCount);
+                    } else {
+                        int findCount = treasures.get(treasureCode);
+                        System.out.println("-" + currentTreasure.getTxt() + ": " + findCount);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Muestra por consola las estadísticas de cada región visitada,
