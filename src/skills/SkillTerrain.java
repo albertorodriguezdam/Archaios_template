@@ -15,7 +15,7 @@ public class SkillTerrain extends Skill{
 
     /**
      * Constructor principal de la clase SkillTerrain.
-     * @param nameEl Nombres identificativo de la habilidad.
+     * @param name Nombre identificativo de la habilidad.
      * @param description Descripción de lo que hace la habilidd.
      * @param unlockedTerrains Lista de los formatos de terrenos que desbloquea esta habilidad.
      */

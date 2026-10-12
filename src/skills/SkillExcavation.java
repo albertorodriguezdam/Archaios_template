@@ -11,7 +11,7 @@ public class SkillExcavation extends Skill{
     /**Cantidad de porcentaje extra, sobre la cantidad de acciones que ya posees. */
     private int extraActionsPercent; 
     /**Cantidad de celdas vacías reveladas. */
-    private int emptyCellsRevealed; 
+    private int emptyCellsReveled; 
     /**Cantidad de celdas con interrogación que te indican una pista. */
     private int scanHints; 
     /**Marcador que determina si el arqueólogo puede hacer un desglose de los tesoros de cada rareza que hay. */
@@ -24,16 +24,16 @@ public class SkillExcavation extends Skill{
      * @param extraActions Cantidad de acciones extra.
      * @param extraActionsPercent Cantidad de porcentaje extra, sobre la cantidad de acciones que posee el arqueólogo.
      * @param emptyCellsReveled Cantidad de celdas vacías reveladas.
-     * @param cellsReveled Cantidad de celdas que puedes revelar a mano.
+     * @param scanHints Cantidad de celdas con interrogación que te indican una pista.
      * @param investigation Cantidad de tesoros de cada rareza.
      */
     public SkillExcavation(String name, String description, int extraActions, int extraActionsPercent, 
-                        int emptyCellsRevealed, int scanHints, boolean investigation){
+                        int emptyCellsReveled, int scanHints, boolean investigation){
 
                 super(name, description, ESkillType.EXCAVATION); 
                 this.extraActions=extraActions; 
                 this.extraActionsPercent=extraActionsPercent; 
-                this.emptyCellsRevealed=emptyCellsRevealed; 
+                this.emptyCellsReveled=emptyCellsReveled; 
                 this.scanHints=scanHints; 
                 this.investigation=investigation; 
     }
@@ -67,8 +67,8 @@ public class SkillExcavation extends Skill{
      * @param emptyCellsReveled Cantidad de celdas vacías reveladas.
      * @return Objeto SkillExcavation(Limpieza I o II).
      */
-    public static SkillExcavation createCleaning(String name, String description, int emptyCellsRevealed){
-        return new SkillExcavation(name, description, 0, 0, emptyCellsRevealed, 0, false); 
+    public static SkillExcavation createCleaning(String name, String description, int emptyCellsReveled){
+        return new SkillExcavation(name, description, 0, 0, emptyCellsReveled, 0, false); 
     }
 
     /**
@@ -117,7 +117,7 @@ public class SkillExcavation extends Skill{
      */
     @Override
     public int getEmptyCellsReveled(){
-        return emptyCellsRevealed; 
+        return emptyCellsReveled; 
     }
 
     /**

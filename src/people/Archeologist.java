@@ -29,7 +29,7 @@ public class Archeologist {
 
     /**
      * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
-     * las dos listas a ArrayList y añade el único terreno disponible al instanciar
+     * las tres listas a ArrayList y añade el único terreno disponible al instanciar
      * un nuevo arqueólogo: "pequeño".
      * @param name Nombre del arqueólogo.
      * @param rarity Rareza del arqueólogo (Común, infrecuente o raro).
@@ -206,9 +206,9 @@ public class Archeologist {
     }
 
     /**
-     * Claculo del porcentaje de acciones que aumenta el arqueólogo, 
-     * a partir de la lista de habilidades.
-     * @return Multiplicador de acciones, 1.0 si no hay bonificaciones.
+     * Calcula el factor de aumento de acciones multiplicando los factores
+     * individuales de las habilidades de experiencia.
+     * @return Factor multiplicativo de acciones; 1.0 si no hay bonificaciones.
      */
     public double getActionsMultiplier(){
 
@@ -454,8 +454,11 @@ public class Archeologist {
      */
     @Override 
     public  String toString(){
-        return name + " [Nivel: " + level + " | XP: " + xp + "/" + (level < 5 ? getXpToNextLevel() : "MAX") + "]"
-                + " - Rareza: " + rarity
-                + " - Terrenos: " + terrainsSize;
+        String experience = level < 5 ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
+
+        return name + " [Nivel: " + level + " | XP: " + experience + "]"
+            + " - Rareza: " + rarity
+            + " - Tamaños: " + terrainsSize
+            + " - Formatos: " + terrainsFormats;
     }
 }
