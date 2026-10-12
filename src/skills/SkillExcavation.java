@@ -90,7 +90,7 @@ public class SkillExcavation extends Skill{
      * @return Objeto SkillExcavation(Investigación).
      */
     public static SkillExcavation createInvestigation(String name, String description, boolean investigation){
-        return new SkillExcavation(name, description, 0, 0, 0, 0, true); 
+        return new SkillExcavation(name, description, 0, 0, 0, 0, investigation); 
     }
 
     /**
