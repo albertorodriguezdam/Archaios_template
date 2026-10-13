@@ -1,3 +1,5 @@
+package excavation;
+
 /**
  * Los tamaños de terreno y las reglas de excavación que dependen de ellos.
  * Cada {@link ETerrain} pertenece a uno de estos tamaños.

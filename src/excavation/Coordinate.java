@@ -1,3 +1,5 @@
+package excavation;
+
 public class Coordinate {
     /**
      * Fila

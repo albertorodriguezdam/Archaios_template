@@ -1,3 +1,5 @@
+package excavation;
+
 import java.util.Random;
 import treasures.ETreasureRarity;
 /**
