@@ -1,8 +1,6 @@
 package commons;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -204,19 +202,16 @@ public class Stats {
 
         for (String regionCode : places.keySet()) { 
             int visits = places.get(regionCode);
-            int totalFound = 0; 
-
-            List<String> foundTreasureCodes = new ArrayList<>();   
+            int totalFound = 0;
+            int distinctFound = 0;
 
             for (String treasureCode : treasures.keySet()) { 
                 if (treasureCode.startsWith(regionCode + "_")) {
                     int findCount = treasures.get(treasureCode); 
                     totalFound += findCount; 
-                    foundTreasureCodes.add(treasureCode); 
+                    distinctFound++;
                 }
             }
-
-            int distinctFound = foundTreasureCodes.size(); 
             
             Region currentRegion = RegionRepository.getRegion(regionCode); 
             if (currentRegion == null) { 
