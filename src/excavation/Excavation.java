@@ -83,6 +83,7 @@ public class Excavation {
      * El tesoro escondido en cada casilla, o null si está vacía.
      */
     private Treasure[][] hiddenTreasures;
+    private String[][] hiddenCodes;
     /**
      * Los tesoros generados que hay que esconder en la rejilla.
      */
@@ -117,16 +118,17 @@ public class Excavation {
      * Prepara una excavación nueva: crea la rejilla, genera y esconde los
      * tesoros, aplica las habilidades de revelación y calcula las acciones.
      *
+     * @param terrain Terreno elegido.
      * @param region Región donde se excava.
      * @param archeologist Arqueólogo que excava.
-     * @param terrain Terreno elegido.
      */
-    public Excavation(Region region, Archeologist archeologist, ETerrain terrain) {
+    public Excavation(ETerrain terrain, Region region, Archeologist archeologist) {
         this.region = region;
         this.archeologist = archeologist;
         this.terrain = terrain;
         this.rejilla = new Rejilla(terrain);
         this.hiddenTreasures = new Treasure[terrain.getRows()][terrain.getColumns()];
+        this.hiddenCodes = new String[terrain.getRows()][terrain.getColumns()];
         this.treasuresToPlace = new ArrayList<>();
         this.foundTreasuresList = new ArrayList<>();
         this.foundCodes = new ArrayList<>();
@@ -137,7 +139,11 @@ public class Excavation {
         generateTreasures();
         placeTreasures();
         applyCleaning(archeologist.getTotalEmptyCellsReveled());
-        applyGuesses(archeologist.getTotalScanHints());
+        /**
+         * getTotalScanHints() devuelve casillas con '?'; cada suposición marca
+         * 3
+         */
+        applyGuesses(archeologist.getTotalScanHints() / GUESSES_PER_SKILL);
         this.actions = calcActions(terrain, archeologist.getTotalExtraActions(), archeologist.getActionsMultiplier());
     }
 
@@ -416,6 +422,7 @@ public class Excavation {
             Treasure treasure = this.treasuresToPlace.get(i);
 
             this.hiddenTreasures[row][column] = treasure;
+            this.hiddenCodes[row][column] = treasure.getRandomPartCode();
             this.rejilla.placeTreasure(new Coordinate(row, column), treasure.getRarity());
         }
     }
@@ -461,7 +468,8 @@ public class Excavation {
         List<Coordinate> empties = getCoordinates(false);
 
         /**
-         * No podemos limpiar más casillas de las que hay vacías ni pasar del 25 %
+         * No podemos limpiar más casillas de las que hay vacías ni pasar del 25
+         * %
          */
         int toClean = Math.min(amount, empties.size());
         toClean = Math.min(toClean, getRevealsLeft());
@@ -508,7 +516,8 @@ public class Excavation {
                     return;
                 }
                 /**
-                 * markGuess devuelve false si la casilla ya estaba limpiada o marcada
+                 * markGuess devuelve false si la casilla ya estaba limpiada o
+                 * marcada
                  */
                 if (this.rejilla.markGuess(coord)) {
                     this.revealedBySkills++;
@@ -617,7 +626,7 @@ public class Excavation {
         } else {
             Treasure treasure = this.hiddenTreasures[coord.getRow()][coord.getColumn()];
             this.foundTreasuresList.add(treasure);
-            this.foundCodes.add(treasure.getRandomPartCode());
+            this.foundCodes.add(this.hiddenCodes[coord.getRow()][coord.getColumn()]);
             this.foundTreasures++;
             System.out.println(this.rejilla.getLabel(coord) + ": ¡tesoro " + rarity + "!");
         }
@@ -625,12 +634,14 @@ public class Excavation {
 
     /**
      * Finaliza la excavación: muestra la rejilla final, la rejilla descubierta
-     * y el resumen de tesoros encontrados por rareza, y devuelve los tesoros
-     * encontrados para que Archaios los registre en Stats y los envíe al Museo.
+     * y el resumen de tesoros encontrados por rareza, y devuelve los códigos de
+     * los tesoros encontrados para que Archaios los registre en Stats y los
+     * envíe al Museo.
      *
-     * @return La lista de tesoros encontrados.
+     * @return Los códigos completos (con número de parte) de los tesoros
+     * encontrados.
      */
-    public List<Treasure> finish() {
+    public List<String> finish() {
         System.out.println();
         System.out.println("Excavación terminada");
         System.out.print(this.rejilla.render());
@@ -657,6 +668,14 @@ public class Excavation {
                 System.out.println(found + "/" + total + " tesoros " + getPlural(rarity) + ".");
             }
         }
+        return new ArrayList<>(this.foundCodes);
+    }
+
+    /**
+     * @return Los tesoros encontrados (los objetos Treasure), para mostrar su
+     * nombre, descripción, tipo y rareza.
+     */
+    public List<Treasure> getFoundTreasures() {
         return new ArrayList<>(this.foundTreasuresList);
     }
 
