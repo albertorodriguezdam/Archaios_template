@@ -8,7 +8,7 @@ public class Grecia extends Region {
     /**El código único identificativo de la región */
     private static final String CODE = "GRC";
 
-    /**Constructor por defecto que hereda del padre */
+    /** Inicializa la región y carga los tesoros de Grecia. */
     public Grecia() {
         super();
         loadTreasures();
@@ -39,8 +39,8 @@ public class Grecia extends Region {
         treasureList.add(new Treasure(CODE + "_" + ETreasureType.BEAD.getCode() + "_002", "Cuenta de cerámica", "Pequeños trozos de cerámica pintada a mano que se utilizaban en collares y pulseras.", ETreasureRarity.COMMON, ETreasureType.BEAD, 1, 1));
         // Joyería
         treasureList.add(new Treasure(CODE + "_" + ETreasureType.JEWELRY.getCode() + "_001", "Fíbula omega", "Hebilla para sujetar la ropa similar a un imperdible.", ETreasureRarity.UNCOMMON, ETreasureType.JEWELRY, 3, 2));
-        treasureList.add(new Treasure(CODE + "_" + ETreasureType.JEWELRY.getCode() + "_002", "Anillos", "Anillos de oro, plata y bronce adornados con grabados e incrustaciones de gemas.", ETreasureRarity.RARE, ETreasureType.JEWELRY, 4,5));
-        treasureList.add(new Treasure(CODE + "_" + ETreasureType.JEWELRY.getCode() + "_003", "Brazal", "Brazal de oro decorado con filigranas y  gemas.", ETreasureRarity.UNCOMMON, ETreasureType.JEWELRY, 7,3));
+        treasureList.add(new Treasure(CODE + "_" + ETreasureType.JEWELRY.getCode() + "_002", "Anillos", "Anillos de oro, plata y bronce adornados con grabados e incrustaciones de gemas.", ETreasureRarity.RARE, ETreasureType.JEWELRY, 4, 5));
+        treasureList.add(new Treasure(CODE + "_" + ETreasureType.JEWELRY.getCode() + "_003", "Brazal", "Brazal de oro decorado con filigranas y gemas.", ETreasureRarity.UNCOMMON, ETreasureType.JEWELRY, 7,3));
         // Cerámica
         treasureList.add(new Treasure(CODE + "_" + ETreasureType.CERAMIC.getCode() + "_001", "Ánfora de Nola", "Ánfora típica de la región de Nola con un cuello más largo y estrecho.", ETreasureRarity.UNCOMMON, ETreasureType.CERAMIC, 34,2));
         treasureList.add(new Treasure(CODE + "_" + ETreasureType.CERAMIC.getCode() + "_002", "Ánfora nicosténica", "Ánfora creada en el siglo VI a.C. por Nicóstenes que imita la forma etrusca.", ETreasureRarity.UNCOMMON, ETreasureType.CERAMIC, 18,3));
