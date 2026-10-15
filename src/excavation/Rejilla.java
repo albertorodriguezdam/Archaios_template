@@ -165,10 +165,13 @@ public class Rejilla {
 	 * @return Si se ha podido marcar la casilla.
 	 */
 	public boolean markGuess(Coordinate coord) {
-		if (isRevealed(coord)) {
+		int row = coord.getRow();
+		int column = coord.getColumn();
+
+		if(cells[row][column]!= UNDUG){
 			return false;
 		}
-		this.cells[coord.getRow()][coord.getColumn()] = GUESS;
+		cells[row][column] = GUESS;
 		return true;
 	}
 
