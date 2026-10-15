@@ -12,8 +12,6 @@ import skills.Skill;
  */
 public class Archeologist {
 
-    /**Constante para el nivel máximo del arqueólogo */
-    private static final int MAX_LEVEL=5; 
     /**Nombre del arqueólogo. */
     private String name; 
     /**Nivel del arqueólogo. */
@@ -26,6 +24,8 @@ public class Archeologist {
     private List<String> terrainsSize; 
     /**Lista de formatos de terrenos accesibles para el arqueólogo. */
     private List<String> terrainsFormats;
+    /**Rareza del arqueólogo (Común, infrecuente o raro). */
+    private  String rarity; 
 
     /**
      * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
@@ -38,6 +38,7 @@ public class Archeologist {
         this.name = name;
         this.level = 0;
         this.xp = 0;
+        this.rarity = (rarity != null) ? rarity.toUpperCase() : "COMUN";
         this.skills = new ArrayList<>();
         this.terrainsSize = new ArrayList<>();
         this.terrainsFormats=new ArrayList<>(); 
@@ -61,7 +62,7 @@ public class Archeologist {
      */
     public int getXpToNextLevel(){
 
-        if (this.level<MAX_LEVEL) {
+        if (this.level<5) {
              return 50+(50*this.level); 
         } else {
             return 0;
@@ -81,7 +82,7 @@ public class Archeologist {
 
             this.xp+=xpGained; 
 
-            while (level<MAX_LEVEL&&this.xp>=getXpToNextLevel()) {
+            while (level<5&&this.xp>=getXpToNextLevel()) {
                 this.xp-=getXpToNextLevel(); 
                 this.level++;
                 levelGained++;
@@ -118,11 +119,17 @@ public class Archeologist {
      */
     public int getLicensingPoints(){
 
-        int points=skills.size();
+        int points=0; 
 
         if (level>0) {
             points=level*10; 
         } 
+
+        if ("INFRECUENTE".equals(rarity)) {
+            points+=10; 
+        } else if ("RARO".equals(rarity)) {
+            points+=20; 
+        }
 
         return points; 
     }
@@ -191,7 +198,7 @@ public class Archeologist {
             total+=s.getExtraActions(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==5) {
             total+=(xp/25); 
         }
 
@@ -229,7 +236,7 @@ public class Archeologist {
             total+=s.getExtraRandomTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==5) {
             total+=(xp/50); 
         }
 
@@ -251,7 +258,7 @@ public class Archeologist {
             total+=s.getExtraCommonTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==5) {
             total+=(xp/50); 
         }
 
@@ -273,7 +280,7 @@ public class Archeologist {
             total+=s.getExtraUncommonTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==5) {
             total+=(xp/100); 
         }
 
@@ -295,7 +302,7 @@ public class Archeologist {
             total+=s.getExtraRareTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==5) {
             total+=(xp/200); 
         }
 
@@ -434,23 +441,23 @@ public class Archeologist {
     }
 
     /**
-     *Obtención del nivel máximo al que puede llegar el arqueólogo.
-     * @return Nivel máximo del arqueólogo.
+     * Obtención de la rareza del arqueólogo.
+     * @return Rareza del arqueólogo.
      */
-    public int getMAX_LEVEL(){
-        return MAX_LEVEL;
+    public String getRarity() {
+        return rarity;
     }
 
-    
     /**    
      * Método que devuelve el objeto arqueólogo en una String.
      * @see java.lang.Object#toString()
      */
     @Override 
     public  String toString(){
-        String experience = level < MAX_LEVEL ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
+        String experience = level < 5 ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
 
         return name + " [Nivel: " + level + " | XP: " + experience + "]"
+            + " - Rareza: " + rarity
             + " - Tamaños: " + terrainsSize
             + " - Formatos: " + terrainsFormats;
     }
