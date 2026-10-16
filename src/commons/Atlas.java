@@ -1,8 +1,7 @@
 package commons;
 
-import java.util.List;
-
 import helpers.InputValidator;
+import java.util.List;
 import regions.Region;
 import treasures.Treasure;
 
@@ -17,7 +16,7 @@ public class Atlas {
         int option;
 
         do {
-            option = chooseRegion();
+            option = chooseRegion("Atlas de regiones");
 
             if (option != 0) {
                 Region region = regions.get(option - 1);
@@ -32,6 +31,13 @@ public class Atlas {
                         + treasure.getRarity()
                     );
                 }
+
+                int again = InputValidator.inputOptionQuest(
+                    0, 1, "¿Volver al atlas? 1 sí, 0 menú: ", "Escribe 0 o 1."
+                );
+                if (again == 0) {
+                    return;
+                }
             }
         } while (option != 0);
     }
@@ -40,33 +46,42 @@ public class Atlas {
         int option;
 
         do {
-            option = chooseRegion();
+            option = chooseRegion("Catálogo de tesoros");
 
             if (option != 0) {
                 Region region = regions.get(option - 1);
                 List<Treasure> treasures = region.getTreasures();
 
-                for (int i = 0; i < treasures.size(); i++) {
-                    System.out.println(
-                        (i + 1) + ". " + treasures.get(i).getTxt()
+                if (treasures.isEmpty()) {
+                    System.out.println("No hay tesoros en esta región.");
+                    return;
+                }
+
+                int again = 1;
+                while (again == 1) {
+                    System.out.println("\n--- Tesoros de " + region.getClass().getSimpleName() + " ---");
+
+                    for (int i = 0; i < treasures.size(); i++) {
+                        System.out.println((i + 1) + ". " + treasures.get(i).getTxt());
+                    }
+
+                    int number = InputValidator.inputOptionQuest(
+                        1, treasures.size(), "Elige un tesoro: ", "Número incorrecto."
+                    );
+
+                    System.out.println("\n" + treasures.get(number - 1) + "\n");
+                    again = InputValidator.inputOptionQuest(
+                        0, 1, "¿Quieres ver otro tesoro de esta región? 1 sí, 0 menú: ",
+                        "Escribe 0 o 1."
                     );
                 }
-
-                int number = InputValidator.inputOptionQuest(
-                    0, treasures.size(),
-                    "Tesoro (0 para volver): ",
-                    "Número incorrecto."
-                );
-
-                if (number != 0) {
-                    System.out.println(treasures.get(number - 1));
-                }
+                return;
             }
         } while (option != 0);
     }
 
-    private int chooseRegion() {
-        System.out.println("\n--- Regiones ---");
+    private int chooseRegion(String title) {
+        System.out.println("\n--- " + title + " ---");
 
         for (int i = 0; i < regions.size(); i++) {
             Region region = regions.get(i);
