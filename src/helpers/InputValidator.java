@@ -1,61 +1,50 @@
 package helpers;
-import java.io.Console;
-/**
- * Clase auxiliar para validar entradas por consola.
- */
-public class InputValidator {
-/**
- * Consola usada para leer datos del usuario.
- */
-    private static Console console = System.console();
-    /**
-     * Pide una opción numérica dentro de un rango.
-     * 
-     * @param min valor mínimo permitido    
-     * @param max valor máximo permitido 
-     * @param msg mensaje que se muestra al usuario
-     * @param err mensaje de error
-     * @return opción válida introducida por el usuario
-     */
-    public static int inputOptionQuest(int min, int max, String msg, String err) {
 
-        int option = Integer.MIN_VALUE;
-        
-        while (option == Integer.MIN_VALUE) {
+import java.util.Scanner;
+
+public class InputValidator {
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static int inputOptionQuest(int min, int max, String msg, String err) {
+        while (true) {
+            System.out.print(msg);
+            String text = scanner.nextLine();
 
             try {
-                option = Integer.parseInt(console.readLine(msg));
-
-                if (option < min || option > max){
-                    System.out.println(err);
-                    option = Integer.MIN_VALUE;
+                int option = Integer.parseInt(text.trim());
+                if (option >= min && option <= max) {
+                    return option;
                 }
-            } catch (NumberFormatException ex) {
-                System.out.println(err);
+            } catch (NumberFormatException e) {
+                // Si no es un número, se vuelve a pedir.
             }
-        }
 
-        return option;
+            System.out.println(err);
+        }
     }
-    /* Falta acabar los metodos que vimos en el InputValidator del profesor */
+
     public static int inputMenu(String msg, String err) {
-        // TODO
-        return 0;
+        return inputOptionQuest(0, 7, msg, err);
     }
 
     public static String inputExtra(String msg) {
-        // TODO
-        return null;
+        while (true) {
+            System.out.print(msg);
+            String text = scanner.nextLine().trim();
+
+            if (!text.isEmpty()) {
+                return text;
+            }
+
+            System.out.println("Escribe un texto.");
+        }
     }
 
-    public static String inputDigPosition(String msg, String err){
-        // TODO
-        return null;
+    public static String inputDigPosition(String msg, String err) {
+        return inputExtra(msg);
     }
 
     public static char[] readPassword(String msg) {
-        // TODO
-        return null;
+        return inputExtra(msg).toCharArray();
     }
-
 }
