@@ -3,7 +3,6 @@ package people;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import skills.Skill;
 
 /**
@@ -26,6 +25,10 @@ public class Archeologist {
     private List<String> terrainsSize; 
     /**Lista de formatos de terrenos accesibles para el arqueólogo. */
     private List<String> terrainsFormats;
+    /** Licencias regionales independientes de las habilidades Licencia A y B. */
+    private List<String> licenses = new ArrayList<>();
+    /** Código de región de especialización; vacío antes del nivel máximo. */
+    private String specialization = "";
 
     /**
      * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
@@ -116,15 +119,8 @@ public class Archeologist {
      * un arqueólogo.
      * @return Cantidad de puntos recibidos por licenciar un arqueólogo.
      */
-    public int getLicensingPoints(){
-
-        int points=skills.size();
-
-        if (level>0) {
-            points=level*10; 
-        } 
-
-        return points; 
+    public int getLicensingPoints() {
+        return 10 * level + 10 * (skills.size() - level);
     }
 
     /**
@@ -454,4 +450,17 @@ public class Archeologist {
             + " - Tamaños: " + terrainsSize
             + " - Formatos: " + terrainsFormats;
     }
+
+    public List<String> getLicenses() {
+        return Collections.unmodifiableList(licenses);
+    }
+
+    public void addLicense(String code) {
+        if (!licenses.contains(code)) licenses.add(code);
+    }
+
+    public String getSpecialization() { return specialization; }
+
+    public void setSpecialization(String code) { specialization = code; }
+
 }

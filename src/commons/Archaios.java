@@ -9,6 +9,7 @@ import helpers.InputValidator;
 import helpers.MenuHelper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import people.Archeologist;
 import regions.Grecia;
 import regions.Region;
@@ -21,6 +22,7 @@ public class Archaios {
     private List<Region> regions = new ArrayList<>();
     private Stats stats = new Stats();
     private int points = 0;
+    private final Random random = new Random();
 
     public Archaios() {
         SkillRepository.register();
@@ -84,42 +86,33 @@ public class Archaios {
 
     private void archeologistsMenu() {
         int option;
-
         do {
-            System.out.println("\n--- Arqueólogos ---");
-            System.out.println("1. Crear arqueólogo");
-            System.out.println("2. Ver arqueólogos");
-            System.out.println("0. Volver");
-
-            option = InputValidator.inputOptionQuest(
-                0, 2, "Elige una opción: ", "Escribe 0, 1 o 2."
-            );
-
+            MenuHelper.header("Arqueólogos");
+            System.out.println("1.- Ver arqueólogos");
+            System.out.println("2.- Contratar");
+            System.out.println("3.- Licenciar");
+            System.out.println("0.- Volver");
+            option = InputValidator.inputOptionQuest(0, 3, "");
             switch (option) {
                 case 1:
-                    String name = InputValidator.inputExtra("Nombre: ");
-                    Archeologist archeologist = new Archeologist(name);
-
-                    archeologists.add(archeologist);
-                    System.out.println("Arqueólogo " + name + " añadido.");
+                    viewArcheologist();
                     break;
                 case 2:
-                    showArcheologists();
+                    hireArcheologist();
+                    break;
+                case 3:
+                    licenseArcheologist();
                     break;
             }
         } while (option != 0);
     }
 
     private void showArcheologists() {
-        if (archeologists.isEmpty()) {
-            System.out.println("Todavía no hay arqueólogos.");
-            return;
-        }
-
+        MenuHelper.subHeader("Arqueólogos");
         for (int i = 0; i < archeologists.size(); i++) {
-            System.out.println((i + 1) + ". " + archeologists.get(i));
+            System.out.println((i + 1) + ".- " + archeologists.get(i).getName());
         }
-        System.out.println();
+        System.out.println("0.- Volver");
     }
 
     private void showSkills() {
@@ -153,40 +146,22 @@ public class Archaios {
     }
 
     private void licenseArcheologist() {
-        if (archeologists.isEmpty()) {
-            System.out.println("No hay arqueólogos que licenciar.");
+        System.out.println("Al licenciar un arqueólogo te deshaces de él otorgando puntos en compensación.");
+        if (archeologists.size() <= 1) {
+            System.out.println("No puedes licenciar tu último arqueólogo.");
             return;
         }
-
-        showArcheologists();
-
-        int number = InputValidator.inputOptionQuest(
-            0, archeologists.size(),
-            "Arqueólogo (0 para volver): ",
-            "Número incorrecto."
-        );
-
-        if (number == 0) {
-            return;
+        while (true) {
+            Archeologist selected = selectArcheologist("Arqueólogo a licenciar: ");
+            if (selected == null) return;
+            int earned = selected.getLicensingPoints();
+            System.out.println("Licenciar a " + selected.getName() + " otorga " + earned + " puntos.");
+            if (MenuHelper.confirm("¿Quieres licenciarlo?")) {
+                archeologists.remove(selected);
+                points += earned;
+                return;
+            }
         }
-
-        Archeologist chosen = archeologists.get(number - 1);
-        int earned = chosen.getLicensingPoints();
-
-        System.out.println(
-            "Licenciar a " + chosen.getName() + " da " + earned + " puntos."
-        );
-
-        int confirm = InputValidator.inputOptionQuest(
-            0, 1, "¿Confirmar? 1 sí, 0 no: ", "Escribe 0 o 1."
-        );
-
-        if (confirm == 1) {
-            archeologists.remove(number - 1);
-            points += earned;
-            System.out.println("Arqueólogo licenciado. Puntos: " + points);
-        }
-        System.out.println();
     }
 
     private void excavateMenu() {
@@ -315,6 +290,108 @@ public class Archaios {
         System.out.println("--------------------");
         System.out.println(title + ":");
         for (Skill skill : skills) System.out.println("-" + skill.getName());
+    }
+
+//casi completado, falta hireArcheologist() para acabar en casa
+    private void viewArcheologist() {
+        int again = 1;
+        while (again == 1) {
+            Archeologist selected = selectArcheologist("Arqueólogo a consultar: ");
+            if (selected == null) return;
+            MenuHelper.subHeader(selected.getName());
+            System.out.println("Nivel: " + selected.getLevel());
+            if (selected.getLevel() == selected.getMAX_LEVEL()) {
+                System.out.println("Especialización: " + specializationReference(selected.getSpecialization()));
+            }
+            String experience = Integer.toString(selected.getXp());
+            if (selected.getLevel() < selected.getMAX_LEVEL()) {
+                experience += "/" + selected.getXpToNextLevel();
+            }
+            System.out.println("Exp: " + experience);
+            System.out.println("Terrenos:");
+            for (String terrain : selected.getTerrainsSize()) {
+                System.out.println(" -" + terrain);
+            }
+            if (!selected.getLicenses().isEmpty()) {
+                System.out.println("Licencias:");
+                for (String code : selected.getLicenses()) {
+                    System.out.println(" -" + RegionRepository.getRegion(code).getClass().getSimpleName());
+                }
+            }
+            if (!selected.getSkills().isEmpty()) {
+                System.out.println("Habilidades:");
+                for (Skill skill : selected.getSkills()) {
+                    System.out.println(" -" + skill.getName() + ":");
+                    System.out.println("  " + skill.getDescription());
+                }
+            }
+            again = MenuHelper.returnMenu("Consultar otro arqueólogo");
+        }
+    }
+
+
+    private Archeologist selectArcheologist(String question) {
+        if (archeologists.isEmpty()) {
+            System.out.println("No hay arqueólogos.");
+            return null;
+        }
+        showArcheologists();
+        int number = InputValidator.inputOptionQuest(0, archeologists.size(), question);
+        return number == 0 ? null : archeologists.get(number - 1);
+    }
+
+
+    private void hireArcheologist() {
+        System.out.println("Puntos disponibles: " + points);
+        System.out.println("El coste de contratar a un nuevo arqueólogo es de 50 puntos");
+        if (points < 50) {
+            System.out.println("No tienes puntos suficientes para contratar un nuevo arqueólogo.");
+            return;
+        }
+        if (!MenuHelper.confirm("¿Quieres contratar un nuevo arqueólogo?")) {
+            System.out.println("No tienes puntos suficientes para contratar un nuevo arqueólogo.");
+            return;
+        }
+        int roll = random.nextInt(100);
+        int skillCount = roll < 70 ? 0 : roll < 90 ? 1 : 2;
+        String rarity = skillCount == 0 ? "común" : skillCount == 1 ? "infrecuente" : "raro";
+        Archeologist generated = new Archeologist("");
+        for (int i = 0; i < skillCount; i++) {
+            List<Skill> possible = SkillRepository.getLearnable(generated);
+            generated.learnSkill(possible.get(random.nextInt(possible.size())));
+        }
+        System.out.println("----------------------------------------");
+        System.out.println("Arqueólogo " + rarity);
+        if (!generated.getSkills().isEmpty()) {
+            MenuHelper.subHeader("Habilidades");
+            for (Skill skill : generated.getSkills()) {
+                System.out.println(skill.getName());
+                System.out.println("  " + skill.getDescription());
+            }
+        }
+        String name = InputValidator.inputExtra("Introduce el nombre del arqueólogo: ");
+        Archeologist hired = new Archeologist(name);
+        for (Skill skill : generated.getSkills()) hired.learnSkill(skill);
+        archeologists.add(hired);
+        points -= 50;
+    }
+
+
+    /** Conserva la etiqueta del tipo que imprime la referencia; el identificador varía en cada ejecución. */
+    private String specializationReference(String code) {
+        Region region = RegionRepository.getRegion(code);
+        if (region == null) return "null";
+        String type;
+        switch (code) {
+            case "GRC": type = "Greece"; break;
+            case "IBR": type = "Iberia"; break;
+            case "ROM": type = "Rome"; break;
+            case "EGP": type = "Egypt"; break;
+            case "PTR": type = "Petra"; break;
+            case "SUM": type = "Sumer"; break;
+            default: return region.toString();
+        }
+        return "regions.places." + type + "@" + Integer.toHexString(System.identityHashCode(region));
     }
 
 }
