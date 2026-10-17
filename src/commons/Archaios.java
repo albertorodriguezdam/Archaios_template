@@ -29,11 +29,11 @@ public class Archaios {
     public Archaios() {
         SkillRepository.register();
         regions.add(new Grecia());
-        /*regions.add(new Iberia());
+       /*regions.add(new Iberia());
         regions.add(new Roma());
         regions.add(new Egipto());
         regions.add(new Petra());
-        regions.add(new Sumeria());*/
+        regions.add(new Sumeria()); */
         regions.sort(java.util.Comparator.comparing(Region::getCode));
         for (Region region : regions) {
             RegionRepository.registerRegion(region);
@@ -214,35 +214,25 @@ public class Archaios {
     }
 
     private void showStats() {
-        int option;
-
-        do {
-            System.out.println("\n--- Estadísticas ---");
-            System.out.println("1. Lugares visitados");
-            System.out.println("2. Tesoros por región");
-            System.out.println("3. Tesoros por tipo");
-            System.out.println("0. Volver");
-
-            option = InputValidator.inputOptionQuest(
-                0, 3, "Elige una opción: ", "Escribe un número del 0 al 3."
-            );
-
-            switch (option) {
-                case 1:
-                    stats.getStatsPlaces();
-                    break;
-                case 2:
-                    stats.showTreasuresByRegion();
-                    break;
-                case 3:
-                    stats.showTreasuresByType();
-                    break;
+        while (true) {
+            MenuHelper.header("Estadísticas");
+            System.out.println("1.- Ver regiones");
+            System.out.println("2.- Ver tesoros");
+            System.out.println("0.- Volver");
+            int option = InputValidator.inputOptionQuest(0, 2, "");
+            if (option == 0) return;
+            if (option == 1) {
+                stats.getStatsPlaces();
+            } else {
+                MenuHelper.header("Estadísticas de tesoros");
+                System.out.println("1.- Por región");
+                System.out.println("2.- Por tipo");
+                System.out.println("0.- Volver");
+                int type = InputValidator.inputOptionQuest(0, 2, "");
+                if (type == 1) stats.showTreasuresByRegion();
+                if (type == 2) stats.showTreasuresByType();
             }
-
-            if (option != 0) {
-                System.out.println();
-            }
-        } while (option != 0);
+        }
     }
 
     /** La primera contratación se realiza al crear la partida, sin coste ni habilidades. */
@@ -460,11 +450,11 @@ public class Archaios {
         String type;
         switch (code) {
             case "GRC": type = "Greece"; break;
-          /* case "IBR": type = "Iberia"; break;
+            /*case "IBR": type = "Iberia"; break;
             case "ROM": type = "Rome"; break;
             case "EGP": type = "Egypt"; break;
             case "PTR": type = "Petra"; break;
-            case "SUM": type = "Sumer"; break; */
+            case "SUM": type = "Sumer"; break;*/
             default: return region.toString();
         }
         return "regions.places." + type + "@" + Integer.toHexString(System.identityHashCode(region));
