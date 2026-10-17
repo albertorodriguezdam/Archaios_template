@@ -1,11 +1,11 @@
 package excavation;
 
 import helpers.CoordinateValidator;
+import helpers.InputValidator;
 import helpers.UtilsHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import people.Archeologist;
 import regions.Region;
 import treasures.ETreasureRarity;
@@ -577,7 +577,7 @@ public class Excavation {
      * notifica.
      */
     public void excavate() {
-        Scanner sc = new Scanner(System.in);
+
 
         while (!isFinished()) {
             System.out.println();
@@ -593,7 +593,7 @@ public class Excavation {
             List<Coordinate> coords = new ArrayList<>();
             while (coords.isEmpty()) {
                 System.out.print("Posición o posiciones a excavar (por ejemplo 3B o 3B 4C): ");
-                String line = sc.nextLine();
+                String line = InputValidator.readLine("");
                 coords = CoordinateValidator.parseAll(line, this.rejilla, this.actions);
             }
 

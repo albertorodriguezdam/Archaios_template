@@ -5,6 +5,7 @@ import commons.repositories.TreasureRepository;
 import excavation.ETerrain;
 import excavation.Excavation;
 import helpers.InputValidator;
+import helpers.MenuHelper;
 import java.util.ArrayList;
 import java.util.List;
 import people.Archeologist;
@@ -37,18 +38,18 @@ public class Archaios {
         int option;
 
         do {
-            System.out.println("\n========== Archaios ==========");
-            System.out.println("1. Arqueólogos");
-            System.out.println("2. Habilidades");
-            System.out.println("3. Licencias");
-            System.out.println("4. Atlas");
-            System.out.println("5. Catálogo de tesoros");
-            System.out.println("6. Excavar");
-            System.out.println("7. Estadísticas");
-            System.out.println("0. Salir");
+            MenuHelper.mainHeader();
+            System.out.println("1.- Arqueólogos");
+            System.out.println("2.- Habilidades");
+            System.out.println("3.- Licencias");
+            System.out.println("4.- Atlas");
+            System.out.println("5.- Catálogo de tesoros");
+            System.out.println("6.- Excavación");
+            System.out.println("7.- Estadísticas");
+            System.out.println("0.- Salir");
 
             option = InputValidator.inputOptionQuest(
-                0, 7, "Elige una opción: ", "Escribe un número del 0 al 7."
+                0, 7, ""
             );
 
             switch (option) {
@@ -74,7 +75,6 @@ public class Archaios {
                     showStats();
                     break;
                 case 0:
-                    System.out.println("Hasta luego.");
                     break;
             }
         } while (option != 0);
