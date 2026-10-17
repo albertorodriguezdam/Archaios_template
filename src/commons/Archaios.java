@@ -12,7 +12,6 @@ import people.Archeologist;
 import regions.Grecia;
 import regions.Region;
 import skills.Skill;
-import skills.SkillExcavation;
 import treasures.Treasure;
 
 public class Archaios {
@@ -20,7 +19,6 @@ public class Archaios {
     private List<Region> regions = new ArrayList<>();
     private Stats stats = new Stats();
     private int points = 0;
-    private boolean firstArcheologistCreated = false;
 
     public Archaios() {
         Region greece = new Grecia();
@@ -31,6 +29,7 @@ public class Archaios {
 
     public static void main(String[] args) {
         Archaios game = new Archaios();
+        game.init();
         game.menu();
     }
 
@@ -97,14 +96,6 @@ public class Archaios {
                 case 1:
                     String name = InputValidator.inputExtra("Nombre: ");
                     Archeologist archeologist = new Archeologist(name);
-
-                    if (!firstArcheologistCreated) {
-                        // El primero empieza con una habilidad.
-                        archeologist.learnSkill(SkillExcavation.createExcavation(
-                            "Excavación I", "Cinco extracciones extra", 5
-                        ));
-                        firstArcheologistCreated = true;
-                    }
 
                     archeologists.add(archeologist);
                     System.out.println("Arqueólogo " + name + " añadido.");
@@ -304,4 +295,11 @@ public class Archaios {
             }
         } while (option != 0);
     }
+
+    /** La primera contratación se realiza al crear la partida, sin coste ni habilidades. */
+    private void init() {
+        String name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
+        archeologists.add(new Archeologist(name));
+    }
+
 }
