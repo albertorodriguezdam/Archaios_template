@@ -26,10 +26,17 @@ public class Archaios {
 
     public Archaios() {
         SkillRepository.register();
-        Region greece = new Grecia();
-        regions.add(greece);
-        RegionRepository.registerRegion(greece);
-        TreasureRepository.registerRegionTreasures(greece);
+        regions.add(new Grecia());
+        /*regions.add(new Iberia());
+        regions.add(new Roma());
+        regions.add(new Egipto());
+        regions.add(new Petra());
+        regions.add(new Sumeria());*/
+        regions.sort(java.util.Comparator.comparing(Region::getCode));
+        for (Region region : regions) {
+            RegionRepository.registerRegion(region);
+            TreasureRepository.registerRegionTreasures(region);
+        }
     }
 
     public static void main(String[] args) {
@@ -64,7 +71,7 @@ public class Archaios {
                     showSkills();
                     break;
                 case 3:
-                    licenseArcheologist();
+                    buyLicenses();
                     break;
                 case 4:
                     new Atlas(regions).show();
@@ -292,7 +299,7 @@ public class Archaios {
         for (Skill skill : skills) System.out.println("-" + skill.getName());
     }
 
-//casi completado, falta hireArcheologist() para acabar en casa
+
     private void viewArcheologist() {
         int again = 1;
         while (again == 1) {
@@ -377,6 +384,42 @@ public class Archaios {
     }
 
 
+    private void buyLicenses() {
+        MenuHelper.header("Licencias");
+        while (true) {
+            Archeologist selected = selectArcheologist("Arqueólogo para el que comprar licencias: ");
+            if (selected == null) return;
+            List<String> owned = selected.getLicenses();
+            List<Region> available = new ArrayList<>();
+            for (Region region : regions) {
+                if (List.of("EGP", "PTR", "SUM").contains(region.getCode()) && !owned.contains(region.getCode())) available.add(region);
+            }
+            if (available.isEmpty()) {
+                System.out.println(selected.getName() + " ya dispone de todas las licencias.");
+                continue;
+            }
+            int cost = 20 + 10 * owned.size();
+            MenuHelper.subHeader(selected.getName());
+            System.out.println("Puntos disponibles: " + points);
+            System.out.println("Comprar una licencia para " + selected.getName() + " cuesta " + cost + " puntos.");
+            if (points < cost) {
+                System.out.println("No dispones de puntos suficientes para comprarle una licencia a " + selected.getName());
+                continue;
+            }
+            for (int i = 0; i < available.size(); i++) {
+                System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
+            }
+            System.out.println("0.- Volver");
+            int option = InputValidator.inputOptionQuest(0, available.size(), "Comprar licencia para la región: ");
+            if (option == 0) continue;
+            selected.addLicense(available.get(option - 1).getCode());
+            points -= cost;
+            System.out.println("Licencia comprada.");
+            return;
+        }
+    }
+
+
     /** Conserva la etiqueta del tipo que imprime la referencia; el identificador varía en cada ejecución. */
     private String specializationReference(String code) {
         Region region = RegionRepository.getRegion(code);
@@ -384,11 +427,11 @@ public class Archaios {
         String type;
         switch (code) {
             case "GRC": type = "Greece"; break;
-            case "IBR": type = "Iberia"; break;
+            /*case "IBR": type = "Iberia"; break;
             case "ROM": type = "Rome"; break;
             case "EGP": type = "Egypt"; break;
             case "PTR": type = "Petra"; break;
-            case "SUM": type = "Sumer"; break;
+            case "SUM": type = "Sumer"; break;*/
             default: return region.toString();
         }
         return "regions.places." + type + "@" + Integer.toHexString(System.identityHashCode(region));
