@@ -4,10 +4,12 @@ import commons.repositories.RegionRepository;
 import commons.repositories.SkillRepository;
 import commons.repositories.TreasureRepository;
 import excavation.ETerrain;
+import excavation.ETerrainSize;
 import excavation.Excavation;
 import helpers.InputValidator;
 import helpers.MenuHelper;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import people.Archeologist;
@@ -172,80 +174,42 @@ public class Archaios {
     }
 
     private void excavateMenu() {
-        if (archeologists.isEmpty()) {
-            System.out.println("Primero crea un arqueólogo.");
-            return;
-        }
-
-        System.out.println("\n--- Regiones ---");
-        for (int i = 0; i < regions.size(); i++) {
-            System.out.println((i + 1) + ". " + regions.get(i).getClass().getSimpleName());
-        }
-
-        int regionNumber = InputValidator.inputOptionQuest(
-            0, regions.size(), "Región (0 para volver): ", "Número incorrecto."
-        );
-        if (regionNumber == 0) {
-            return;
-        }
-        Region region = regions.get(regionNumber - 1);
-
-        System.out.println("\n--- Arqueólogos ---");
-        for (int i = 0; i < archeologists.size(); i++) {
-            Archeologist a = archeologists.get(i);
-            System.out.println((i + 1) + ". " + a.getName() + " (nivel " + a.getLevel() + ")");
-        }
-
-        int archeologistNumber = InputValidator.inputOptionQuest(
-            0, archeologists.size(), "Arqueólogo (0 para volver): ", "Número incorrecto."
-        );
-        if (archeologistNumber == 0) {
-            return;
-        }
-        Archeologist chosen = archeologists.get(archeologistNumber - 1);
-
-        List<ETerrain> terrains = Excavation.getAvailableTerrains(chosen);
-        if (terrains.isEmpty()) {
-            System.out.println("Este arqueólogo no tiene terrenos disponibles.");
-            return;
-        }
-
-        System.out.println("\n--- Terrenos disponibles ---");
-        for (int i = 0; i < terrains.size(); i++) {
-            System.out.println((i + 1) + ". " + terrains.get(i));
-        }
-
-        int terrainNumber = InputValidator.inputOptionQuest(
-            0, terrains.size(), "Terreno (0 para volver): ", "Número incorrecto."
-        );
-        if (terrainNumber == 0) {
-            return;
-        }
-
-        Excavation excavation = new Excavation(terrains.get(terrainNumber - 1), region, chosen);
-        excavation.excavate();
-        List<String> foundCodes = excavation.finish();
-
-        stats.registerVisit(region.getCode());
-        for (String code : foundCodes) {
-            stats.registerTreasure(code);
-        }
-
-        List<Treasure> found = excavation.getFoundTreasures();
-        for (int i = 0; i < found.size(); i++) {
-            System.out.println("\n" + found.get(i).getTxt() + " (" + foundCodes.get(i) + ")");
-            System.out.println(found.get(i).getDescription());
-        }
-
-        int earnedPoints = excavation.getEarnedPoints();
-        int earnedXp = excavation.getEarnedXp();
-        points += earnedPoints;
-        int levelsGained = chosen.addXp(earnedXp);
-
-        System.out.println("\nPuntos ganados: " + earnedPoints + ". Total: " + points);
-        System.out.println("Experiencia ganada: " + earnedXp);
-        if (levelsGained > 0) {
-            System.out.println(chosen.getName() + " ha subido " + levelsGained + " nivel(es).");
+        MenuHelper.header("Excavación");
+        while (true) {
+            Archeologist selected = selectArcheologist("Arqueólogo que realiza la excavación: ");
+            if (selected == null) return;
+            List<Region> available = new ArrayList<>();
+            List<String> owned = selected.getLicenses();
+            for (Region region : regions) {
+                if (!List.of("EGP", "PTR", "SUM").contains(region.getCode()) || owned.contains(region.getCode())) available.add(region);
+            }
+            while (true) {
+                MenuHelper.subHeader("Regiones");
+                for (int i = 0; i < available.size(); i++) {
+                    System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
+                }
+                System.out.println("0.- Volver");
+                int regionNumber = InputValidator.inputOptionQuest(0, available.size(), "Región en la que realizar la excavación: ");
+                if (regionNumber == 0) return;
+                Region region = available.get(regionNumber - 1);
+                List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);
+                List<ETerrainSize> sizes = new ArrayList<>();
+                for (ETerrain terrain : terrains) {
+                    if (!sizes.contains(terrain.getSize())) sizes.add(terrain.getSize());
+                }
+                MenuHelper.subHeader("Terreno");
+                for (int i = 0; i < sizes.size(); i++) System.out.println((i + 1) + ".- " + capitalise(sizes.get(i).toString()));
+                System.out.println("0.- Volver");
+                int sizeNumber = InputValidator.inputOptionQuest(0, sizes.size(), "Tamaño del terreno a excavar: ");
+                if (sizeNumber == 0) continue;
+                List<ETerrain> candidates = new ArrayList<>();
+                for (ETerrain terrain : terrains) {
+                    if (terrain.getSize() == sizes.get(sizeNumber - 1)) candidates.add(terrain);
+                }
+                ETerrain terrain = candidates.get(random.nextInt(candidates.size()));
+                finishExcavation(new Excavation(terrain, region, selected), region, selected);
+                return;
+            }
         }
     }
 
@@ -420,6 +384,75 @@ public class Archaios {
     }
 
 
+    private void finishExcavation(Excavation excavation, Region region, Archeologist selected) {
+        MenuHelper.header("Excavación en " + region.getClass().getSimpleName());
+        excavation.excavate();
+        System.out.println("::::::::::::::::::::::::::::::::::::::::");
+        List<String> foundCodes = excavation.finish();
+        List<Treasure> found = excavation.getFoundTreasures();
+        stats.registerVisit(region.getCode());
+        MenuHelper.subHeader("Tesoros encontrados");
+        for (int i = 0; i < foundCodes.size(); i++) {
+            if (i > 0) System.out.println("--------------------");
+            stats.registerTreasure(foundCodes.get(i));
+            Treasure treasure = found.get(i);
+            System.out.println(treasure.getTxt());
+            System.out.println(treasure.getDescription());
+            System.out.println("Código: " + foundCodes.get(i));
+            System.out.println(capitalise(Atlas.typeAndRarity(treasure)));
+        }
+        System.out.println("----------------------------------------");
+        int earnedPoints = excavation.getEarnedPoints();
+        points += earnedPoints;
+        System.out.println("Puntos conseguidos: " + earnedPoints);
+        int earnedXp = excavation.getEarnedXp();
+        System.out.println("El arqueólogo " + selected.getName() + " ha conseguido " + earnedXp + " puntos de experiencia.");
+        int levelsGained = selected.addXp(earnedXp);
+        for (int i = 0; i < levelsGained; i++) {
+            int level = selected.getLevel() - levelsGained + i + 1;
+            chooseLevelSkill(selected, level);
+        }
+        if (levelsGained > 0 && selected.getLevel() == selected.getMAX_LEVEL()) {
+            MenuHelper.subHeader("Especialización");
+            System.out.println("El arqueólogo " + selected.getName() + " ha llegado al nivel máximo y se especializa en una región.");
+            for (int i = 0; i < regions.size(); i++) {
+                System.out.println((i + 1) + ".- " + regions.get(i).getClass().getSimpleName());
+            }
+            int choice = InputValidator.inputOptionQuest(1, regions.size(), "Región en la que especializarse: ");
+            selected.setSpecialization(regions.get(choice - 1).getCode());
+        }
+    }
+
+
+    private void chooseLevelSkill(Archeologist selected, int level) {
+        List<Skill> available = SkillRepository.getLearnable(selected);
+        if (available.isEmpty()) {
+            System.out.println("No quedan habilidades disponibles para aprender.");
+            return;
+        }
+        Collections.shuffle(available, random);
+        List<Skill> choices = new ArrayList<>();
+        for (Skill skill : available) {
+            if (!skill.getDependencies().isEmpty()) {
+                choices.add(skill);
+                break;
+            }
+        }
+        for (Skill skill : available) {
+            if (choices.size() == 3) break;
+            if (!choices.contains(skill)) choices.add(skill);
+        }
+        System.out.println("::::::::::::::::::::");
+        System.out.println("El arqueólogo " + selected.getName() + " ha subido al nivel " + level + ".");
+        System.out.println("Puede aprender una de estas tres habilidades:");
+        for (int i = 0; i < choices.size(); i++) {
+            System.out.println((i + 1) + ".- " + choices.get(i).getName() + " | " + choices.get(i).getDescription());
+        }
+        int option = InputValidator.inputOptionQuest(1, choices.size(), "Habilidad a aprender: ");
+        selected.learnSkill(choices.get(option - 1));
+    }
+
+
     /** Conserva la etiqueta del tipo que imprime la referencia; el identificador varía en cada ejecución. */
     private String specializationReference(String code) {
         Region region = RegionRepository.getRegion(code);
@@ -427,11 +460,11 @@ public class Archaios {
         String type;
         switch (code) {
             case "GRC": type = "Greece"; break;
-            /*case "IBR": type = "Iberia"; break;
+          /* case "IBR": type = "Iberia"; break;
             case "ROM": type = "Rome"; break;
             case "EGP": type = "Egypt"; break;
             case "PTR": type = "Petra"; break;
-            case "SUM": type = "Sumer"; break;*/
+            case "SUM": type = "Sumer"; break; */
             default: return region.toString();
         }
         return "regions.places." + type + "@" + Integer.toHexString(System.identityHashCode(region));

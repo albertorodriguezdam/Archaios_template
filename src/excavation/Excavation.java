@@ -550,14 +550,8 @@ public class Excavation {
                 }
             }
         }
-        int total = common + uncommon + rare;
-        if (total == 1) {
-            System.out.println("Investigación: queda 1 tesoro ("
-                    + common + " comunes, " + uncommon + " infrecuentes, " + rare + " raros).");
-        } else {
-            System.out.println("Investigación: quedan " + total + " tesoros ("
-                    + common + " comunes, " + uncommon + " infrecuentes, " + rare + " raros).");
-        }
+        System.out.println("Tesoros: " + common + " comunes, "
+            + uncommon + " infrecuentes y " + rare + " raros.");
     }
 
     /**
@@ -577,37 +571,28 @@ public class Excavation {
      * notifica.
      */
     public void excavate() {
-
-
         while (!isFinished()) {
-            System.out.println();
-            System.out.println("Acciones restantes: " + this.actions);
+            System.out.print(this.rejilla.render());
+            System.out.println("Número de acciones restantes: " + this.actions);
             if (this.archeologist.hasInvestigation()) {
                 showInvestigation();
+            } else {
+                System.out.println("Tesoros: " + this.totalTreasures);
             }
-            System.out.print(this.rejilla.render());
 
-            /**
-             * Pedimos coordenadas hasta que la entrada sea válida
-             */
             List<Coordinate> coords = new ArrayList<>();
             while (coords.isEmpty()) {
-                System.out.print("Posición o posiciones a excavar (por ejemplo 3B o 3B 4C): ");
-                String line = InputValidator.readLine("");
+                String line = InputValidator.readLine("Conjunto de coordenadas a excavar separadas por espacios: ");
                 coords = CoordinateValidator.parseAll(line, this.rejilla, this.actions);
             }
-
             for (Coordinate coord : coords) {
                 digAt(coord);
-                if (isFinished()) {
-                    break;
-                }
+                if (isFinished()) break;
             }
+            if (!isFinished()) System.out.println("----------------------------------------");
         }
-
         if (this.foundTreasures >= this.totalTreasures) {
-            System.out.println();
-            System.out.println("¡Has encontrado todos los tesoros!");
+            System.out.println("-------------------- ¡Se han encontrado todos los tesoros! --------------------");
         }
     }
 
@@ -621,14 +606,11 @@ public class Excavation {
         this.actions--;
         ETreasureRarity rarity = this.rejilla.dig(coord);
 
-        if (rarity == null) {
-            System.out.println(this.rejilla.getLabel(coord) + ": no hay nada.");
-        } else {
+        if (rarity != null) {
             Treasure treasure = this.hiddenTreasures[coord.getRow()][coord.getColumn()];
             this.foundTreasuresList.add(treasure);
             this.foundCodes.add(this.hiddenCodes[coord.getRow()][coord.getColumn()]);
             this.foundTreasures++;
-            System.out.println(this.rejilla.getLabel(coord) + ": ¡tesoro " + rarity + "!");
         }
     }
 
@@ -642,7 +624,6 @@ public class Excavation {
      * encontrados.
      */
     public List<String> finish() {
-        System.out.println();
         System.out.println("Excavación terminada");
         System.out.print(this.rejilla.render());
         System.out.print(this.rejilla.renderUncovered());
