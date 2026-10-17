@@ -1,6 +1,7 @@
 package commons;
 
 import commons.repositories.RegionRepository;
+import commons.repositories.SkillRepository;
 import commons.repositories.TreasureRepository;
 import excavation.ETerrain;
 import excavation.Excavation;
@@ -11,6 +12,7 @@ import java.util.List;
 import people.Archeologist;
 import regions.Grecia;
 import regions.Region;
+import skills.ESkillType;
 import skills.Skill;
 import treasures.Treasure;
 
@@ -21,6 +23,7 @@ public class Archaios {
     private int points = 0;
 
     public Archaios() {
+        SkillRepository.register();
         Region greece = new Grecia();
         regions.add(greece);
         RegionRepository.registerRegion(greece);
@@ -120,33 +123,33 @@ public class Archaios {
     }
 
     private void showSkills() {
-        if (archeologists.isEmpty()) {
-            System.out.println("Primero crea un arqueólogo desde la opción 1.");
-            return;
-        }
-
-        showArcheologists();
-
-        int number = InputValidator.inputOptionQuest(
-            0, archeologists.size(),
-            "Arqueólogo (0 para volver): ",
-            "Número incorrecto."
-        );
-
-        if (number == 0) {
-            return;
-        }
-
-        List<Skill> skills = archeologists.get(number - 1).getSkills();
-
-        if (skills.isEmpty()) {
-            System.out.println("Este arqueólogo todavía no tiene habilidades.");
-        } else {
-            for (Skill skill : skills) {
-                System.out.println(skill);
+        ESkillType[] types = ESkillType.values();
+        while (true) {
+            MenuHelper.header("Habilidades");
+            for (int i = 0; i < types.length; i++) {
+                System.out.println((i + 1) + ".- " + capitalise(types[i].toString()));
+            }
+            System.out.println("0.- Volver");
+            int type = InputValidator.inputOptionQuest(0, types.length, "Tipo de habilidad: ");
+            if (type == 0) return;
+            List<Skill> skills = SkillRepository.getByType(types[type - 1]);
+            while (true) {
+                MenuHelper.subHeader(capitalise(types[type - 1].toString()));
+                for (int i = 0; i < skills.size(); i++) {
+                    System.out.println((i + 1) + ".- " + skills.get(i).getName());
+                }
+                System.out.println("0.- Volver");
+                int number = InputValidator.inputOptionQuest(0, skills.size(), "Habilidad a consultar: ");
+                if (number == 0) break;
+                Skill selected = skills.get(number - 1);
+                MenuHelper.subHeader(selected.getName());
+                System.out.println(selected.getDescription());
+                System.out.println("Tipo: " + selected.getType());
+                showSkillRelations("Dependencias", selected.getDependencies());
+                showSkillRelations("Incompatibilidades", selected.getIncompatibilities());
+                if (MenuHelper.returnMenu("Consultar otra habilidad") == 0) return;
             }
         }
-        System.out.println();
     }
 
     private void licenseArcheologist() {
@@ -300,6 +303,18 @@ public class Archaios {
     private void init() {
         String name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
         archeologists.add(new Archeologist(name));
+    }
+
+
+    private String capitalise(String text) {
+        return Character.toUpperCase(text.charAt(0)) + text.substring(1);
+    }
+
+    private void showSkillRelations(String title, List<Skill> skills) {
+        if (skills.isEmpty()) return;
+        System.out.println("--------------------");
+        System.out.println(title + ":");
+        for (Skill skill : skills) System.out.println("-" + skill.getName());
     }
 
 }
