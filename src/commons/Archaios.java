@@ -1,24 +1,27 @@
 package commons;
 
+import commons.repositories.RegionRepository;
+import commons.repositories.TreasureRepository;
+import excavation.ETerrain;
+import excavation.Excavation;
+import helpers.InputValidator;
 import java.util.ArrayList;
 import java.util.List;
-
-import helpers.InputValidator;
 import people.Archeologist;
 import regions.Grecia;
 import regions.Region;
 import skills.Skill;
-import commons.repositories.RegionRepository;
-import commons.repositories.TreasureRepository;
+import skills.SkillExcavation;
+import treasures.Treasure;
 
 public class Archaios {
     private List<Archeologist> archeologists = new ArrayList<>();
     private List<Region> regions = new ArrayList<>();
     private Stats stats = new Stats();
     private int points = 0;
+    private boolean firstArcheologistCreated = false;
 
     public Archaios() {
-        // De momento solo tenemos los datos de Grecia.
         Region greece = new Grecia();
         regions.add(greece);
         RegionRepository.registerRegion(greece);
@@ -65,7 +68,7 @@ public class Archaios {
                     new Atlas(regions).showCatalog();
                     break;
                 case 6:
-                    System.out.println("Excavación todavía no implementada.");
+                    excavateMenu();
                     break;
                 case 7:
                     showStats();
@@ -82,7 +85,7 @@ public class Archaios {
 
         do {
             System.out.println("\n--- Arqueólogos ---");
-            System.out.println("1. Crear arqueólogo de prueba");
+            System.out.println("1. Crear arqueólogo");
             System.out.println("2. Ver arqueólogos");
             System.out.println("0. Volver");
 
@@ -93,8 +96,18 @@ public class Archaios {
             switch (option) {
                 case 1:
                     String name = InputValidator.inputExtra("Nombre: ");
-                    archeologists.add(new Archeologist(name));
-                    System.out.println("Arqueólogo añadido.");
+                    Archeologist archeologist = new Archeologist(name);
+
+                    if (!firstArcheologistCreated) {
+                        // El primero empieza con una habilidad.
+                        archeologist.learnSkill(SkillExcavation.createExcavation(
+                            "Excavación I", "Cinco extracciones extra", 5
+                        ));
+                        firstArcheologistCreated = true;
+                    }
+
+                    archeologists.add(archeologist);
+                    System.out.println("Arqueólogo " + name + " añadido.");
                     break;
                 case 2:
                     showArcheologists();
@@ -112,6 +125,7 @@ public class Archaios {
         for (int i = 0; i < archeologists.size(); i++) {
             System.out.println((i + 1) + ". " + archeologists.get(i));
         }
+        System.out.println();
     }
 
     private void showSkills() {
@@ -141,6 +155,7 @@ public class Archaios {
                 System.out.println(skill);
             }
         }
+        System.out.println();
     }
 
     private void licenseArcheologist() {
@@ -177,6 +192,85 @@ public class Archaios {
             points += earned;
             System.out.println("Arqueólogo licenciado. Puntos: " + points);
         }
+        System.out.println();
+    }
+
+    private void excavateMenu() {
+        if (archeologists.isEmpty()) {
+            System.out.println("Primero crea un arqueólogo.");
+            return;
+        }
+
+        System.out.println("\n--- Regiones ---");
+        for (int i = 0; i < regions.size(); i++) {
+            System.out.println((i + 1) + ". " + regions.get(i).getClass().getSimpleName());
+        }
+
+        int regionNumber = InputValidator.inputOptionQuest(
+            0, regions.size(), "Región (0 para volver): ", "Número incorrecto."
+        );
+        if (regionNumber == 0) {
+            return;
+        }
+        Region region = regions.get(regionNumber - 1);
+
+        System.out.println("\n--- Arqueólogos ---");
+        for (int i = 0; i < archeologists.size(); i++) {
+            Archeologist a = archeologists.get(i);
+            System.out.println((i + 1) + ". " + a.getName() + " (nivel " + a.getLevel() + ")");
+        }
+
+        int archeologistNumber = InputValidator.inputOptionQuest(
+            0, archeologists.size(), "Arqueólogo (0 para volver): ", "Número incorrecto."
+        );
+        if (archeologistNumber == 0) {
+            return;
+        }
+        Archeologist chosen = archeologists.get(archeologistNumber - 1);
+
+        List<ETerrain> terrains = Excavation.getAvailableTerrains(chosen);
+        if (terrains.isEmpty()) {
+            System.out.println("Este arqueólogo no tiene terrenos disponibles.");
+            return;
+        }
+
+        System.out.println("\n--- Terrenos disponibles ---");
+        for (int i = 0; i < terrains.size(); i++) {
+            System.out.println((i + 1) + ". " + terrains.get(i));
+        }
+
+        int terrainNumber = InputValidator.inputOptionQuest(
+            0, terrains.size(), "Terreno (0 para volver): ", "Número incorrecto."
+        );
+        if (terrainNumber == 0) {
+            return;
+        }
+
+        Excavation excavation = new Excavation(terrains.get(terrainNumber - 1), region, chosen);
+        excavation.excavate();
+        List<String> foundCodes = excavation.finish();
+
+        stats.registerVisit(region.getCode());
+        for (String code : foundCodes) {
+            stats.registerTreasure(code);
+        }
+
+        List<Treasure> found = excavation.getFoundTreasures();
+        for (int i = 0; i < found.size(); i++) {
+            System.out.println("\n" + found.get(i).getTxt() + " (" + foundCodes.get(i) + ")");
+            System.out.println(found.get(i).getDescription());
+        }
+
+        int earnedPoints = excavation.getEarnedPoints();
+        int earnedXp = excavation.getEarnedXp();
+        points += earnedPoints;
+        int levelsGained = chosen.addXp(earnedXp);
+
+        System.out.println("\nPuntos ganados: " + earnedPoints + ". Total: " + points);
+        System.out.println("Experiencia ganada: " + earnedXp);
+        if (levelsGained > 0) {
+            System.out.println(chosen.getName() + " ha subido " + levelsGained + " nivel(es).");
+        }
     }
 
     private void showStats() {
@@ -203,6 +297,10 @@ public class Archaios {
                 case 3:
                     stats.showTreasuresByType();
                     break;
+            }
+
+            if (option != 0) {
+                System.out.println();
             }
         } while (option != 0);
     }
