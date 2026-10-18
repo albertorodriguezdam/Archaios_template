@@ -1,8 +1,12 @@
 package commons;
-/* para pruebas usar java -cp bin commons.Archaios --pruebas
+/* para pruebas usar 
+
 New-Item -ItemType Directory -Force bin | Out-Null
 javac -encoding UTF-8 -sourcepath src -d bin src\commons\Archaios.java
 if ($LASTEXITCODE -ne 0) { throw "No se compila" }
+
+java -cp bin commons.Archaios --pruebas
+
 */
 
 import commons.repositories.RegionRepository;
@@ -50,6 +54,7 @@ public class Archaios {
         Archaios game = new Archaios();
         if (args.length > 0 && "--pruebas".equals(args[0])) {
             game.archeologists = DatosPrueba.createArcheologists();
+            game.stats = DatosPrueba.createStats();
             game.points = DatosPrueba.INITIAL_POINTS;
         } else {
             game.init();

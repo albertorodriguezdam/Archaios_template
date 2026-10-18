@@ -29,6 +29,20 @@ public final class DatosPrueba {
         return archeologists;
     }
 
+    /** Tres visitas a Grecia y cinco hallazgos, incluyendo una pieza repetida. */
+    public static Stats createStats() {
+        Stats stats = new Stats();
+        stats.registerVisit("GRC");
+        stats.registerVisit("GRC");
+        stats.registerVisit("GRC");
+        stats.registerTreasure("GRC_MON_001_0001");
+        stats.registerTreasure("GRC_MON_001_0001");
+        stats.registerTreasure("GRC_TES_001_0001");
+        stats.registerTreasure("GRC_TES_001_0002");
+        stats.registerTreasure("GRC_CER_001_0001");
+        return stats;
+    }
+
     private static Archeologist createArcheologist(String name, int xp, String... skillNames) {
         Archeologist archeologist = new Archeologist(name);
         archeologist.addXp(xp);
