@@ -3,12 +3,11 @@ package people;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import skills.Skill;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * Clase encargada del Arqueólogo.
+ * @author Alberto Rodríguez Domínguez
  */
 public class Archeologist {
 
@@ -26,15 +25,18 @@ public class Archeologist {
     private List<String> terrainsSize; 
     /**Lista de formatos de terrenos accesibles para el arqueólogo. */
     private List<String> terrainsFormats;
+    /** Licencias regionales independientes de las habilidades Licencia A y B. */
+    private List<String> licenses = new ArrayList<>();
+    /** Código de región de especialización; vacío antes del nivel máximo. */
+    private String specialization = "";
 
     /**
      * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
-     * las tres listas a ArrayList y añade el único terreno disponible al instanciar
-     * un nuevo arqueólogo: "pequeño".
+     * las tres colecciones a ArrayList y añade el único terreno disponible al instanciar
+     * un nuevo arqueólogo: "pequeño" y en formato "cuadrado".
      * @param name Nombre del arqueólogo.
-     * @param rarity Rareza del arqueólogo (Común, infrecuente o raro).
      */
-    public Archeologist(String name, String rarity) {
+    public Archeologist(String name) {
         this.name = name;
         this.level = 0;
         this.xp = 0;
@@ -46,17 +48,8 @@ public class Archeologist {
     }
 
     /**
-     * Constructor para arqueólogos de rareza común por defecto.
-     * @param name Nombre del arqueólogo.
-     */
-    public Archeologist(String name){
-        this(name, "COMUN");
-    }
-
-    /**
      * Método de obtención de la cantidad de experiencia total,
-     * para subir al siguiente nivel. En el caso de que el arqueólogo alacance el nivel máximo
-     * (nivel 5), devolverá 0.
+     * para subir al siguiente nivel. En el caso de que el arqueólogo alacance el nivel máximo devolverá 0.
      * @return Cantidad de xp total para subir de nivel, si es nivel máximo devuelve 0; 
      */
     public int getXpToNextLevel(){
@@ -112,19 +105,12 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de los puntos que devueleve la acción de licenciar(vender), 
-     * un arqueólogo.
-     * @return Cantidad de puntos recibidos por licenciar un arqueólogo.
+     * Calcula la compensación por licenciar al arqueólogo.
+     *
+     * @return Diez puntos por cada habilidad aprendida.
      */
-    public int getLicensingPoints(){
-
-        int points=skills.size();
-
-        if (level>0) {
-            points=level*10; 
-        } 
-
-        return points; 
+    public int getLicensingPoints() {
+        return skills.size() * 10;
     }
 
     /**
@@ -410,8 +396,8 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de la lista de habilidades disponibles del arqueólogo.
-     * @return Lista inmutable de las habilidades disponibles del arqueólogo.
+     * Obtención de la lista de habilidades aprendidas por el arqueólogo.
+     * @return Lista inmutable de las habilidades aprendidas por el arqueólogo.
      */
     public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
@@ -426,7 +412,7 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de la lista de fromatos de terrenos disponibles del arqueólogo.
+     * Obtención de la lista de formatos de terrenos disponibles del arqueólogo.
      * @return Lista inmutable de los formatos de terrenos disponibles del arqueólogo.
      */
     public List<String> getTerrainsFormats() {
@@ -441,6 +427,37 @@ public class Archeologist {
         return MAX_LEVEL;
     }
 
+    /**
+     * Permite consultar las licencias regionales sin modificar la lista.
+     * @return Lista inmutable de licencias.
+     */
+    public List<String> getLicenses() {
+        return Collections.unmodifiableList(licenses);
+    }
+
+    /**
+     * Añade una licencia regional solo si todavía no está en la lista.
+     * @param code Código de la región a añadir.
+     */
+    public void addLicense(String code) {
+        if (!licenses.contains(code)) licenses.add(code);
+    }
+
+    /**
+     * Devuelve el código de la región elegida para la especialización.
+     * @return Código de la región elegida, cadena vacía si no tiene especialización.
+     */
+    public String getSpecialization() { 
+        return specialization; 
+    }
+    
+    /**
+     * Establece la región de especialización del arqueólogo.
+     * @param code Código de la región elegida para la especialización.
+     */
+    public void setSpecialization(String code) { 
+        specialization = code; 
+    }
     
     /**    
      * Método que devuelve el objeto arqueólogo en una String.
@@ -454,4 +471,7 @@ public class Archeologist {
             + " - Tamaños: " + terrainsSize
             + " - Formatos: " + terrainsFormats;
     }
+
+    
+
 }

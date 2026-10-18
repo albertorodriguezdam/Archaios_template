@@ -25,7 +25,7 @@ public class SkillExcavation extends Skill{
      * @param extraActionsPercent Cantidad de porcentaje extra, sobre la cantidad de acciones que posee el arqueólogo.
      * @param emptyCellsReveled Cantidad de celdas vacías reveladas.
      * @param scanHints Cantidad de celdas con interrogación que te indican una pista.
-     * @param investigation Cantidad de tesoros de cada rareza.
+     * @param investigation Indica si habilita el desglose de tesoros por rareza.
      */
     public SkillExcavation(String name, String description, int extraActions, int extraActionsPercent, 
                         int emptyCellsReveled, int scanHints, boolean investigation){
@@ -75,7 +75,7 @@ public class SkillExcavation extends Skill{
      * Método estático para la creación de las habilidades Escaneo A, B, C y D. 
      * @param name Nombre identificativo de la habilidad.
      * @param description Descripción de lo que hace la habilidad.
-     * @param cellsReveled Cantidad de celdas con interrogación que te indican una pista.
+     * @param scanHints Cantidad de posiciones que se marcarán como pistas.
      * @return Objeto SkillExcavation(Escaneo A, B, C o D).
      */
     public static SkillExcavation createScan(String name, String description, int scanHints){

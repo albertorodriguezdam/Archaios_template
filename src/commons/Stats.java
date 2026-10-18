@@ -1,22 +1,20 @@
 package commons;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import commons.repositories.RegionRepository;
 import commons.repositories.TreasureRepository;
 import helpers.CodeHelper;
 import helpers.UtilsHelper;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import regions.Region;
 import treasures.ETreasureType;
 import treasures.Treasure;
 
 /**
- * Información de las estadísticas de lugares
- * o de tesoros.
- * @author jagoldar
+ * Información de las estadísticas de lugares o de tesoros.
+ * @author Javier A. Goldar Picón.
  */
 public class Stats {
     /**El registro de veces que se ha encontrado cada tesoro */
@@ -69,7 +67,7 @@ public class Stats {
     public void showTreasuresByRegion() {
 
         if (treasures.isEmpty()) { 
-            System.out.println("No hay tesoros registrados");
+            System.out.println("No has encontrado ningún tesoro.");
             return;
         }
         Set<String> regionCodes = new TreeSet<>();
@@ -80,7 +78,8 @@ public class Stats {
         }
 
         for (String regionCode : regionCodes) {
-            System.out.println("---------- " + regionCode + " ----------");
+            
+            helpers.MenuHelper.subHeader(RegionRepository.getRegion(regionCode).getClass().getSimpleName());
 
             String previousBaseCode = "";
 
@@ -129,7 +128,7 @@ public class Stats {
     public void showTreasuresByType() {
 
         if (treasures.isEmpty()) { 
-            System.out.println("No hay tesoros registrados");
+            System.out.println("No has encontrado ningún tesoro.");
             return;
         }
         Set<String> typeCodes = new TreeSet<>();
@@ -150,7 +149,8 @@ public class Stats {
                 }
             }
 
-            System.out.println("---------- " + typeName + " ----------");
+            
+            helpers.MenuHelper.subHeader(typeName);
 
             String previousBaseCode = "";
 
@@ -196,7 +196,7 @@ public class Stats {
     public void getStatsPlaces() {
 
         if (places.isEmpty()) { 
-            System.out.println("No hay excavaciones registradas");
+            System.out.println("No hay estadísticas de ninguna región.");
             return;
         }
 
@@ -226,7 +226,8 @@ public class Stats {
             
             int completionPercent = UtilsHelper.getPercent(distinctFound, totalAvailable);
 
-            System.out.println("---------- " + regionCode + " ----------");
+            
+            helpers.MenuHelper.subHeader(RegionRepository.getRegion(regionCode).getClass().getSimpleName());
             System.out.println("Veces visitada: " + visits);
             System.out.println("Tesoros encontrados: " + distinctFound + "/" + totalAvailable + " (" + completionPercent + "%)");
             System.out.println("Total de tesoros excavados: " + totalFound);

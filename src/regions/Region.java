@@ -9,7 +9,7 @@ import helpers.UtilsHelper;
 
 /**
  * Clase base para todas las regiones
- * @author jagoldar
+ * @author Javier A. Goldar Picón.
  */
 public abstract class Region {
     /**La lista de tesoros que se encuentran en una región */
@@ -20,7 +20,9 @@ public abstract class Region {
         this.treasureList = new ArrayList<>();
     }
 
-    /**Devuelve el código identificativo de la región */
+    /**
+     * @return Devuelve el código identificativo de la región
+     */
     public abstract String getCode();
 
     /**

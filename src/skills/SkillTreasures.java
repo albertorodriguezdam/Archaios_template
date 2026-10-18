@@ -10,58 +10,70 @@ public class SkillTreasures extends Skill{
     /**Cantidad aleatoria extra. */
     private int extraRandom; 
     /**Cantidad común extra. */
-    private int extraComun; 
+    private int extraCommon; 
     /**Cantidad infrecuente extra. */
-    private int extraInfrecuente; 
+    private int extraUncommon; 
     /**Cantidad rara extra. */
-    private int extraRaro; 
+    private int extraRare; 
     /**Cantidad de probabilidad infrecuente extra. */
-    private int extraInfrecuenteProb; 
+    private int extraUncommonProb; 
     /**Cantidad de probabilidad rara extra. */
-    private int extraRaroProb; 
+    private int extraRareProb; 
 
     /**
      * Constructor base de la clase SkillTesoros.
-     * @param nombre El nombre identificativo de la habilidad.
-     * @param descripcion Descripción de lo que hace la habilidad.
+     * @param name El nombre identificativo de la habilidad.
+     * @param description Descripción de lo que hace la habilidad.
      * @param extraRandom Cantidad aleatoria extra.
-     * @param extraComun Cantidad común extra.
-     * @param extraInfrecuente antidad infrecuente extra.
-     * @param extraRaro Cantidad rara extra.
-     * @param extraInfrecuenteProb Cantidad de probabilidad infrecuente extra.
-     * @param extraRaroProb Cantidad de probabilidad rara extra.
+     * @param extraCommon Cantidad común extra.
+     * @param extraUncommon Cantidad infrecuente extra.
+     * @param extraRare Cantidad rara extra.
+     * @param extraUncommonProb Cantidad de probabilidad infrecuente extra.
+     * @param extraRareProb Cantidad de probabilidad rara extra.
      */
-    public SkillTreasures(String nombre, String descripcion, int extraRandom, int extraComun, 
-                        int extraInfrecuente, int extraRaro, int extraInfrecuenteProb, int extraRaroProb){
+    public SkillTreasures(String name, String description, int extraRandom, int extraCommon, 
+                        int extraUncommon, int extraRare, int extraUncommonProb, int extraRareProb){
 
-            super(nombre, descripcion, ESkillType.TREASURE); 
+            super(name, description, ESkillType.TREASURE); 
             this.extraRandom=extraRandom; 
-            this.extraComun=extraComun; 
-            this.extraInfrecuente=extraInfrecuente; 
-            this.extraRaro=extraRaro; 
-            this.extraInfrecuenteProb=extraInfrecuenteProb; 
-            this.extraRaroProb=extraRaroProb; 
+            this.extraCommon=extraCommon; 
+            this.extraUncommon=extraUncommon; 
+            this.extraRare=extraRare; 
+            this.extraUncommonProb=extraUncommonProb; 
+            this.extraRareProb=extraRareProb; 
     }
 
     /**
      * Constructor para habilidades que solo otorgan tesoros aleatorios (Extra I, II, III).
+     * @param name El nombre identificativo de la habilidad.
+     * @param description Descripción de lo que hace la habilidad.
+     * @param extraRandom Cantidad aleatoria extra.
      */
-    public SkillTreasures(String nombre, String descripcion, int extraRandom) {
-        this(nombre, descripcion, extraRandom, 0, 0, 0, 0, 0);
+    public SkillTreasures(String name, String description, int extraRandom) {
+        this(name, description, extraRandom, 0, 0, 0, 0, 0);
     }
 
     /**
      * Constructor para habilidades de rareza fija (Aprendiz, Experto, Maestro).
+     * @param name El nombre identificativo de la habilidad.
+     * @param description Descripción de lo que hace la habilidad.
+     * @param extraCommon Cantidad común extra.
+     * @param extraUncommon Cantidad infrecuente extra.
+     * @param extraRare Cantidad rara extra.
      */
-    public SkillTreasures(String nombre, String descripcion, int extraComun, int extraInfrecuente, int extraRaro) {
-        this(nombre, descripcion, 0, extraComun, extraInfrecuente, extraRaro, 0, 0);
+    public SkillTreasures(String name, String description, int extraCommon, int extraUncommon, int extraRare) {
+        this(name, description, 0, extraCommon, extraUncommon, extraRare, 0, 0);
     }
 
     /**
-     * Constructor para habilidades de incremento de probabilidad (Especialistas).
+     * Constructor para habilidades de incremento de probabilidad.
+     * @param name El nombre identificativo de la habilidad.
+     * @param description Descripción de lo que hace la habilidad.
+     * @param extraUncommonProb Cantidad infrecuente extra.
+     * @param extraRareProb Cantidad rara extra.
      */
-    public SkillTreasures(String nombre, String descripcion, int extraInfrecuenteProb, int extraRaroProb) {
-        this(nombre, descripcion, 0, 0, 0, 0, extraInfrecuenteProb, extraRaroProb);
+    public SkillTreasures(String name, String description, int extraUncommonProb, int extraRareProb) {
+        this(name, description, 0, 0, 0, 0, extraUncommonProb, extraRareProb);
     }
 
     /**
@@ -79,7 +91,7 @@ public class SkillTreasures extends Skill{
      */
     @Override 
     public int getExtraCommonTreasures(){
-        return extraComun; 
+        return extraCommon; 
     }
 
     /**
@@ -88,7 +100,7 @@ public class SkillTreasures extends Skill{
      */
     @Override 
     public int getExtraUncommonTreasures(){
-        return extraInfrecuente; 
+        return extraUncommon; 
     }
 
     /**
@@ -97,7 +109,7 @@ public class SkillTreasures extends Skill{
      */
     @Override 
     public int getExtraRareTreasures(){
-        return extraRaro; 
+        return extraRare; 
     }
     
     /**
@@ -107,7 +119,7 @@ public class SkillTreasures extends Skill{
      */
     @Override 
     public int getExtraUncommonProb(){
-        return extraInfrecuenteProb; 
+        return extraUncommonProb; 
     }
 
     /**
@@ -117,6 +129,6 @@ public class SkillTreasures extends Skill{
      */
     @Override 
     public int getExtraRareProb(){
-        return extraRaroProb; 
+        return extraRareProb; 
     }
 }

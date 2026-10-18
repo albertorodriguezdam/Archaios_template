@@ -1,11 +1,11 @@
 package excavation;
 
 import helpers.CoordinateValidator;
+import helpers.InputValidator;
 import helpers.UtilsHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import people.Archeologist;
 import regions.Region;
 import treasures.ETreasureRarity;
@@ -139,9 +139,8 @@ public class Excavation {
         generateTreasures();
         placeTreasures();
         applyCleaning(archeologist.getTotalEmptyCellsReveled());
-        /**
-         * getTotalScanHints() devuelve casillas con '?'; cada suposición marca
-         * 3
+        /*
+         * getTotalScanHints() devuelve casillas con '?'; cada suposición marca 3
          */
         applyGuesses(archeologist.getTotalScanHints() / GUESSES_PER_SKILL);
         this.actions = calcActions(terrain, archeologist.getTotalExtraActions(), archeologist.getActionsMultiplier());
@@ -251,7 +250,7 @@ public class Excavation {
      */
     public static int calculateBaseTreasure(ETerrain terrain) {
         int base = (int) Math.ceil(terrain.getCells() * RATIO_TREASURE);
-        /**
+        /*
          * Como mínimo 1 y nunca menos que los mínimos del tamaño
          */
         if (base < 1) {
@@ -315,7 +314,7 @@ public class Excavation {
             rareProb = 0;
         }
 
-        /**
+        /*
          * Número entre 0 y 99: los primeros valores son raros, luego
          * infrecuentes y el resto comunes
          */
@@ -341,14 +340,14 @@ public class Excavation {
         int uncommonProb = this.archeologist.getTotalUncommonProb();
         int rareProb = this.archeologist.getTotalRareProb();
 
-        /**
+        /*
          * 1) Mínimos del tamaño
          */
         addTreasures(ETreasureRarity.COMMON, size.getMinCommon());
         addTreasures(ETreasureRarity.UNCOMMON, size.getMinUncommon());
         addTreasures(ETreasureRarity.RARE, size.getMinRare());
 
-        /**
+        /*
          * 2) Aleatorios hasta llegar a los tesoros base
          */
         while (this.treasuresToPlace.size() < base) {
@@ -357,9 +356,8 @@ public class Excavation {
             }
         }
 
-        /**
-         * 3) Extras del arqueólogo: raros (si el terreno los permite),
-         * infrecuentes, comunes y aleatorios
+        /*
+         * 3) Extras del arqueólogo: raros (si el terreno los permite), infrecuentes, comunes y aleatorios
          */
         if (size.allowsRare()) {
             addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures());
@@ -467,9 +465,8 @@ public class Excavation {
     private void applyCleaning(int amount) {
         List<Coordinate> empties = getCoordinates(false);
 
-        /**
-         * No podemos limpiar más casillas de las que hay vacías ni pasar del 25
-         * %
+        /*
+         * No podemos limpiar más casillas de las que hay vacías ni pasar del 25%
          */
         int toClean = Math.min(amount, empties.size());
         toClean = Math.min(toClean, getRevealsLeft());
@@ -497,7 +494,7 @@ public class Excavation {
         List<Coordinate> empties = getCoordinates(false);
 
         for (int i = 0; i < skills; i++) {
-            /**
+            /*
              * Hacen falta al menos 1 casilla con tesoro y 2 vacías
              */
             if (withTreasure.isEmpty() || empties.size() < 2) {
@@ -515,9 +512,8 @@ public class Excavation {
                 if (getRevealsLeft() <= 0) {
                     return;
                 }
-                /**
-                 * markGuess devuelve false si la casilla ya estaba limpiada o
-                 * marcada
+                /*
+                 * markGuess devuelve false si la casilla ya estaba limpiada o marcada
                  */
                 if (this.rejilla.markGuess(coord)) {
                     this.revealedBySkills++;
@@ -536,7 +532,7 @@ public class Excavation {
         int rare = 0;
 
         for (Coordinate coord : getCoordinates(true)) {
-            /**
+            /*
              * Solo contamos los que todavía no se han excavado
              */
             if (!this.rejilla.isRevealed(coord)) {
@@ -550,14 +546,9 @@ public class Excavation {
                 }
             }
         }
-        int total = common + uncommon + rare;
-        if (total == 1) {
-            System.out.println("Investigación: queda 1 tesoro ("
-                    + common + " comunes, " + uncommon + " infrecuentes, " + rare + " raros).");
-        } else {
-            System.out.println("Investigación: quedan " + total + " tesoros ("
-                    + common + " comunes, " + uncommon + " infrecuentes, " + rare + " raros).");
-        }
+        // Presenta por rareza los tesoros que quedan sin excavar.
+        System.out.println("Tesoros: " + common + " comunes, "
+            + uncommon + " infrecuentes y " + rare + " raros.");
     }
 
     /**
@@ -577,37 +568,32 @@ public class Excavation {
      * notifica.
      */
     public void excavate() {
-        Scanner sc = new Scanner(System.in);
-
         while (!isFinished()) {
-            System.out.println();
-            System.out.println("Acciones restantes: " + this.actions);
+            // Muestra la rejilla y los datos del turno antes de pedir coordenadas.
+            System.out.print(this.rejilla.render());
+            System.out.println("Número de acciones restantes: " + this.actions);
             if (this.archeologist.hasInvestigation()) {
                 showInvestigation();
+            } else {
+                System.out.println("Tesoros: " + this.totalTreasures);
             }
-            System.out.print(this.rejilla.render());
 
-            /**
-             * Pedimos coordenadas hasta que la entrada sea válida
-             */
+            // Una lista vacía significa que aún falta recibir una entrada válida.
             List<Coordinate> coords = new ArrayList<>();
             while (coords.isEmpty()) {
-                System.out.print("Posición o posiciones a excavar (por ejemplo 3B o 3B 4C): ");
-                String line = sc.nextLine();
+                // Comparte el lector con los menús para que las lecturas no compitan entre sí.
+                String line = InputValidator.readLine("Conjunto de coordenadas a excavar separadas por espacios: ");
                 coords = CoordinateValidator.parseAll(line, this.rejilla, this.actions);
             }
-
+            // Procesa las coordenadas y se detiene si ya se ha terminado la excavación.
             for (Coordinate coord : coords) {
                 digAt(coord);
-                if (isFinished()) {
-                    break;
-                }
+                if (isFinished()) break;
             }
+            if (!isFinished()) System.out.println("----------------------------------------");
         }
-
         if (this.foundTreasures >= this.totalTreasures) {
-            System.out.println();
-            System.out.println("¡Has encontrado todos los tesoros!");
+            System.out.println("-------------------- ¡Se han encontrado todos los tesoros! --------------------");
         }
     }
 
@@ -621,14 +607,12 @@ public class Excavation {
         this.actions--;
         ETreasureRarity rarity = this.rejilla.dig(coord);
 
-        if (rarity == null) {
-            System.out.println(this.rejilla.getLabel(coord) + ": no hay nada.");
-        } else {
+        // Los hallazgos se guardan aquí y se presentan juntos al terminar.
+        if (rarity != null) {
             Treasure treasure = this.hiddenTreasures[coord.getRow()][coord.getColumn()];
             this.foundTreasuresList.add(treasure);
             this.foundCodes.add(this.hiddenCodes[coord.getRow()][coord.getColumn()]);
             this.foundTreasures++;
-            System.out.println(this.rejilla.getLabel(coord) + ": ¡tesoro " + rarity + "!");
         }
     }
 
@@ -642,7 +626,6 @@ public class Excavation {
      * encontrados.
      */
     public List<String> finish() {
-        System.out.println();
         System.out.println("Excavación terminada");
         System.out.print(this.rejilla.render());
         System.out.print(this.rejilla.renderUncovered());
@@ -661,7 +644,7 @@ public class Excavation {
                     found++;
                 }
             }
-            /**
+            /*
              * Solo mostramos las rarezas que había en la rejilla
              */
             if (total > 0) {

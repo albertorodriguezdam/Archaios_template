@@ -173,8 +173,6 @@ public class Skill {
         return 0; 
     }
 
-    /**Bonos de excavación (Skill excavación)[SIN HCER] */
-
     /**
      * @return Cantidad de acciones extra.
      */
