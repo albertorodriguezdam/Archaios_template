@@ -4,6 +4,10 @@ import treasures.ETreasureRarity;
 import treasures.ETreasureType;
 import treasures.Treasure;
 
+/**
+ * Región de Grecia, con sus respectivos tesoros.
+ * @author Javier A. Goldar Picón.
+ */
 public class Grecia extends Region {
     /**El código único identificativo de la región */
     private static final String CODE = "GRC";
@@ -15,8 +19,6 @@ public class Grecia extends Region {
     }
 
     /**
-     * Devuelve el código identificativo de Grecia.
-     * 
      * @return El código identificativo de Grecia.
      */
     @Override

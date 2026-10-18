@@ -72,7 +72,7 @@ public final class SkillRepository {
     /**
      * Recupera la misma instancia del catálogo a partir de su nombre.
      * @param name Nombre de la habilidad.
-     * @return instancia de la habilidad a partir de su nombre.
+     * @return instancia registrada de la habilidad a partir de su nombre.
      */
     public static Skill get(String name) { return skills.get(name); }
 
@@ -93,7 +93,6 @@ public final class SkillRepository {
 
     /**
      * Obtiene las habilidades implementadas que puede aprender el arqueólogo.
-     *
      * @param archeologist Arqueólogo cuyas habilidades se comprueban.
      * @return Nueva lista de habilidades disponibles para aprender.
      */

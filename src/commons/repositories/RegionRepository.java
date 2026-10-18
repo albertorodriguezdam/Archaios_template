@@ -8,8 +8,7 @@ import regions.Region;
 /**
  * Repositorio encargado de registrar y gestionar las regiones del sistema.
  * Permite almacenar y consultar regiones mediante su código identificativo.
- * 
- * @author jagoldar
+ * @author Javier A. Goldar Picón.
  */
 public class RegionRepository {
 

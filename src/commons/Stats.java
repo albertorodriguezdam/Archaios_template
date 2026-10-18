@@ -13,9 +13,8 @@ import treasures.ETreasureType;
 import treasures.Treasure;
 
 /**
- * Información de las estadísticas de lugares
- * o de tesoros.
- * @author jagoldar
+ * Información de las estadísticas de lugares o de tesoros.
+ * @author Javier A. Goldar Picón.
  */
 public class Stats {
     /**El registro de veces que se ha encontrado cada tesoro */
@@ -79,7 +78,7 @@ public class Stats {
         }
 
         for (String regionCode : regionCodes) {
-            // Usa el mismo formato de título que las demás pantallas del menú.
+            
             helpers.MenuHelper.subHeader(RegionRepository.getRegion(regionCode).getClass().getSimpleName());
 
             String previousBaseCode = "";
@@ -150,7 +149,7 @@ public class Stats {
                 }
             }
 
-            // Muestra el nombre del tipo con el formato común de las fichas.
+            
             helpers.MenuHelper.subHeader(typeName);
 
             String previousBaseCode = "";
@@ -227,7 +226,7 @@ public class Stats {
             
             int completionPercent = UtilsHelper.getPercent(distinctFound, totalAvailable);
 
-            // Usa el mismo formato de título que las demás pantallas del menú.
+            
             helpers.MenuHelper.subHeader(RegionRepository.getRegion(regionCode).getClass().getSimpleName());
             System.out.println("Veces visitada: " + visits);
             System.out.println("Tesoros encontrados: " + distinctFound + "/" + totalAvailable + " (" + completionPercent + "%)");

@@ -9,8 +9,7 @@ import treasures.Treasure;
 /**
  * Repositorio encargado de registrar y gestionar los tesoros del sistema.
  * Permite almacenar y consultar los tesoros mediante su código identificativo.
- *
- * @author jagoldar
+ * @author Javier A. Goldar Picón.
  */
 public class TreasureRepository {
 

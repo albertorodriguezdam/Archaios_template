@@ -53,12 +53,13 @@ public class Archaios {
 
     /**
      * Inicia la aplicación con una partida nueva o con datos de prueba.
+     * @param args Argumentos de ejecución. Si el primero es {@code --pruebas}, carga arqueólogos, estadísticas y puntos de ejemplo.
      */
     public static void main(String[] args) {
 
         Archaios game = new Archaios();
 
-        /**El argumento --pruebas permite entrar con personajes y puntos de ejemplo. */
+        
         if (args.length > 0 && "--pruebas".equals(args[0])) {
             game.archeologists = DatosPrueba.createArcheologists();
             game.stats = DatosPrueba.createStats();

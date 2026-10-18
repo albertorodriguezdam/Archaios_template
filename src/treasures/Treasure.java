@@ -6,8 +6,8 @@ import java.lang.StringBuilder;
 import helpers.UtilsHelper;
 
 /**
- * La base del tesoro
- * @author jagoldar
+ * La base del tesoro.
+ * @author Javier A. Goldar Picón.
  */
 public class Treasure {
     /**El código del tesoro */

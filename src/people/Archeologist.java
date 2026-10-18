@@ -6,8 +6,8 @@ import java.util.List;
 import skills.Skill;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * Clase encargada del Arqueólogo.
+ * @author Alberto Rodríguez Domínguez
  */
 public class Archeologist {
 
@@ -32,8 +32,8 @@ public class Archeologist {
 
     /**
      * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
-     * las tres listas a ArrayList y añade el único terreno disponible al instanciar
-     * un nuevo arqueólogo: "pequeño".
+     * las tres colecciones a ArrayList y añade el único terreno disponible al instanciar
+     * un nuevo arqueólogo: "pequeño" y en formato "cuadrado".
      * @param name Nombre del arqueólogo.
      */
     public Archeologist(String name) {
@@ -49,8 +49,7 @@ public class Archeologist {
 
     /**
      * Método de obtención de la cantidad de experiencia total,
-     * para subir al siguiente nivel. En el caso de que el arqueólogo alacance el nivel máximo
-     * (nivel 5), devolverá 0.
+     * para subir al siguiente nivel. En el caso de que el arqueólogo alacance el nivel máximo devolverá 0.
      * @return Cantidad de xp total para subir de nivel, si es nivel máximo devuelve 0; 
      */
     public int getXpToNextLevel(){
@@ -397,8 +396,8 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de la lista de habilidades disponibles del arqueólogo.
-     * @return Lista inmutable de las habilidades disponibles del arqueólogo.
+     * Obtención de la lista de habilidades disponibles para aprender del arqueólogo.
+     * @return Lista inmutable de las habilidades disponibles para aprender del arqueólogo.
      */
     public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
@@ -413,7 +412,7 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de la lista de fromatos de terrenos disponibles del arqueólogo.
+     * Obtención de la lista de formatos de terrenos disponibles del arqueólogo.
      * @return Lista inmutable de los formatos de terrenos disponibles del arqueólogo.
      */
     public List<String> getTerrainsFormats() {
@@ -446,7 +445,7 @@ public class Archeologist {
 
     /**
      * Devuelve el código de la región elegida para la especialización.
-     * @return Código de la región elegida, cadena vacía sino tiene especialización.
+     * @return Código de la región elegida, cadena vacía si no tiene especialización.
      */
     public String getSpecialization() { 
         return specialization; 

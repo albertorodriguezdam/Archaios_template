@@ -139,9 +139,8 @@ public class Excavation {
         generateTreasures();
         placeTreasures();
         applyCleaning(archeologist.getTotalEmptyCellsReveled());
-        /**
-         * getTotalScanHints() devuelve casillas con '?'; cada suposición marca
-         * 3
+        /*
+         * getTotalScanHints() devuelve casillas con '?'; cada suposición marca 3
          */
         applyGuesses(archeologist.getTotalScanHints() / GUESSES_PER_SKILL);
         this.actions = calcActions(terrain, archeologist.getTotalExtraActions(), archeologist.getActionsMultiplier());
@@ -251,7 +250,7 @@ public class Excavation {
      */
     public static int calculateBaseTreasure(ETerrain terrain) {
         int base = (int) Math.ceil(terrain.getCells() * RATIO_TREASURE);
-        /**
+        /*
          * Como mínimo 1 y nunca menos que los mínimos del tamaño
          */
         if (base < 1) {
@@ -315,7 +314,7 @@ public class Excavation {
             rareProb = 0;
         }
 
-        /**
+        /*
          * Número entre 0 y 99: los primeros valores son raros, luego
          * infrecuentes y el resto comunes
          */
@@ -341,14 +340,14 @@ public class Excavation {
         int uncommonProb = this.archeologist.getTotalUncommonProb();
         int rareProb = this.archeologist.getTotalRareProb();
 
-        /**
+        /*
          * 1) Mínimos del tamaño
          */
         addTreasures(ETreasureRarity.COMMON, size.getMinCommon());
         addTreasures(ETreasureRarity.UNCOMMON, size.getMinUncommon());
         addTreasures(ETreasureRarity.RARE, size.getMinRare());
 
-        /**
+        /*
          * 2) Aleatorios hasta llegar a los tesoros base
          */
         while (this.treasuresToPlace.size() < base) {
@@ -357,9 +356,8 @@ public class Excavation {
             }
         }
 
-        /**
-         * 3) Extras del arqueólogo: raros (si el terreno los permite),
-         * infrecuentes, comunes y aleatorios
+        /*
+         * 3) Extras del arqueólogo: raros (si el terreno los permite), infrecuentes, comunes y aleatorios
          */
         if (size.allowsRare()) {
             addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures());
@@ -467,9 +465,8 @@ public class Excavation {
     private void applyCleaning(int amount) {
         List<Coordinate> empties = getCoordinates(false);
 
-        /**
-         * No podemos limpiar más casillas de las que hay vacías ni pasar del 25
-         * %
+        /*
+         * No podemos limpiar más casillas de las que hay vacías ni pasar del 25%
          */
         int toClean = Math.min(amount, empties.size());
         toClean = Math.min(toClean, getRevealsLeft());
@@ -497,7 +494,7 @@ public class Excavation {
         List<Coordinate> empties = getCoordinates(false);
 
         for (int i = 0; i < skills; i++) {
-            /**
+            /*
              * Hacen falta al menos 1 casilla con tesoro y 2 vacías
              */
             if (withTreasure.isEmpty() || empties.size() < 2) {
@@ -515,9 +512,8 @@ public class Excavation {
                 if (getRevealsLeft() <= 0) {
                     return;
                 }
-                /**
-                 * markGuess devuelve false si la casilla ya estaba limpiada o
-                 * marcada
+                /*
+                 * markGuess devuelve false si la casilla ya estaba limpiada o marcada
                  */
                 if (this.rejilla.markGuess(coord)) {
                     this.revealedBySkills++;
@@ -536,7 +532,7 @@ public class Excavation {
         int rare = 0;
 
         for (Coordinate coord : getCoordinates(true)) {
-            /**
+            /*
              * Solo contamos los que todavía no se han excavado
              */
             if (!this.rejilla.isRevealed(coord)) {
@@ -648,7 +644,7 @@ public class Excavation {
                     found++;
                 }
             }
-            /**
+            /*
              * Solo mostramos las rarezas que había en la rejilla
              */
             if (total > 0) {

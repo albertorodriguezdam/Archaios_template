@@ -10,7 +10,7 @@ import treasures.ETreasureType;
 import treasures.Treasure;
 
 /** 
- * Clase encargade de mostrar la información de las regiones y las fichas de sus tesoros.
+ * Clase encargada de mostrar la información de las regiones y las fichas de sus tesoros.
  * @author Constantin Laurentiu.
  */
 public class Atlas {
