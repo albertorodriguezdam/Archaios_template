@@ -75,7 +75,7 @@ public class SkillExcavation extends Skill{
      * Método estático para la creación de las habilidades Escaneo A, B, C y D. 
      * @param name Nombre identificativo de la habilidad.
      * @param description Descripción de lo que hace la habilidad.
-     * @param cellsReveled Cantidad de posiciones que se marcarán como pistas.
+     * @param scanHints Cantidad de posiciones que se marcarán como pistas.
      * @return Objeto SkillExcavation(Escaneo A, B, C o D).
      */
     public static SkillExcavation createScan(String name, String description, int scanHints){

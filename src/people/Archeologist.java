@@ -396,8 +396,8 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de la lista de habilidades disponibles para aprender del arqueólogo.
-     * @return Lista inmutable de las habilidades disponibles para aprender del arqueólogo.
+     * Obtención de la lista de habilidades aprendidas por el arqueólogo.
+     * @return Lista inmutable de las habilidades aprendidas por el arqueólogo.
      */
     public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
