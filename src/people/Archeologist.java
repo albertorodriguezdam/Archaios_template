@@ -35,9 +35,8 @@ public class Archeologist {
      * las tres listas a ArrayList y añade el único terreno disponible al instanciar
      * un nuevo arqueólogo: "pequeño".
      * @param name Nombre del arqueólogo.
-     * @param rarity Rareza del arqueólogo (Común, infrecuente o raro).
      */
-    public Archeologist(String name, String rarity) {
+    public Archeologist(String name) {
         this.name = name;
         this.level = 0;
         this.xp = 0;
@@ -46,14 +45,6 @@ public class Archeologist {
         this.terrainsFormats=new ArrayList<>(); 
         this.terrainsSize.add("Pequeño");
         this.terrainsFormats.add("Cuadrado"); 
-    }
-
-    /**
-     * Constructor para arqueólogos de rareza común por defecto.
-     * @param name Nombre del arqueólogo.
-     */
-    public Archeologist(String name){
-        this(name, "COMUN");
     }
 
     /**
@@ -115,15 +106,12 @@ public class Archeologist {
     }
 
     /**
-     * Obtención de los puntos que devueleve la acción de licenciar(vender), 
-     * un arqueólogo.
-     * @return Cantidad de puntos recibidos por licenciar un arqueólogo.
+     * Calcula la compensación por licenciar al arqueólogo.
+     *
+     * @return Diez puntos por cada habilidad aprendida.
      */
     public int getLicensingPoints() {
-        // Cada nivel vale 10 puntos.
-        // Restar el nivel a las habilidades totales permite contar las habilidades iniciales.
-        // Cada habilidad inicial añade otros 10 puntos de compensación.
-        return 10 * level + 10 * (skills.size() - level);
+        return skills.size() * 10;
     }
 
     /**
@@ -440,6 +428,37 @@ public class Archeologist {
         return MAX_LEVEL;
     }
 
+    /**
+     * Permite consultar las licencias regionales sin modificar la lista.
+     * @return Lista inmutable de licencias.
+     */
+    public List<String> getLicenses() {
+        return Collections.unmodifiableList(licenses);
+    }
+
+    /**
+     * Añade una licencia regional solo si todavía no está en la lista.
+     * @param code Código de la región a añadir.
+     */
+    public void addLicense(String code) {
+        if (!licenses.contains(code)) licenses.add(code);
+    }
+
+    /**
+     * Devuelve el código de la región elegida para la especialización.
+     * @return Código de la región elegida, cadena vacía sino tiene especialización.
+     */
+    public String getSpecialization() { 
+        return specialization; 
+    }
+    
+    /**
+     * Establece la región de especialización del arqueólogo.
+     * @param code Código de la región elegida para la especialización.
+     */
+    public void setSpecialization(String code) { 
+        specialization = code; 
+    }
     
     /**    
      * Método que devuelve el objeto arqueólogo en una String.
@@ -454,20 +473,6 @@ public class Archeologist {
             + " - Formatos: " + terrainsFormats;
     }
 
-    // Permite consultar las licencias regionales sin modificar la lista desde fuera.
-    public List<String> getLicenses() {
-        return Collections.unmodifiableList(licenses);
-    }
-
-    // Añade una licencia regional solo si todavía no está en la lista.
-    public void addLicense(String code) {
-        if (!licenses.contains(code)) licenses.add(code);
-    }
-
-    // Devuelve el código de la región elegida para la especialización.
-    public String getSpecialization() { return specialization; }
-
-    // Guarda la elección del usuario; este método no calcula los bonos.
-    public void setSpecialization(String code) { specialization = code; }
+    
 
 }
