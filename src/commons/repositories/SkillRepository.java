@@ -7,15 +7,17 @@ import java.util.List;
 import java.util.Map;
 import people.Archeologist;
 import skills.*;
-
-/** Catálogo obtenido del programa de referencia; todos comparten sus instancias. */
 public final class SkillRepository {
     private static final Map<String, Skill> skills = new LinkedHashMap<>();
 
+    // No se crean objetos del repositorio se accede mediante sus métodos estáticos.
     private SkillRepository() { }
 
+    // Crea el catálogo una vez y añade sus dependencias e incompatibilidades.
     public static void register() {
+        // Evita registrar otra vez las mismas habilidades si ya se cargaron.
         if (!skills.isEmpty()) return;
+        // Cada objeto guarda el texto del catálogo y los bonos que consulta el arqueólogo.
         register(new SkillTreasures("Aprendiz", "Aumenta el número de tesoros posibles de la excavación en 5 comunes", 0, 5, 0, 0, 0, 0));
         register(new SkillExcavation("Escaneo A", "Marca tres posiciones entre las que se encuentra un tesoro y dos lugares vacíos.", 0, 0, 0, 3, false));
         register(new SkillExcavation("Escaneo B", "Marca tres posiciones entre las que se encuentra un tesoro y dos lugares vacíos.", 0, 0, 0, 3, false));
@@ -24,6 +26,7 @@ public final class SkillRepository {
         register(new SkillTreasures("Especialista M", "Aumenta la probabilidad de aparición de tesoros infrecuentes en un 5% y raros en un 5% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 5, 5));
         register(new SkillTreasures("Especialista R", "Aumenta la probabilidad de aparición de tesoros raros en un 10% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 0, 10));
         register(new SkillTreasures("Especialista U", "Aumenta la probabilidad de aparición de tesoros infrecuentes en un 10% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 10, 0));
+        // Esta entrada usa la clase Skill base aquí se registra su ficha.
         register(new Skill("Especialista en desierto", "Establece a 1 el coste de excavar arena (~).", ESkillType.EXPERT));
         register(new SkillExcavation("Excavación I", "Aumenta el número de acciones de excavación en 5.", 5, 0, 0, 0, false));
         register(new SkillExcavation("Excavación II", "Aumenta el número de acciones de excavación en 10.", 10, 0, 0, 0, false));
@@ -40,10 +43,12 @@ public final class SkillRepository {
         register(new SkillExcavation("Limpieza I", "Desvela 5 posiciones de excavación sin tesoro antes del proceso de excavación.", 0, 0, 5, 0, false));
         register(new SkillExcavation("Limpieza II", "Desvela 10 posiciones de excavación sin tesoro antes del proceso de excavación.", 0, 0, 10, 0, false));
         register(new SkillTreasures("Maestro", "Aumenta el número de tesoros posibles de la excavación en 5 infrecuentes y 2 raros", 0, 0, 5, 2, 0, 0));
+        // El modelo también añade la relación inversa al registrar una incompatibilidad.
         get("Especialista R").addIncompatibility(get("Especialista U"));
         get("Especialista M").addIncompatibility(get("Especialista R"));
         get("Especialista M").addIncompatibility(get("Especialista U"));
         get("Licencia A").addIncompatibility(get("Licencia B"));
+        // Para aprender una mejora se exige primero la habilidad del nivel anterior.
         get("Excavación II").addDependency(get("Excavación I"));
         get("Excavación III").addDependency(get("Excavación II"));
         get("Experiencia II").addDependency(get("Experiencia I"));
@@ -54,19 +59,24 @@ public final class SkillRepository {
         get("Maestro").addDependency(get("Experto"));
     }
 
+    // Guarda cada habilidad utilizando su nombre como clave.
     private static void register(Skill skill) { skills.put(skill.getName(), skill); }
 
+    // Recupera la misma instancia del catálogo a partir de su nombre.
     public static Skill get(String name) { return skills.get(name); }
 
+    // Devuelve las habilidades de un tipo ordenadas por nombre.
     public static List<Skill> getByType(ESkillType type) {
         List<Skill> result = new ArrayList<>();
         for (Skill skill : skills.values()) {
+            // El modelo de Skill guarda el tipo como texto.
             if (skill.getType().equals(type.toString())) result.add(skill);
         }
         result.sort(Comparator.comparing(Skill::getName));
         return result;
     }
 
+    // Filtra las habilidades ya aprendidas, incompatibles o sin dependencias cumplidas.
     public static List<Skill> getLearnable(Archeologist archeologist) {
         List<Skill> result = new ArrayList<>();
         for (Skill skill : skills.values()) {
