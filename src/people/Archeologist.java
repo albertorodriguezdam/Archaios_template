@@ -120,6 +120,9 @@ public class Archeologist {
      * @return Cantidad de puntos recibidos por licenciar un arqueólogo.
      */
     public int getLicensingPoints() {
+        // Cada nivel vale 10 puntos.
+        // Restar el nivel a las habilidades totales permite contar las habilidades iniciales.
+        // Cada habilidad inicial añade otros 10 puntos de compensación.
         return 10 * level + 10 * (skills.size() - level);
     }
 
@@ -451,16 +454,20 @@ public class Archeologist {
             + " - Formatos: " + terrainsFormats;
     }
 
+    // Permite consultar las licencias regionales sin modificar la lista desde fuera.
     public List<String> getLicenses() {
         return Collections.unmodifiableList(licenses);
     }
 
+    // Añade una licencia regional solo si todavía no está en la lista.
     public void addLicense(String code) {
         if (!licenses.contains(code)) licenses.add(code);
     }
 
+    // Devuelve el código de la región elegida para la especialización.
     public String getSpecialization() { return specialization; }
 
+    // Guarda la elección del usuario; este método no calcula los bonos.
     public void setSpecialization(String code) { specialization = code; }
 
 }
