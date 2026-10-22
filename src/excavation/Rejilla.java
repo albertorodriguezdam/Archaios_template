@@ -51,7 +51,7 @@ public class Rejilla {
 		this.hidden = new ETreasureRarity[rows][columns];
 		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < columns; c++) {
-				this.cells[r][c] = UNDUG;
+				this.cells[r][c] = Rejilla.UNDUG;
 			}
 		}
 		this.columnLetters = generateLetters(columns);
@@ -132,7 +132,7 @@ public class Rejilla {
 	 */
 	public boolean isRevealed(Coordinate coord) {
 		char symbol = this.cells[coord.getRow()][coord.getColumn()];
-		return symbol != UNDUG && symbol != GUESS;
+		return symbol != Rejilla.UNDUG && symbol != Rejilla.GUESS;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class Rejilla {
 	public ETreasureRarity dig(Coordinate coord) {
 		ETreasureRarity rarity = getRarity(coord);
 		if (rarity == null) {
-			this.cells[coord.getRow()][coord.getColumn()] = EMPTY;
+			this.cells[coord.getRow()][coord.getColumn()] = Rejilla.EMPTY;
 		} else {
 			this.cells[coord.getRow()][coord.getColumn()] = rarity.getCode().charAt(0);
 		}
@@ -156,7 +156,7 @@ public class Rejilla {
 	 * @param coord La casilla vacía a limpiar.
 	 */
 	public void clean(Coordinate coord) {
-		this.cells[coord.getRow()][coord.getColumn()] = EMPTY;
+		this.cells[coord.getRow()][coord.getColumn()] = Rejilla.EMPTY;
 	}
 
 	/**
@@ -168,10 +168,10 @@ public class Rejilla {
 		int row = coord.getRow();
 		int column = coord.getColumn();
 
-		if(cells[row][column]!= UNDUG){
+		if(cells[row][column]!= Rejilla.UNDUG){
 			return false;
 		}
-		cells[row][column] = GUESS;
+		cells[row][column] = Rejilla.GUESS;
 		return true;
 	}
 
@@ -266,7 +266,7 @@ public class Rejilla {
 		if (this.hidden[r][c] != null) {
 			return this.hidden[r][c].getCode().charAt(0);
 		}
-		return EMPTY;
+		return Rejilla.EMPTY;
 	}
 
 	/**

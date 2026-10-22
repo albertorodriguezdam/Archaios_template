@@ -142,7 +142,7 @@ public class Excavation {
         /*
          * getTotalScanHints() devuelve casillas con '?'; cada suposición marca 3
          */
-        applyGuesses(archeologist.getTotalScanHints() / GUESSES_PER_SKILL);
+        applyGuesses(archeologist.getTotalScanHints() / Excavation.GUESSES_PER_SKILL);
         this.actions = calcActions(terrain, archeologist.getTotalExtraActions(), archeologist.getActionsMultiplier());
     }
 
@@ -249,7 +249,7 @@ public class Excavation {
      * @return El número de tesoros base.
      */
     public static int calculateBaseTreasure(ETerrain terrain) {
-        int base = (int) Math.ceil(terrain.getCells() * RATIO_TREASURE);
+        int base = (int) Math.ceil(terrain.getCells() * Excavation.RATIO_TREASURE);
         /*
          * Como mínimo 1 y nunca menos que los mínimos del tamaño
          */
@@ -270,7 +270,7 @@ public class Excavation {
      * habilidades.
      */
     public static int calculateMaxTreasure(ETerrain terrain) {
-        return (int) (terrain.getCells() * MAX_RATIO_TREASURE);
+        return (int) (terrain.getCells() * Excavation.MAX_RATIO_TREASURE);
     }
 
     /**
@@ -285,9 +285,9 @@ public class Excavation {
      * @return El número de acciones.
      */
     public static int calcActions(ETerrain terrain, int extraActions, double factor) {
-        int min = (int) (terrain.getCells() * BASE_ACTIONS_RATIO);
-        int max = (int) (terrain.getCells() * MAX_ACTIONS_RATIO);
-        int result = (int) ((terrain.getCells() * BASE_ACTIONS_RATIO + extraActions) * factor);
+        int min = (int) (terrain.getCells() * Excavation.BASE_ACTIONS_RATIO);
+        int max = (int) (terrain.getCells() * Excavation.MAX_ACTIONS_RATIO);
+        int result = (int) ((terrain.getCells() * Excavation.BASE_ACTIONS_RATIO + extraActions) * factor);
 
         if (result < min) {
             result = min;
@@ -308,8 +308,8 @@ public class Excavation {
      * @return La rareza elegida.
      */
     private ETreasureRarity randomRarity(int extraUncommonProb, int extraRareProb) {
-        int rareProb = PROB_RARE + extraRareProb;
-        int uncommonProb = PROB_UNCOMMON + extraUncommonProb;
+        int rareProb = Excavation.PROB_RARE + extraRareProb;
+        int uncommonProb = Excavation.PROB_UNCOMMON + extraUncommonProb;
         if (!this.terrain.getSize().allowsRare()) {
             rareProb = 0;
         }
@@ -318,7 +318,7 @@ public class Excavation {
          * Número entre 0 y 99: los primeros valores son raros, luego
          * infrecuentes y el resto comunes
          */
-        int number = RANDOM.nextInt(100);
+        int number = Excavation.RANDOM.nextInt(100);
         if (number < rareProb) {
             return ETreasureRarity.RARE;
         } else if (number < rareProb + uncommonProb) {
@@ -451,7 +451,7 @@ public class Excavation {
      * 25 %.
      */
     private int getRevealsLeft() {
-        int maxReveal = (int) (this.terrain.getCells() * MAX_REVEAL_RATIO);
+        int maxReveal = (int) (this.terrain.getCells() * Excavation.MAX_REVEAL_RATIO);
         return maxReveal - this.revealedBySkills;
     }
 
@@ -502,8 +502,8 @@ public class Excavation {
             }
 
             List<Coordinate> chosen = new ArrayList<>();
-            chosen.add(withTreasure.get(RANDOM.nextInt(withTreasure.size())));
-            List<Integer> emptyIdxs = UtilsHelper.genRandomIdxs(GUESSES_PER_SKILL - 1, empties.size());
+            chosen.add(withTreasure.get(Excavation.RANDOM.nextInt(withTreasure.size())));
+            List<Integer> emptyIdxs = UtilsHelper.genRandomIdxs(Excavation.GUESSES_PER_SKILL - 1, empties.size());
             for (int index : emptyIdxs) {
                 chosen.add(empties.get(index));
             }

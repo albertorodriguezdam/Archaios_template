@@ -21,7 +21,7 @@ public final class SkillRepository {
     /**Crea el catálogo una vez y añade sus dependencias e incompatibilidades.*/
     public static void register() {
         
-        if (!skills.isEmpty()) return;
+        if (!SkillRepository.skills.isEmpty()) return;
         
         register(new SkillTreasures("Aprendiz", "Aumenta el número de tesoros posibles de la excavación en 5 comunes", 0, 5, 0, 0, 0, 0));
         register(new SkillExcavation("Escaneo A", "Marca tres posiciones entre las que se encuentra un tesoro y dos lugares vacíos.", 0, 0, 0, 3, false));
@@ -31,7 +31,8 @@ public final class SkillRepository {
         register(new SkillTreasures("Especialista M", "Aumenta la probabilidad de aparición de tesoros infrecuentes en un 5% y raros en un 5% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 5, 5));
         register(new SkillTreasures("Especialista R", "Aumenta la probabilidad de aparición de tesoros raros en un 10% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 0, 10));
         register(new SkillTreasures("Especialista U", "Aumenta la probabilidad de aparición de tesoros infrecuentes en un 10% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 10, 0));
-        register(new Skill("Especialista en desierto", "Establece a 1 el coste de excavar arena (~).", ESkillType.EXPERT));
+        //A añadir en la segunda entrega con el resto de especialistas dependiendo de la región
+        //register(new Skill("Especialista en desierto", "Establece a 1 el coste de excavar arena (~).", ESkillType.EXPERT));
         register(new SkillExcavation("Excavación I", "Aumenta el número de acciones de excavación en 5.", 5, 0, 0, 0, false));
         register(new SkillExcavation("Excavación II", "Aumenta el número de acciones de excavación en 10.", 10, 0, 0, 0, false));
         register(new SkillExcavation("Excavación III", "Aumenta el número de acciones de excavación en 15.", 15, 0, 0, 0, false));
@@ -66,7 +67,7 @@ public final class SkillRepository {
      * Guarda cada habilidad utilizando su nombre como clave. 
      * @param skill Habilidad a registrar.
      */
-    private static void register(Skill skill) { skills.put(skill.getName(), skill); }
+    private static void register(Skill skill) { SkillRepository.skills.put(skill.getName(), skill); }
 
    
     /**
@@ -74,7 +75,7 @@ public final class SkillRepository {
      * @param name Nombre de la habilidad.
      * @return instancia registrada de la habilidad a partir de su nombre.
      */
-    public static Skill get(String name) { return skills.get(name); }
+    public static Skill get(String name) { return SkillRepository.skills.get(name); }
 
     /**
      * Devuelve las habilidades de un tipo ordenadas por nombre.
@@ -83,7 +84,7 @@ public final class SkillRepository {
      */
     public static List<Skill> getByType(ESkillType type) {
         List<Skill> result = new ArrayList<>();
-        for (Skill skill : skills.values()) {
+        for (Skill skill : SkillRepository.skills.values()) {
            
             if (skill.getType().equals(type.toString())) result.add(skill);
         }
@@ -99,7 +100,7 @@ public final class SkillRepository {
     public static List<Skill> getLearnable(Archeologist archeologist) {
         List<Skill> result = new ArrayList<>();
 
-        for (Skill skill : skills.values()) {
+        for (Skill skill : SkillRepository.skills.values()) {
             
             if (!ESkillType.EXPERT.toString().equals(skill.getType())
                     && archeologist.canLearn(skill)) {

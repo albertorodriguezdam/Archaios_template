@@ -20,11 +20,11 @@ public class Archeologist {
     /**Experiencia del arqueólogo. */
     private int xp; 
     /**Lista de habilidades pertenecientes al arqueólogo. */
-    private List<Skill> skills; 
+    private List<Skill> skills = new ArrayList<>(); 
     /**Lista de tamaños de terrenos accesibles para el arqueólogo. */
-    private List<String> terrainsSize; 
+    private List<String> terrainsSize = new ArrayList<>(); 
     /**Lista de formatos de terrenos accesibles para el arqueólogo. */
-    private List<String> terrainsFormats;
+    private List<String> terrainsFormats = new ArrayList<>();
     /** Licencias regionales independientes de las habilidades Licencia A y B. */
     private List<String> licenses = new ArrayList<>();
     /** Código de región de especialización; vacío antes del nivel máximo. */
@@ -40,9 +40,6 @@ public class Archeologist {
         this.name = name;
         this.level = 0;
         this.xp = 0;
-        this.skills = new ArrayList<>();
-        this.terrainsSize = new ArrayList<>();
-        this.terrainsFormats=new ArrayList<>(); 
         this.terrainsSize.add("Pequeño");
         this.terrainsFormats.add("Cuadrado"); 
     }
@@ -54,7 +51,7 @@ public class Archeologist {
      */
     public int getXpToNextLevel(){
 
-        if (this.level<MAX_LEVEL) {
+        if (this.level<Archeologist.MAX_LEVEL) {
              return 50+(50*this.level); 
         } else {
             return 0;
@@ -74,17 +71,14 @@ public class Archeologist {
 
             this.xp+=xpGained; 
 
-            while (level<MAX_LEVEL&&this.xp>=getXpToNextLevel()) {
+            while (level<Archeologist.MAX_LEVEL&&this.xp>=getXpToNextLevel()) {
                 this.xp-=getXpToNextLevel(); 
                 this.level++;
                 levelGained++;
                 updateTerrainByLevel();
             }
-
+        } 
             return levelGained; 
-        } else {
-            return levelGained; 
-        }
     }
 
     /**
@@ -177,7 +171,7 @@ public class Archeologist {
             total+=s.getExtraActions(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/25); 
         }
 
@@ -215,7 +209,7 @@ public class Archeologist {
             total+=s.getExtraRandomTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/50); 
         }
 
@@ -237,7 +231,7 @@ public class Archeologist {
             total+=s.getExtraCommonTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/50); 
         }
 
@@ -259,7 +253,7 @@ public class Archeologist {
             total+=s.getExtraUncommonTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/100); 
         }
 
@@ -281,7 +275,7 @@ public class Archeologist {
             total+=s.getExtraRareTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/200); 
         }
 
@@ -424,7 +418,7 @@ public class Archeologist {
      * @return Nivel máximo del arqueólogo.
      */
     public int getMAX_LEVEL(){
-        return MAX_LEVEL;
+        return Archeologist.MAX_LEVEL;
     }
 
     /**
@@ -465,7 +459,7 @@ public class Archeologist {
      */
     @Override 
     public  String toString(){
-        String experience = level < MAX_LEVEL ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
+        String experience = level < Archeologist.MAX_LEVEL ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
 
         return name + " [Nivel: " + level + " | XP: " + experience + "]"
             + " - Tamaños: " + terrainsSize

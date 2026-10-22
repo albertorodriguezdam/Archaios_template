@@ -8,7 +8,7 @@ import java.util.List;
  * @author Alberto Rodríguez Domínguez
  * Clase base de todas las habilidades de Archaios 
  * */
-public class Skill {
+public abstract class Skill {
 
     /**Nombre de la habilidad. */
     private String name; 
