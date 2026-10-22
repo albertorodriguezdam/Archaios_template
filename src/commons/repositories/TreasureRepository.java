@@ -28,7 +28,7 @@ public class TreasureRepository {
      * @param treasure El tesoro que se desea registrar.
      */
     public static void registerTreasure(Treasure treasure) {
-        treasures.put(treasure.getCode(), treasure);
+        TreasureRepository.treasures.put(treasure.getCode(), treasure);
     }
 
     /**
@@ -39,7 +39,7 @@ public class TreasureRepository {
      */
     public static Treasure getTreasure(String code) {
         
-        return treasures.get(code);
+        return TreasureRepository.treasures.get(code);
     }
 
     /**

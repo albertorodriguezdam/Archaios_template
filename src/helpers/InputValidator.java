@@ -23,7 +23,7 @@ public class InputValidator {
         if (System.console() != null) return System.console().readLine("%s", message);
        
         System.out.print(message);
-        return scanner.nextLine();
+        return InputValidator.scanner.nextLine();
     }
 
     /**

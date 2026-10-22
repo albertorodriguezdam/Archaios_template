@@ -51,7 +51,7 @@ public class Archeologist {
      */
     public int getXpToNextLevel(){
 
-        if (this.level<MAX_LEVEL) {
+        if (this.level<Archeologist.MAX_LEVEL) {
              return 50+(50*this.level); 
         } else {
             return 0;
@@ -71,7 +71,7 @@ public class Archeologist {
 
             this.xp+=xpGained; 
 
-            while (level<MAX_LEVEL&&this.xp>=getXpToNextLevel()) {
+            while (level<Archeologist.MAX_LEVEL&&this.xp>=getXpToNextLevel()) {
                 this.xp-=getXpToNextLevel(); 
                 this.level++;
                 levelGained++;
@@ -171,7 +171,7 @@ public class Archeologist {
             total+=s.getExtraActions(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/25); 
         }
 
@@ -209,7 +209,7 @@ public class Archeologist {
             total+=s.getExtraRandomTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/50); 
         }
 
@@ -231,7 +231,7 @@ public class Archeologist {
             total+=s.getExtraCommonTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/50); 
         }
 
@@ -253,7 +253,7 @@ public class Archeologist {
             total+=s.getExtraUncommonTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/100); 
         }
 
@@ -275,7 +275,7 @@ public class Archeologist {
             total+=s.getExtraRareTreasures(); 
         }
 
-        if (level==MAX_LEVEL) {
+        if (level==Archeologist.MAX_LEVEL) {
             total+=(xp/200); 
         }
 
@@ -418,7 +418,7 @@ public class Archeologist {
      * @return Nivel máximo del arqueólogo.
      */
     public int getMAX_LEVEL(){
-        return MAX_LEVEL;
+        return Archeologist.MAX_LEVEL;
     }
 
     /**
@@ -459,7 +459,7 @@ public class Archeologist {
      */
     @Override 
     public  String toString(){
-        String experience = level < MAX_LEVEL ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
+        String experience = level < Archeologist.MAX_LEVEL ? xp + "/" + getXpToNextLevel() : Integer.toString(xp);
 
         return name + " [Nivel: " + level + " | XP: " + experience + "]"
             + " - Tamaños: " + terrainsSize

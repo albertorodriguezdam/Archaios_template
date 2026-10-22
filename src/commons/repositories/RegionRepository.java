@@ -26,7 +26,7 @@ public class RegionRepository {
      * @param region La región a registrar.
      */
     public static void registerRegion(Region region) {
-        regions.put(region.getCode(), region);
+        RegionRepository.regions.put(region.getCode(), region);
     }
 
     /**
@@ -38,6 +38,6 @@ public class RegionRepository {
      */
     public static Region getRegion(String code) {
 
-        return regions.get(code);
+        return RegionRepository.regions.get(code);
     }
 }
