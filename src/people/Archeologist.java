@@ -20,11 +20,11 @@ public class Archeologist {
     /**Experiencia del arqueólogo. */
     private int xp; 
     /**Lista de habilidades pertenecientes al arqueólogo. */
-    private List<Skill> skills; 
+    private List<Skill> skills = new ArrayList<>(); 
     /**Lista de tamaños de terrenos accesibles para el arqueólogo. */
-    private List<String> terrainsSize; 
+    private List<String> terrainsSize = new ArrayList<>(); 
     /**Lista de formatos de terrenos accesibles para el arqueólogo. */
-    private List<String> terrainsFormats;
+    private List<String> terrainsFormats = new ArrayList<>();
     /** Licencias regionales independientes de las habilidades Licencia A y B. */
     private List<String> licenses = new ArrayList<>();
     /** Código de región de especialización; vacío antes del nivel máximo. */
@@ -40,9 +40,6 @@ public class Archeologist {
         this.name = name;
         this.level = 0;
         this.xp = 0;
-        this.skills = new ArrayList<>();
-        this.terrainsSize = new ArrayList<>();
-        this.terrainsFormats=new ArrayList<>(); 
         this.terrainsSize.add("Pequeño");
         this.terrainsFormats.add("Cuadrado"); 
     }
@@ -80,11 +77,8 @@ public class Archeologist {
                 levelGained++;
                 updateTerrainByLevel();
             }
-
+        } 
             return levelGained; 
-        } else {
-            return levelGained; 
-        }
     }
 
     /**
