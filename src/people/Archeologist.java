@@ -430,11 +430,23 @@ public class Archeologist {
     }
 
     /**
-     * Añade una licencia regional solo si todavía no está en la lista.
-     * @param code Código de la región a añadir.
+     * Añade una licencia regional si el código es válido y todavía no la posee.
+     * @param code Código no vacío de la región.
      */
     public void addLicense(String code) {
-        if (!licenses.contains(code)) licenses.add(code);
+
+        if (code != null && !code.isBlank() && !hasLicense(code)) {
+            licenses.add(code);
+        }
+    }
+
+    /**
+     * Comprueba si el arqueólogo tiene una licencia regional.
+     * @param code Código de la región.
+     * @return true si posee la licencia; false si no la posee o el código es null.
+     */
+    public boolean hasLicense(String code) {
+        return code != null && licenses.contains(code);
     }
 
     /**
@@ -451,6 +463,19 @@ public class Archeologist {
      */
     public void setSpecialization(String code) { 
         specialization = code; 
+    }
+
+    /**
+     * Comprueba si la especialización está activa para una región.
+     * @param regionCode Código de la región donde se realiza la excavación.
+     * @return true si está al nivel máximo y especializado en esa región.
+     */
+    public boolean isSpecializedIn(String regionCode) {
+        
+        return level == Archeologist.MAX_LEVEL
+            && regionCode != null
+            && !regionCode.isBlank()
+            && regionCode.equals(specialization);
     }
     
     /**    
