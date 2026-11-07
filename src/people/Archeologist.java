@@ -157,22 +157,23 @@ public class Archeologist {
     }
 
     /**
-     * Comprueba la cantidad total de acciones extra del arqueólogo,
-     * a partir de su lista de habilidades. Una vez alcanzado el nivel 5
-     * la experiencia obtenida aumenta los bonos, en este caso acciones,
+     * Comprueba la cantidad total de acciones extra aplicables a una región.
+     * Suma los bonos de las habilidades y añade una acción por cada
+     * 25 XP cuando la especialización está activa para esa región.
      * aumenta 1 cada 25 de experiencia.
+     * @param regionCode Código de la región donde se excava.
      * @return Cantidad total de acciones extra del arqueólogo.
      */
-    public int getTotalExtraActions(){
+    public int getTotalExtraActions(String regionCode){
 
         int total=0;
 
         for (Skill s : skills) {
-            total+=s.getExtraActions(); 
+            total += s.getExtraActions(); 
         }
 
-        if (level==Archeologist.MAX_LEVEL) {
-            total+=(xp/25); 
+        if (isSpecializedIn(regionCode)) {
+            total += xp/25; 
         }
 
         return total; 
@@ -197,11 +198,11 @@ public class Archeologist {
     /**
      * Calcula la cantidad de tesoros aleatorios extra que pueden aparecer 
      * a la hora de excavar, a partir de la lista de habilidades.
-     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
-     * en este caso la aparición de tesoros aleatorios, aumenta 1 cada 50 de experiencia.
+     * El extra de experiencia requiere de especialización activa sobre la región.
+     * @param regionCode Código de la región donde se excava.
      * @return Cantidad de tesoros aleatorios extra que podrán aparecer en la cuadrícula de excavación.
      */
-    public int getTotalRandomTreasures(){
+    public int getTotalRandomTreasures(String regionCode){
 
          int total=0;
 
@@ -209,7 +210,7 @@ public class Archeologist {
             total+=s.getExtraRandomTreasures(); 
         }
 
-        if (level==Archeologist.MAX_LEVEL) {
+        if (isSpecializedIn(regionCode)) {
             total+=(xp/50); 
         }
 
@@ -219,11 +220,11 @@ public class Archeologist {
     /**
      * Calcula la cantidad de tesoros comunes extra que pueden aparecer 
      * a la hora de excavar, a partir de la lista de habilidades.
-     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
-     * en este caso la aparición de tesoros comunes, aumenta 1 cada 50 de experiencia.
+     * El extra de experiencia requiere de especialización activa sobre la región.
+     * @param regionCode Código de la región donde se excava.
      * @return Cantidad de tesoros comunes extra que podrán aparecer en la cuadrícula de excavación.
      */
-    public int getTotalCommonTreasures(){
+    public int getTotalCommonTreasures(String regionCode){
 
          int total=0;
 
@@ -231,7 +232,7 @@ public class Archeologist {
             total+=s.getExtraCommonTreasures(); 
         }
 
-        if (level==Archeologist.MAX_LEVEL) {
+        if (isSpecializedIn(regionCode)) {
             total+=(xp/50); 
         }
 
@@ -241,11 +242,11 @@ public class Archeologist {
     /**
      * Calcula la cantidad de tesoros infrecuentes extra que pueden aparecer 
      * a la hora de excavar, a partir de la lista de habilidades.
-     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
-     * en este caso la aparición de tesoros infrecuentes, aumenta 1 cada 100 de experiencia.
+     * El extra de experiencia requiere de especialización activa sobre la región.
+     * @param regionCode Código de la región donde se excava.
      * @return Cantidad de tesoros infrecuentes extra que podrán aparecer en la cuadrícula de excavación.
      */
-    public int getTotalUncommonTreasures(){
+    public int getTotalUncommonTreasures(String regionCode){
 
          int total=0;
 
@@ -253,7 +254,7 @@ public class Archeologist {
             total+=s.getExtraUncommonTreasures(); 
         }
 
-        if (level==Archeologist.MAX_LEVEL) {
+        if (isSpecializedIn(regionCode)) {
             total+=(xp/100); 
         }
 
@@ -263,11 +264,11 @@ public class Archeologist {
     /**
      * Calcula la cantidad de tesoros raros extra que pueden aparecer 
      * a la hora de excavar, a partir de la lista de habilidades.
-     * Una vez alcanzado el nivel 5, la experiencia obtenida aumenta los bonos, 
-     * en este caso la aparición de tesoros raros, aumenta 1 cada 200 de experiencia.
+     * El extra de experiencia requiere de especialización activa sobre la región.
+     * @param regionCode Código de la región donde se excava.
      * @return Cantidad de tesoros raros extra que podrán aparecer en la cuadrícula de excavación.
      */
-    public int getTotalRareTreasures(){
+    public int getTotalRareTreasures(String regionCode){
 
          int total=0;
 
@@ -275,7 +276,7 @@ public class Archeologist {
             total+=s.getExtraRareTreasures(); 
         }
 
-        if (level==Archeologist.MAX_LEVEL) {
+        if (isSpecializedIn(regionCode)) {
             total+=(xp/200); 
         }
 
