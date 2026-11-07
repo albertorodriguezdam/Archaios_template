@@ -195,6 +195,25 @@ public abstract class Skill {
     }
 
     /**
+     * Obtiene el coste de excavación aplicable a un terreno.
+     * @param terrainSymbol Símbolo del terreno que se va a excavar.
+     * @param baseCost Coste positivo calculado por el motor de excavación.
+     * @return Coste base, salvo que una subclase aplique una modificación.
+     */
+    public int getExcavationCost(char terrainSymbol, int baseCost) {
+        return baseCost;
+    }
+
+    /**
+     * Obtiene cuántas casillas de un terreno convierte a tierra.
+     * @param terrainSymbol Símbolo del terreno que se quiere transformar.
+     * @return Número de conversiones aportadas por la habilidad; 0 por defecto.
+     */
+    public int getTerrainConversions(char terrainSymbol) {
+        return 0;
+    }
+
+    /**
      * @return Cantidad de celdas con interrogación que te indican una pista.
      */
     public int getScanHints(){

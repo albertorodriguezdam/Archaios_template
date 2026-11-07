@@ -160,7 +160,6 @@ public class Archeologist {
      * Comprueba la cantidad total de acciones extra aplicables a una región.
      * Suma los bonos de las habilidades y añade una acción por cada
      * 25 XP cuando la especialización está activa para esa región.
-     * aumenta 1 cada 25 de experiencia.
      * @param regionCode Código de la región donde se excava.
      * @return Cantidad total de acciones extra del arqueólogo.
      */
@@ -365,6 +364,48 @@ public class Archeologist {
         return false;
     }
 
+    /**
+     * Calcula el coste de excavar un terreno aplicando las habilidades.
+     * @param terrainSymbol Símbolo del terreno que se va a excavar.
+     * @param baseCost Coste positivo calculado por el motor de excavación.
+     * @return Menor coste entre el base y los ofrecidos por las habilidades.
+     * @throws IllegalArgumentException si el coste base no es positivo.
+     */
+    public int getExcavationCost(char terrainSymbol, int baseCost) {
+
+        if (baseCost <= 0) {
+            throw new IllegalArgumentException(
+                "El coste base debe ser mayor que cero."
+            );
+        }
+
+        int cost = baseCost;
+
+        for (Skill skill : skills) {
+            cost = Math.min(
+                cost,
+                skill.getExcavationCost(terrainSymbol, baseCost)
+            );
+        }
+
+        return cost;
+    }
+
+    /**
+     * Suma las conversiones a tierra aportadas por las habilidades.
+     * @param terrainSymbol Símbolo del terreno que se quiere transformar.
+     * @return Número total de casillas que se pueden convertir a tierra.
+     */
+    public int getTerrainConversions(char terrainSymbol) {
+        
+        int total = 0;
+
+        for (Skill skill : skills) {
+            total += skill.getTerrainConversions(terrainSymbol);
+        }
+
+        return total;
+    }
 
     /**
      * Obtención del nombre del arqueólogo.
