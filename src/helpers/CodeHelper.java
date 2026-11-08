@@ -14,7 +14,7 @@ public class CodeHelper {
 	 */
 	public static String getRegion(String code)
 	{
-		if(code.length() > 3)
+		if(code != null && code.length() >= 3)
 		{
 			return code.substring(0, 3);
 		}else{
@@ -29,7 +29,7 @@ public class CodeHelper {
 	 */
 	public static String getType(String code)
 	{
-		if(code.length() >= 7)
+		if(code != null && code.length() >= 7)
 		{
 			return code.substring(4, 7);
 		}else{
@@ -44,7 +44,7 @@ public class CodeHelper {
 	 */
 	public static String getTreasureNumber(String code)
 	{
-		if(code.length() >= 11)
+		if(code != null && code.length() >= 11)
 		{
 			return code.substring(8, 11);
 		}else{
@@ -59,7 +59,7 @@ public class CodeHelper {
 	 */
 	public static String getTreasurePart(String code)
 	{
-		if(code.length() == 14)
+		if(code != null && code.length() >= 16)
 		{
 			return code.substring(12, 16);
 		}else{
@@ -74,7 +74,7 @@ public class CodeHelper {
 	 */
 	public static String getFullTreasure(String code)
 	{
-		if(code.length() >= 9)
+		if(code != null && code.length() >= 11)
 		{
 			return code.substring(0, 11);
 		}else{

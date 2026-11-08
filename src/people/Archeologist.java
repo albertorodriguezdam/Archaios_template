@@ -45,6 +45,40 @@ public class Archeologist {
     }
 
     /**
+     * Reconstruye la progresión de un arqueólogo desde datos guardados.
+     * @param name Nombre del arqueólogo.
+     * @param level Nivel del arqueólogo.
+     * @param xp Experiencia del arqueólogo.
+     * @throws IllegalArgumentException si el nivel o la experiencia no representan una progresión válida.
+     */
+    public Archeologist(String name, int level, int xp){
+        this(name);
+
+        if (level < 0 || level > Archeologist.MAX_LEVEL) {
+        throw new IllegalArgumentException(
+            "El nivel guardado está fuera del intervalo permitido."
+        );
+        }
+
+        if (xp < 0) {
+            throw new IllegalArgumentException(
+                "La experiencia guardada no puede ser negativa."
+            );
+        }
+
+        this.level = level;
+
+        if (level < Archeologist.MAX_LEVEL && xp >= getXpToNextLevel()) {
+            throw new IllegalArgumentException(
+                "La experiencia guardada supera el progreso permitido para el nivel."
+            );
+        }
+
+        this.xp = xp;
+        updateTerrainByLevel();
+    }
+
+    /**
      * Método de obtención de la cantidad de experiencia total,
      * para subir al siguiente nivel. En el caso de que el arqueólogo alacance el nivel máximo devolverá 0.
      * @return Cantidad de xp total para subir de nivel, si es nivel máximo devuelve 0; 
@@ -154,6 +188,110 @@ public class Archeologist {
         } else {
             return false; 
         }
+    }
+
+    /**
+     * Sustituye las habilidades por las recuperadas de una partida.
+     * Reconstruye los formatos de terreno a partir de esas habilidades.
+     * @param savedSkills Instancias del catálogo previamente resueltas.
+     * @throws IllegalArgumentException si hay habilidades nulas, repetidas,
+     *         incompatibles o con dependencias ausentes.
+     */
+    public void restoreSkills(List<Skill> savedSkills) {
+        if (savedSkills == null) {
+            throw new IllegalArgumentException(
+                "La lista de habilidades guardadas no puede ser null."
+            );
+        }
+
+        List<Skill> restoredSkills = new ArrayList<>();
+
+        for (Skill skill : savedSkills) {
+            if (skill == null || restoredSkills.contains(skill)) {
+                throw new IllegalArgumentException(
+                    "Hay habilidades guardadas nulas o repetidas."
+                );
+            }
+
+            restoredSkills.add(skill);
+        }
+
+        List<String> restoredFormats = new ArrayList<>();
+        restoredFormats.add("Cuadrado");
+
+        for (Skill skill : restoredSkills) {
+            if (!restoredSkills.containsAll(skill.getDependencies())) {
+                throw new IllegalArgumentException(
+                    "Faltan dependencias de la habilidad: " + skill.getName()
+                );
+            }
+
+            for (Skill other : restoredSkills) {
+                if (skill.getIncompatibilities().contains(other)) {
+                    throw new IllegalArgumentException(
+                        "Hay habilidades incompatibles: "
+                            + skill.getName() + " y " + other.getName()
+                    );
+                }
+            }
+
+            for (String format : skill.getTerrains()) {
+                if (!restoredFormats.contains(format)) {
+                    restoredFormats.add(format);
+                }
+            }
+        }
+
+        skills.clear();
+        skills.addAll(restoredSkills);
+
+        terrainsFormats.clear();
+        terrainsFormats.addAll(restoredFormats);
+    }
+
+    /**
+     * Recupera las licencias regionales y la especialización de una partida.
+     * Valida los datos antes de sustituir el estado actual.
+     * @param savedLicenses Códigos de las licencias guardadas.
+     * @param savedSpecialization Código de especialización; vacío si no tiene.
+     * @throws IllegalArgumentException si los datos son nulos, hay licencias vacías o repetidas, o la especialización no corresponde al nivel.
+     */
+    public void restoreRegionalData(List<String> savedLicenses, String savedSpecialization) {
+
+        if (savedLicenses == null || savedSpecialization == null) {
+            throw new IllegalArgumentException(
+                "Los datos regionales guardados no pueden ser null."
+            );
+        }
+
+        if (!savedSpecialization.isEmpty() && savedSpecialization.isBlank()) {
+            throw new IllegalArgumentException(
+                "El código de especialización no puede contener solo espacios."
+            );
+        }
+
+        if (!savedSpecialization.isEmpty() && level < Archeologist.MAX_LEVEL) {
+            throw new IllegalArgumentException(
+                "Un arqueólogo por debajo del nivel máximo no puede estar especializado."
+            );
+        }
+
+        List<String> restoredLicenses = new ArrayList<>();
+
+        for (String code : savedLicenses) {
+
+            if (code == null || code.isBlank() || restoredLicenses.contains(code)) {
+                throw new IllegalArgumentException(
+                    "Hay licencias guardadas nulas, vacías o repetidas."
+                );
+            }
+
+            restoredLicenses.add(code);
+        }
+
+        licenses.clear();
+        licenses.addAll(restoredLicenses);
+        specialization = savedSpecialization;
     }
 
     /**
