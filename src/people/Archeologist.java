@@ -31,9 +31,7 @@ public class Archeologist {
     private String specialization = "";
 
     /**
-     * Constructor base de la clase Arqueólogo, que inicializa el nivel y experiencia a 0,
-     * las tres colecciones a ArrayList y añade el único terreno disponible al instanciar
-     * un nuevo arqueólogo: "pequeño" y en formato "cuadrado".
+     * Crea un arqueólogo de nivel 0, sin experiencia, con acceso a terrenos pequeños y formato cuadrado.
      * @param name Nombre del arqueólogo.
      */
     public Archeologist(String name) {
@@ -55,23 +53,17 @@ public class Archeologist {
         this(name);
 
         if (level < 0 || level > Archeologist.MAX_LEVEL) {
-        throw new IllegalArgumentException(
-            "El nivel guardado está fuera del intervalo permitido."
-        );
+        throw new IllegalArgumentException("El nivel guardado está fuera del intervalo permitido.");
         }
 
         if (xp < 0) {
-            throw new IllegalArgumentException(
-                "La experiencia guardada no puede ser negativa."
-            );
+            throw new IllegalArgumentException("La experiencia guardada no puede ser negativa.");
         }
 
         this.level = level;
 
         if (level < Archeologist.MAX_LEVEL && xp >= getXpToNextLevel()) {
-            throw new IllegalArgumentException(
-                "La experiencia guardada supera el progreso permitido para el nivel."
-            );
+            throw new IllegalArgumentException("La experiencia guardada supera el progreso permitido para el nivel.");
         }
 
         this.xp = xp;
