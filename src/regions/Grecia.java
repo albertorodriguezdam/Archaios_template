@@ -1,5 +1,7 @@
 package regions;
 
+import java.util.List;
+
 import treasures.ETreasureRarity;
 import treasures.ETreasureType;
 import treasures.Treasure;
@@ -16,6 +18,16 @@ public class Grecia extends Region {
     public Grecia() {
         super();
         loadTreasures();
+    }
+
+    /**
+     * Crea la región de Grecia con su catálogo de tesoros ya cargado.
+     *
+     * @param treasures Tesoros que se incorporan al catálogo de Grecia.
+     */
+    public Grecia(List<Treasure> treasures) {
+        super();
+        this.treasureList.addAll(treasures);
     }
 
     /**

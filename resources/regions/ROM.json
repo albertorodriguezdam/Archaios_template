@@ -1,0 +1,236 @@
+[
+    {
+        "code": "ROM_MON_001",
+        "name": "As",
+        "description": "La moneda de la Antigua Roma de menor valor. Hecha de cobre.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "ROM_MON_002",
+        "name": "Dupondio",
+        "description": "Moneda de bronce de poco valor.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "ROM_MON_003",
+        "name": "Sestercio",
+        "description": "Moneda de bronce que se utilizaba como medida est\u00e1ndar para medir valores.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "ROM_MON_004",
+        "name": "Denario",
+        "description": "Moneda de plata de gran valor que equivale a diez ases.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "ROM_MON_005",
+        "name": "\u00c1ureo",
+        "description": "Moneda de oro de gran valor equivalente a veinticinco denarios.",
+        "rarity": "I",
+        "parts": 1,
+        "points": 2,
+        "type": "MON"
+    },
+    {
+        "code": "ROM_CUE_001",
+        "name": "Cuenta de n\u00e1car",
+        "description": "Perlas y conchas perforadas utilizadas para confeccionar collares y pulseras.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "ROM_CUE_002",
+        "name": "Cuenta de gema",
+        "description": "Piedras semipreciosas talladas para confeccionar adornos, pulseras y collares.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "ROM_CUE_003",
+        "name": "Cuenta de metal precioso",
+        "description": "Peque\u00f1as piezas de oro, plata o bronce para confeccionar collares y pulseras.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "ROM_JOY_001",
+        "name": "Pulseras de esferas",
+        "description": "Juego de pulseras de oro formadas por pares de semiesferas en fila.",
+        "rarity": "I",
+        "parts": 4,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "ROM_JOY_002",
+        "name": "Brazalete de serpiente",
+        "description": "Brazalete con forma de serpiente enroscada.",
+        "rarity": "I",
+        "parts": 5,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "ROM_JOY_003",
+        "name": "Ce\u00f1idor",
+        "description": "Cadena decorada que se pon\u00eda sobre la ropa para ajustarla al pecho.",
+        "rarity": "R",
+        "parts": 6,
+        "points": 5,
+        "type": "JOY"
+    },
+    {
+        "code": "ROM_JOY_004",
+        "name": "F\u00edbula de ballesta",
+        "description": "Hebilla para sujetar la ropa con forma de ballesta.",
+        "rarity": "I",
+        "parts": 4,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "ROM_JOY_005",
+        "name": "L\u00fanula",
+        "description": "Colgante con forma de luna que llevaban las mujeres hasta el d\u00eda de su boda.",
+        "rarity": "I",
+        "parts": 5,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "ROM_CER_001",
+        "name": "Jarra en terra sigillata",
+        "description": "Jarra creada mediante terra sigillata, cer\u00e1mica estampada en un molde para decorarla.",
+        "rarity": "C",
+        "parts": 20,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "ROM_CER_002",
+        "name": "Vaso en terra sigilliata",
+        "description": "Vaso creado mediante terra sigillata, cer\u00e1mica estampada en un molde para decorarla.",
+        "rarity": "C",
+        "parts": 12,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "ROM_CER_003",
+        "name": "Rit\u00f3n",
+        "description": "Vaso con un agujero para realizar libaciones rituales.",
+        "rarity": "R",
+        "parts": 10,
+        "points": 5,
+        "type": "CER"
+    },
+    {
+        "code": "ROM_CER_004",
+        "name": "Lucerna",
+        "description": "Peque\u00f1a l\u00e1mpara de aceite confeccionada en masa durante el Imperio.",
+        "rarity": "C",
+        "parts": 5,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "ROM_CER_005",
+        "name": "\u00c1nfora vinaria",
+        "description": "\u00c1nfora romana para el transporte del vino.",
+        "rarity": "C",
+        "parts": 22,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "ROM_EQP_001",
+        "name": "Gladius",
+        "description": "Espada emblem\u00e1tica de las legiones romanas basada en la utilizada por los celt\u00edberos.",
+        "rarity": "I",
+        "parts": 18,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_EQP_002",
+        "name": "Pilum",
+        "description": "Lanza de madera y hierro que formaba parte del equipo b\u00e1sico del legionario.",
+        "rarity": "I",
+        "parts": 11,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_EQP_003",
+        "name": "Lorica Hamata",
+        "description": "Cota de malla usada por las legiones desde la Rep\u00fablica hasta el Imperio.",
+        "rarity": "I",
+        "parts": 37,
+        "points": 4,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_EQP_004",
+        "name": "Lorica Squamata",
+        "description": "Armadura de escamas utilizada durante la Rep\u00fablica por las legiones.",
+        "rarity": "R",
+        "parts": 21,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_EQP_005",
+        "name": "Lorica Segmentata",
+        "description": "Armadura de placas de gran protecci\u00f3n utilizada por las legiones durante el Imperio. Hecha de hierro y acero.",
+        "rarity": "I",
+        "parts": 34,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_EQP_006",
+        "name": "Scutum",
+        "description": "Escudo rectangular de grandes dimensiones caracter\u00edstico de las legiones.",
+        "rarity": "I",
+        "parts": 54,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_EQP_007",
+        "name": "G\u00e1lea",
+        "description": "Casco utilizado por los legionarios durante el Imperio.",
+        "rarity": "I",
+        "parts": 13,
+        "points": 4,
+        "type": "EQP"
+    },
+    {
+        "code": "ROM_TES_001",
+        "name": "Mosaico geom\u00e9trico",
+        "description": "Mosaico de estilo geom\u00e9trico con diversos patrones y formas. Inspirado en los de Carmona.",
+        "rarity": "C",
+        "parts": 625,
+        "points": 1,
+        "type": "TES"
+    }
+]
