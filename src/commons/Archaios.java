@@ -26,8 +26,6 @@ import treasures.Treasure;
 public class Archaios {
     /**Arqueólogos disponibles en esta partida. */
     private List<Archeologist> archeologists = new ArrayList<>();
-    /**Regiones que se han cargado para los menús y las excavaciones. */ 
-    private List<Region> regions = new ArrayList<>();
     /**Contadores de visitas y de tesoros encontrados. */ 
     private Stats stats = new Stats();
     /**Puntos disponibles para contratar arqueólogos y comprar licencias. */ 
@@ -38,15 +36,9 @@ public class Archaios {
     /**
      * Prepara los catálogos antes de arrancar la partida.
      */
-    private void preInit() {
+    private static void preInit() {
         SkillRepository.register();
-
-        regions.add(new Grecia());
-        regions.sort(java.util.Comparator.comparing(Region::getCode));
-
-        for (Region region : regions) {
-            RegionRepository.registerRegion(region);
-        }
+        RegionRepository.registerRegion(new Grecia());
     }
 
     /**
@@ -54,9 +46,8 @@ public class Archaios {
      * @param args Argumentos de ejecución. Si el primero es {@code --pruebas}, carga arqueólogos, estadísticas y puntos de ejemplo.
      */
     public static void main(String[] args) {
-
+        Archaios.preInit();
         Archaios game = new Archaios();
-        game.preInit();
 
         if (args.length > 0 && "--pruebas".equals(args[0])) {
             game.archeologists = DatosPrueba.createArcheologists();
@@ -100,10 +91,10 @@ public class Archaios {
                     buyLicenses();
                     break;
                 case 4:
-                    new Atlas(regions).show();
+                    new Atlas().show();
                     break;
                 case 5:
-                    new Atlas(regions).showCatalog();
+                    new Atlas().showCatalog();
                     break;
                 case 6:
                     excavateMenu();
@@ -227,7 +218,7 @@ public class Archaios {
             if (selected == null) return;
             List<Region> available = new ArrayList<>();
             List<String> owned = selected.getLicenses();
-            for (Region region : regions) {
+            for (Region region : RegionRepository.getRegionsByCode()) {
                 
                 if (!List.of("EGP", "PTR", "SUM").contains(region.getCode()) || owned.contains(region.getCode())) available.add(region);
             }
@@ -349,7 +340,8 @@ public class Archaios {
             if (!selected.getLicenses().isEmpty()) {
                 System.out.println("Licencias:");
                 for (String code : selected.getLicenses()) {
-                    System.out.println(" -" + RegionRepository.getRegion(code).getClass().getSimpleName());
+                    Region region = RegionRepository.getRegion(code);
+                    System.out.println(" -" + (region == null ? code : region.getClass().getSimpleName()));
                 }
             }
             if (!selected.getSkills().isEmpty()) {
@@ -437,7 +429,7 @@ public class Archaios {
             if (selected == null) return;
             List<String> owned = selected.getLicenses();
             List<Region> available = new ArrayList<>();
-            for (Region region : regions) {
+            for (Region region : RegionRepository.getRegionsByCode()) {
                 
                 if (List.of("EGP", "PTR", "SUM").contains(region.getCode()) && !owned.contains(region.getCode())) available.add(region);
             }
@@ -510,6 +502,7 @@ public class Archaios {
         if (levelsGained > 0 && selected.getLevel() == selected.getMAX_LEVEL()) {
             MenuHelper.subHeader("Especialización");
             System.out.println("El arqueólogo " + selected.getName() + " ha llegado al nivel máximo y se especializa en una región.");
+            List<Region> regions = RegionRepository.getRegionsByCode();
             for (int i = 0; i < regions.size(); i++) {
                 System.out.println((i + 1) + ".- " + regions.get(i).getClass().getSimpleName());
             }
@@ -560,22 +553,16 @@ public class Archaios {
 
 
     /**
-     * Genera el texto de la región de especialización utilizando el formato del programa de referencia.
+     * Obtiene el nombre que se muestra para la región de especialización.
      * @param code Código de la región de especialización.
-     * @return Representación textual de la región o la cadena {@code "null"}
-     *         si la región no está registrada.
+     * @return Nombre de la región o su código si todavía no está registrada.
      */
     private String specializationReference(String code) {
-        Region region = RegionRepository.getRegion(code);
-        if (region == null) return "null";
-        String type;
-        switch (code) {
-            case "GRC": type = "Greece"; break;
-            
-            default: return region.toString();
+        if (code == null || code.isBlank()) {
+            return "Sin especialización";
         }
-        
-        return "regions.places." + type + "@" + Integer.toHexString(System.identityHashCode(region));
+        Region region = RegionRepository.getRegion(code);
+        return region == null ? code : region.getClass().getSimpleName();
     }
 
 }

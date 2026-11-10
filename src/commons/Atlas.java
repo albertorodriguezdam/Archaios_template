@@ -1,5 +1,6 @@
 package commons;
 
+import commons.repositories.RegionRepository;
 import helpers.InputValidator;
 import helpers.MenuHelper;
 import java.util.ArrayList;
@@ -14,25 +15,13 @@ import treasures.Treasure;
  * @author Constantin Laurentiu.
  */
 public class Atlas {
-    private List<Region> regions;
-
-    /**
-     * Constructor básico de Atlas.
-     * @param regions Lista de regiones.
-     */
-    public Atlas(List<Region> regions) {
-        this.regions = new ArrayList<>(regions);
-        this.regions.sort(java.util.Comparator.comparing(Region::getCode));
-    }
-
     /**
      * Consulta una región del Atlas y permite elegir otra al terminar.
      */
     public void show() {
         while (true) {
-            int option = chooseRegion("Atlas", "Consultar región: ");
-            if (option == 0) return;
-            Region region = regions.get(option - 1);
+            Region region = chooseRegion("Atlas", "Consultar región: ");
+            if (region == null) return;
             MenuHelper.subHeader(region.getClass().getSimpleName());
             if (List.of("EGP", "PTR", "SUM").contains(region.getCode())) System.out.println("Región difícil. " + "Imperio de las arenas");
             for (Treasure treasure : getTreasures(region)) {
@@ -47,9 +36,8 @@ public class Atlas {
      */
     public void showCatalog() {
         while (true) {
-            int option = chooseRegion("Catálogo de tesoros", "Consultar tesoros de la región: ");
-            if (option == 0) return;
-            Region region = regions.get(option - 1);
+            Region region = chooseRegion("Catálogo de tesoros", "Consultar tesoros de la región: ");
+            if (region == null) return;
             List<Treasure> treasures = getTreasures(region);
             if (treasures.isEmpty()) {
                 System.out.println("No hay tesoros en esta región.");
@@ -76,15 +64,17 @@ public class Atlas {
      * Muestra las regiones disponibles y solicita una opción al usuario.
      * @param title Título de la pantalla.
      * @param question Mensaje para solicitar la selección.
-     * @return Número de la región seleccionada, comenzando en 1; 0 para volver.
+     * @return Región seleccionada o null si el usuario elige volver.
      */
-    private int chooseRegion(String title, String question) {
+    private Region chooseRegion(String title, String question) {
+        List<Region> regions = RegionRepository.getRegionsByCode();
         MenuHelper.header(title);
         for (int i = 0; i < regions.size(); i++) {
             System.out.println((i + 1) + ".- " + regions.get(i).getClass().getSimpleName());
         }
         System.out.println("0.- Volver");
-        return InputValidator.inputOptionQuest(0, regions.size(), question);
+        int option = InputValidator.inputOptionQuest(0, regions.size(), question);
+        return option == 0 ? null : regions.get(option - 1);
     }
 
     /**
