@@ -1,6 +1,9 @@
 package commons.repositories;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import regions.Region;
@@ -39,5 +42,14 @@ public class RegionRepository {
     public static Region getRegion(String code) {
 
         return RegionRepository.regions.get(code);
+    }
+
+    /**
+     * @return Copia de las regiones registradas, ordenadas por código.
+     */
+    public static List<Region> getRegionsByCode() {
+        List<Region> regions = new ArrayList<>(RegionRepository.regions.values());
+        regions.sort(Comparator.comparing(Region::getCode));
+        return regions;
     }
 }
