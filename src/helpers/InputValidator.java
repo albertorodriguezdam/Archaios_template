@@ -8,10 +8,12 @@ import java.util.Scanner;
  * Componente encargado de ser un único lector para menús, nombres y coordenadas.
  * @author Constantin Laurentiu
  */
-public class InputValidator {
+public final class InputValidator {
     
     /**Sistema único utilizado como lector de datos de entrada. */
     private static final Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
+
+    private InputValidator() { }
 
     /**
      * Solicita una línea de texto mediante la consola nativa o,
@@ -38,7 +40,7 @@ public class InputValidator {
     public static int inputOptionQuest(int min, int max, String message, String error) {
         while (true) {
             try {
-                int option = Integer.parseInt(readLine(message));
+                int option = Integer.parseInt(InputValidator.readLine(message));
                 if (option >= min && option <= max) return option;
             
             } catch (NumberFormatException e) {
@@ -57,7 +59,7 @@ public class InputValidator {
      * @return Opción válida comprendida entre min y max.
      */
     public static int inputOptionQuest(int min, int max, String message) {
-        return inputOptionQuest(min, max, message,
+        return InputValidator.inputOptionQuest(min, max, message,
             "Introduce un valor entre " + min + " y " + max + ".");
     }
 
@@ -68,7 +70,7 @@ public class InputValidator {
      * @return Opción válida del menú principal; 0 para salir.
      */
     public static int inputMenu(String message, String error) {
-        return inputOptionQuest(0, 7, message, error);
+        return InputValidator.inputOptionQuest(0, 7, message, error);
     }
 
     /**
@@ -77,7 +79,7 @@ public class InputValidator {
      * @return Texto introducido por el usuario, sin validar ni modificar.
      */
     public static String inputExtra(String message) {
-        return readLine(message);
+        return InputValidator.readLine(message);
     }
 
     /**
@@ -87,7 +89,7 @@ public class InputValidator {
      * @return Texto introducido con las coordenadas.
      */
     public static String inputDigPosition(String message, String error) {
-        return readLine(message);
+        return InputValidator.readLine(message);
     }
 
    /**
@@ -98,6 +100,6 @@ public class InputValidator {
      */
     public static char[] readPassword(String message) {
         if (System.console() != null) return System.console().readPassword(message);
-        return readLine(message).toCharArray();
+        return InputValidator.readLine(message).toCharArray();
     }
 }

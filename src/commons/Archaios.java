@@ -33,6 +33,8 @@ public class Archaios {
     /**Generador que se usa para los sorteos del menú. */ 
     private final Random random = new Random();
 
+    private Archaios() { }
+
     /**
      * Prepara los catálogos antes de arrancar la partida.
      */
@@ -62,7 +64,7 @@ public class Archaios {
     /**
      * Muestra el menú principal y ejecuta las opciones seleccionadas hasta que el usuario elige salir.
      */
-    public void menu() {
+    private void menu() {
         int option;
 
         do {
@@ -324,12 +326,12 @@ public class Archaios {
             if (selected == null) return;
             MenuHelper.subHeader(selected.getName());
             System.out.println("Nivel: " + selected.getLevel());
-            if (selected.getLevel() == selected.getMAX_LEVEL()) {
+            if (selected.getLevel() == Archeologist.MAX_LEVEL) {
                 System.out.println("Especialización: " + specializationReference(selected.getSpecialization()));
             }
             String experience = Integer.toString(selected.getXp());
             
-            if (selected.getLevel() < selected.getMAX_LEVEL()) {
+            if (selected.getLevel() < Archeologist.MAX_LEVEL) {
                 experience += "/" + selected.getXpToNextLevel();
             }
             System.out.println("Exp: " + experience);
@@ -499,7 +501,7 @@ public class Archaios {
             int level = selected.getLevel() - levelsGained + i + 1;
             chooseLevelSkill(selected, level);
         }
-        if (levelsGained > 0 && selected.getLevel() == selected.getMAX_LEVEL()) {
+        if (levelsGained > 0 && selected.getLevel() == Archeologist.MAX_LEVEL) {
             MenuHelper.subHeader("Especialización");
             System.out.println("El arqueólogo " + selected.getName() + " ha llegado al nivel máximo y se especializa en una región.");
             List<Region> regions = RegionRepository.getRegionsByCode();

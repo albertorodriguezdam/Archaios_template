@@ -25,7 +25,7 @@ public class Atlas {
             MenuHelper.subHeader(region.getClass().getSimpleName());
             if (List.of("EGP", "PTR", "SUM").contains(region.getCode())) System.out.println("Región difícil. " + "Imperio de las arenas");
             for (Treasure treasure : getTreasures(region)) {
-                System.out.println("-" + treasure.getTxt() + " - " + typeAndRarity(treasure));
+                System.out.println("-" + treasure.getTxt() + " - " + Atlas.typeAndRarity(treasure));
             }
             if (MenuHelper.returnMenu("Consultar otra región") == 0) return;
         }
@@ -52,7 +52,8 @@ public class Atlas {
                 int number = InputValidator.inputOptionQuest(0, treasures.size(), "Consultar tesoro: ");
                 
                 if (number == 0) break;
-                showTreasure(treasures.get(number - 1), treasures.get(number - 1).getCode());
+                Treasure selected = treasures.get(number - 1);
+                Atlas.showTreasure(selected, selected.getCode());
                 
                 if (MenuHelper.returnMenu("Consultar otro tesoro") == 0) return;
             }
@@ -114,7 +115,7 @@ public class Atlas {
      */
     public static String typeAndRarity(Treasure treasure) {
         String rarity = treasure.getRarity().toString();
-        if (treasure.getRarity() == ETreasureRarity.RARE && isFeminine(treasure)) rarity = "rara";
+        if (treasure.getRarity() == ETreasureRarity.RARE && Atlas.isFeminine(treasure)) rarity = "rara";
         return treasure.getType() + " " + rarity;
     }
 
@@ -126,15 +127,15 @@ public class Atlas {
      * @param treasure Tesoro cuya ficha se muestra.
      * @param code Código que se mostrará, base del tesoro o completo de una pieza.
      */
-    public static void showTreasure(Treasure treasure, String code) {
+    private static void showTreasure(Treasure treasure, String code) {
         MenuHelper.subHeader(treasure.getTxt());
         System.out.println(treasure.getDescription());
         System.out.println("Código: " + code);
-        String info = typeAndRarity(treasure);
+        String info = Atlas.typeAndRarity(treasure);
         info = Character.toUpperCase(info.charAt(0)) + info.substring(1);
         
         if (treasure.getParts() > 1) {
-            info += (isFeminine(treasure) ? " dividida" : " dividido") + " en " + treasure.getParts() + " partes";
+            info += (Atlas.isFeminine(treasure) ? " dividida" : " dividido") + " en " + treasure.getParts() + " partes";
         }
         System.out.println(info);
     }

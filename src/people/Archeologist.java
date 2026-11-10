@@ -12,7 +12,7 @@ import skills.Skill;
 public class Archeologist {
 
     /**Constante para el nivel máximo del arqueólogo */
-    private static final int MAX_LEVEL=5; 
+    public static final int MAX_LEVEL = 5;
     /**Nombre del arqueólogo. */
     private String name; 
     /**Nivel del arqueólogo. */
@@ -583,14 +583,6 @@ public class Archeologist {
      */
     public List<String> getTerrainsFormats() {
         return Collections.unmodifiableList(terrainsFormats);
-    }
-
-    /**
-     *Obtención del nivel máximo al que puede llegar el arqueólogo.
-     * @return Nivel máximo del arqueólogo.
-     */
-    public int getMAX_LEVEL(){
-        return Archeologist.MAX_LEVEL;
     }
 
     /**
