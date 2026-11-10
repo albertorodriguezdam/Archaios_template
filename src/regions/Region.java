@@ -21,6 +21,16 @@ public abstract class Region {
     }
 
     /**
+     * Inicializa la región con un catálogo de tesoros ya cargado.
+     *
+     * @param treasures Los tesoros que se incorporan al catálogo de la región.
+     */
+    protected Region(List<Treasure> treasures) {
+        this();
+        this.treasureList.addAll(treasures);
+    }
+
+    /**
      * @return Devuelve el código identificativo de la región
      */
     public abstract String getCode();
