@@ -1,0 +1,317 @@
+[
+    {
+        "code": "EGP_MON_001",
+        "name": "Deben de cobre",
+        "description": "Pieza de cobre con un peso estandarizado para el trueque.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "EGP_MON_002",
+        "name": "Deben de plata",
+        "description": "Pieza de plata con un peso estandarizado para el trueque.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "EGP_CUE_001",
+        "name": "Cuenta de lapisl\u00e1zuli",
+        "description": "Lapisl\u00e1zuli tallado como cuenta para un collar o decoraci\u00f3n.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "EGP_JOY_001",
+        "name": "Anj",
+        "description": "S\u00edmbolo de la vida ampliamente utilizado como talism\u00e1n protector.",
+        "rarity": "I",
+        "parts": 2,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_JOY_002",
+        "name": "Pluma de Ma'at",
+        "description": "S\u00edmbolo protector de la verdad y la justicia.",
+        "rarity": "R",
+        "parts": 3,
+        "points": 5,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_JOY_003",
+        "name": "Pilar Dyed",
+        "description": "S\u00edmbolo de estabilidad utilizado como amuleto protector.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_JOY_004",
+        "name": "Udyat",
+        "description": "El Ojo de Horus, s\u00edmbolo solar de orden y completitud.",
+        "rarity": "I",
+        "parts": 5,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_JOY_005",
+        "name": "Ureo",
+        "description": "Emblema protector de los faraones con forma de cobra erguida.",
+        "rarity": "R",
+        "parts": 6,
+        "points": 6,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_JOY_006",
+        "name": "Escarabeo",
+        "description": "S\u00edmbolo de resurrecci\u00f3n, es el amuleto m\u00e1s com\u00fan del Antiguo Egipto.",
+        "rarity": "I",
+        "parts": 2,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_JOY_007",
+        "name": "Wadj",
+        "description": "Amuleto con forma de pilar de papiro que representaba la juventud.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "EGP_CER_001",
+        "name": "\u00c1nfora de vino",
+        "description": "\u00c1nfora con forma puntiaguda para guardar el vino.",
+        "rarity": "C",
+        "parts": 14,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "EGP_CER_002",
+        "name": "Vasija del Nilo",
+        "description": "Vasija creada con arcilla roja y limo negro del Nilo.",
+        "rarity": "C",
+        "parts": 14,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "EGP_CER_003",
+        "name": "Vasija de marga",
+        "description": "Vasija creada con marga, d\u00e1ndole un acabado arenoso.",
+        "rarity": "I",
+        "parts": 12,
+        "points": 3,
+        "type": "CER"
+    },
+    {
+        "code": "EGP_CER_004",
+        "name": "Vasija de fondo blanco",
+        "description": "Cer\u00e1mica fina pintada de blanco sobre la que dibujan figuras y s\u00edmbolos.",
+        "rarity": "I",
+        "parts": 18,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "EGP_CER_005",
+        "name": "Ushebti",
+        "description": "Peque\u00f1a estatua dejada como ofrenda en las tumbas para hacer de sirviente en la otra vida.",
+        "rarity": "R",
+        "parts": 12,
+        "points": 5,
+        "type": "CER"
+    },
+    {
+        "code": "EGP_EQP_001",
+        "name": "Khopesh",
+        "description": "Espada de hoja curva con forma de C.",
+        "rarity": "I",
+        "parts": 18,
+        "points": 4,
+        "type": "EQP"
+    },
+    {
+        "code": "EGP_EQP_002",
+        "name": "Shenti",
+        "description": "Falda de lino utilizada como prenda b\u00e1sica por los hombres.",
+        "rarity": "I",
+        "parts": 15,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "EGP_EQP_003",
+        "name": "Kalasiris",
+        "description": "Prenda de lino usada por las mujeres de todas las clases sociales.",
+        "rarity": "I",
+        "parts": 29,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "EGP_EQP_004",
+        "name": "Cetro Uas",
+        "description": "Cetro s\u00edmbolo de poder con una cabeza de animal en la parte superior y una horquilla en la inferior.",
+        "rarity": "R",
+        "parts": 13,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "EGP_EQP_005",
+        "name": "Heka y Nejej",
+        "description": "El cayado y el mayal, s\u00edmbolos del poder real y la fertilidad de la tierra.",
+        "rarity": "R",
+        "parts": 30,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "EGP_EST_001",
+        "name": "Estela de Ra",
+        "description": "Dios del sol y de la vida con cabeza de halc\u00f3n peregrino.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_002",
+        "name": "Estela de Isis",
+        "description": "Diosa suprema de la magia, la sabidur\u00eda y la realeza.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_003",
+        "name": "Estela de Osiris",
+        "description": "Dios de la fertilidad y Juez de los Muertos.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_004",
+        "name": "Estela de Seth",
+        "description": "Dios del caos y el inframundo con cabeza animal de orejas rectangulares y hocico curvo.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_005",
+        "name": "Estela de Horus",
+        "description": "Dios del cielo con cabeza de halc\u00f3n.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_006",
+        "name": "Estela de Ptah",
+        "description": "Dios creador de la artesan\u00eda y la arquitectura.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_007",
+        "name": "Estela de Bastet",
+        "description": "Diosa protectora del hogar, el amor y la harmon\u00eda con cabeza de gato.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_008",
+        "name": "Estela de Anubis",
+        "description": "Dios de la muerte con cabeza de chacal.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_009",
+        "name": "Estela de Hathor",
+        "description": "Diosa de la maternidad, la m\u00fasica y las artes, pero tambi\u00e9n la venganza.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_010",
+        "name": "Estela de Ma'at",
+        "description": "Diosa alada del orden, la verdad y la justicia.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_011",
+        "name": "Estela de Thot",
+        "description": "Dios de la sabidur\u00eda, la ciencia y la escritura con cabeza de ibis.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_012",
+        "name": "Estela de Am\u00f3n",
+        "description": "Dios celeste de la creaci\u00f3n.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_013",
+        "name": "Estela de Khnum",
+        "description": "Dios alfarero y de la creaci\u00f3n con cabeza de carnero. Creaba a los humanos con lodo del Nilo.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_014",
+        "name": "Estela de Sobek",
+        "description": "Dios de la fertilidad, la vegetaci\u00f3n y creador del Nilo con cabeza de cocodrilo",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "EGP_EST_015",
+        "name": "Estela de Jonsu",
+        "description": "Dios ni\u00f1o de la luna y su luz.",
+        "rarity": "C",
+        "parts": 94,
+        "points": 1,
+        "type": "EST"
+    }
+]

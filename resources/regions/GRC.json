@@ -1,0 +1,209 @@
+[
+    {
+        "code": "GRC_MON_001",
+        "name": "Calco griego",
+        "description": "Moneda griega de cobre que ten\u00eda el menor valor.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "GRC_MON_002",
+        "name": "\u00d3bolo griego",
+        "description": "Moneda griega de plata de poco valor.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "GRC_MON_003",
+        "name": "Dracma griego",
+        "description": "Moneda griega de plata ampliamente usada.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "GRC_MON_004",
+        "name": "Estatero",
+        "description": "Moneda griega de gran valor hecha de electro.",
+        "rarity": "I",
+        "parts": 1,
+        "points": 2,
+        "type": "MON"
+    },
+    {
+        "code": "GRC_CUE_001",
+        "name": "Cuenta de vidrio",
+        "description": "Peque\u00f1os trozos de vidrio pulido que se utilizaban en collares y pulseras.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "GRC_CUE_002",
+        "name": "Cuenta de cer\u00e1mica",
+        "description": "Peque\u00f1os trozos de cer\u00e1mica pintada a mano que se utilizaban en collares y pulseras.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "GRC_JOY_001",
+        "name": "F\u00edbula omega",
+        "description": "Hebilla para sujetar la ropa similar a un imperdible.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "GRC_JOY_002",
+        "name": "Anillos",
+        "description": "Anillos de oro, plata y bronce adornados con grabados e incrustaciones de gemas.",
+        "rarity": "R",
+        "parts": 4,
+        "points": 5,
+        "type": "JOY"
+    },
+    {
+        "code": "GRC_JOY_003",
+        "name": "Brazal",
+        "description": "Brazal de oro decorado con filigranas y  gemas.",
+        "rarity": "I",
+        "parts": 7,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "GRC_CER_001",
+        "name": "\u00c1nfora de Nola",
+        "description": "\u00c1nfora t\u00edpica de la regi\u00f3n de Nola con un cuello m\u00e1s largo y estrecho.",
+        "rarity": "I",
+        "parts": 34,
+        "points": 2,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_002",
+        "name": "\u00c1nfora nicost\u00e9nica",
+        "description": "\u00c1nfora creada en el siglo VI a.C. por Nic\u00f3stenes que imita la forma etrusca.",
+        "rarity": "I",
+        "parts": 18,
+        "points": 3,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_003",
+        "name": "\u00c1nfora panatenaica",
+        "description": "\u00c1nfora que conten\u00eda el aceite que se le daba como premio a los ganadores de los Juegos panatenaicos.",
+        "rarity": "R",
+        "parts": 30,
+        "points": 5,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_004",
+        "name": "Calpis",
+        "description": "Vaso griego utilizado para almacenar agua.",
+        "rarity": "C",
+        "parts": 22,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_005",
+        "name": "Cr\u00e1tera",
+        "description": "Vasija de gran capacidad usada para guardar la mezcla de agua y vino.",
+        "rarity": "C",
+        "parts": 20,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_006",
+        "name": "En\u00f3coe",
+        "description": "Vasija con un asa usada para servir el vino.",
+        "rarity": "C",
+        "parts": 16,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_007",
+        "name": "Estamno",
+        "description": "Vasija para conservar el vino con forma de globo y asas horizontales.",
+        "rarity": "R",
+        "parts": 20,
+        "points": 5,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_CER_008",
+        "name": "Hidria",
+        "description": "Vasija para servir y guardar agua con tres asas, dos a los lados y una a modo de jarra.",
+        "rarity": "C",
+        "parts": 16,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "GRC_EQP_001",
+        "name": "Aspis",
+        "description": "Escudo circular de bronce, madera y cuero utilizado por los hoplitas griegos.",
+        "rarity": "I",
+        "parts": 28,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "GRC_EQP_002",
+        "name": "Casco corintio",
+        "description": "Casco de bronce que cubre toda la cabeza y el cuello.",
+        "rarity": "I",
+        "parts": 30,
+        "points": 4,
+        "type": "EQP"
+    },
+    {
+        "code": "GRC_EQP_003",
+        "name": "Casco frigio",
+        "description": "Casco de bronce con una protuberancia en la parte superior y dos placas laterales para la cara.",
+        "rarity": "R",
+        "parts": 21,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "GRC_EQP_004",
+        "name": "Xifos",
+        "description": "Espada de bronce utilizada por los hoplitas griegos.",
+        "rarity": "I",
+        "parts": 25,
+        "points": 4,
+        "type": "EQP"
+    },
+    {
+        "code": "GRC_TES_001",
+        "name": "Mosaico de Poseid\u00f3n",
+        "description": "Mosaico inspirado en el de la Casa de los Delfines de Delos.",
+        "rarity": "C",
+        "parts": 625,
+        "points": 1,
+        "type": "TES"
+    },
+    {
+        "code": "GRC_TES_002",
+        "name": "Mosaico geom\u00e9trico",
+        "description": "Mosaico geom\u00e9trico en dos colores, t\u00edpico de los primeros siglos de Grecia.",
+        "rarity": "C",
+        "parts": 625,
+        "points": 1,
+        "type": "TES"
+    }
+]

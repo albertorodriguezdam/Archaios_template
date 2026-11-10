@@ -1,39 +1,42 @@
 package treasures;
 
 import java.util.List;
+
 import java.lang.StringBuilder;
 
 import helpers.UtilsHelper;
 
 /**
  * La base del tesoro.
+ * 
  * @author Javier A. Goldar Picón.
  */
 public class Treasure {
-    /**El código del tesoro */
+    /** El código del tesoro */
     private String code;
-    /**El nombre del tesoro */
+    /** El nombre del tesoro */
     private String txt;
-    /**La descripción del tesoro */
+    /** La descripción del tesoro */
     private String description;
-    /**La rareza del tesoro */
+    /** La rareza del tesoro */
     private ETreasureRarity rarity;
-    /**El tipo de tesoro */
+    /** El tipo de tesoro */
     private ETreasureType type;
-    /**El número de partes de un tesoro */
+    /** El número de partes de un tesoro */
     private int parts;
-    /**Los puntos que se otorgan al encontrar partes de un tesoro*/
+    /** Los puntos que se otorgan al encontrar partes de un tesoro */
     private int points;
 
     /**
      * Constructor básico
-     * @param code El código del tesoro
-     * @param txt El nombre del tesoro
+     * 
+     * @param code        El código del tesoro
+     * @param txt         El nombre del tesoro
      * @param description La descripción del tesoro
-     * @param rarity La rareza del tesoro
-     * @param type El tipo de tesoro
-     * @param parts El número de partes de un tesoro
-     * @param points Los puntos que se otorgan al encontrar partes de un tesoro
+     * @param rarity      La rareza del tesoro
+     * @param type        El tipo de tesoro
+     * @param parts       El número de partes de un tesoro
+     * @param points      Los puntos que se otorgan al encontrar partes de un tesoro
      */
     public Treasure(String code, String txt, String description, ETreasureRarity rarity, ETreasureType type, int parts, int points) {
         this.code = code;
@@ -147,7 +150,8 @@ public class Treasure {
      * Genera el código completo de una parte aleatoria del tesoro,
      * añadiendo al código base el número de parte con cuatro dígitos.
      * 
-     * @return El código completo de la parte generada o null si el tesoro no tiene partes
+     * @return El código completo de la parte generada o null si el tesoro no tiene
+     *         partes
      */
     public String getRandomPartCode() {
 
@@ -170,14 +174,14 @@ public class Treasure {
         return getCode() + "_" + sb.toString();
     }
 
-    @Override 
+    @Override
     public String toString() {
         return "Código: " + this.code + "\n" +
-               "Nombre: " + this.txt + "\n" +
-               "Descripción: " + this.description + "\n" +
-               "Rareza: " + this.rarity + "\n" +
-               "Tipo: " + this.type + "\n" +
-               "Parte: " + this.parts + "\n" +
-               "Puntos: " + this.points;
+                "Nombre: " + this.txt + "\n" +
+                "Descripción: " + this.description + "\n" +
+                "Rareza: " + this.rarity + "\n" +
+                "Tipo: " + this.type + "\n" +
+                "Parte: " + this.parts + "\n" +
+                "Puntos: " + this.points;
     }
 }

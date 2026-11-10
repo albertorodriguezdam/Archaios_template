@@ -1,0 +1,209 @@
+[
+    {
+        "code": "SUM_MON_001",
+        "name": "Siclo de plata",
+        "description": "Moneda de plata con un peso espec\u00edfico para el trueque.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "SUM_MON_002",
+        "name": "Siclo de oro",
+        "description": "Moneda de oro con un peso espec\u00edfico para el trueque.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "SUM_CUE_001",
+        "name": "Cuentas de cornalina",
+        "description": "Cornalina tallada para adornar y confeccionar joyas.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "SUM_JOY_001",
+        "name": "Collar de hojas",
+        "description": "Collar de lapisl\u00e1zuli con hojas de oro de la tumba de la reina Puabi",
+        "rarity": "R",
+        "parts": 5,
+        "points": 6,
+        "type": "JOY"
+    },
+    {
+        "code": "SUM_JOY_002",
+        "name": "Collar de cuentas",
+        "description": "Collar de grandes esferas de lapisl\u00e1zuli y oro de la reina Puabi.",
+        "rarity": "I",
+        "parts": 7,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "SUM_JOY_003",
+        "name": "Anillo sello",
+        "description": "Anillo de oro y rub\u00edes que serv\u00eda como sello personal.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "SUM_CER_001",
+        "name": "Vaso Ubaid",
+        "description": "Vaso cer\u00e1mico del periodo Ubaid pre sumerio con l\u00edneas oscuras sobre fondo claro.",
+        "rarity": "C",
+        "parts": 15,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_CER_002",
+        "name": "Jarr\u00f3n Ubaid",
+        "description": "Jarr\u00f3n en dos colores t\u00edpico del periodo Ubaid.",
+        "rarity": "C",
+        "parts": 35,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_CER_003",
+        "name": "Plato Ubaid",
+        "description": "Plato con \u00edbices del periodo Ubaid.",
+        "rarity": "I",
+        "parts": 14,
+        "points": 2,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_CER_004",
+        "name": "Jarra Halaf",
+        "description": "Jarra cer\u00e1mica del periodo Halaf, decorada con formas geom\u00e9tricas.",
+        "rarity": "C",
+        "parts": 14,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_CER_005",
+        "name": "\u00cddolo de los ojos",
+        "description": "Figura de terracota oculada de alguna deidad del periodo Uruk.",
+        "rarity": "R",
+        "parts": 12,
+        "points": 6,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_CER_006",
+        "name": "Clavo de fundaci\u00f3n",
+        "description": "Clavo de arcilla que se pon\u00edan en los muros de los templos para constatar su pertenencia a la deidad.",
+        "rarity": "C",
+        "parts": 9,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_CER_007",
+        "name": "Planisferio sumerio",
+        "description": "Tablilla que describe con precisi\u00f3n la posici\u00f3n de las estrellas.",
+        "rarity": "R",
+        "parts": 10,
+        "points": 6,
+        "type": "CER"
+    },
+    {
+        "code": "SUM_EST_001",
+        "name": "Estela de los buitres",
+        "description": "Incripciones conmemorativas de la victoria militar del rey Eannatum.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_EST_002",
+        "name": "Epopeya de Gilgamesh",
+        "description": "Tablilla que contiene parte de la obra \u00e9pica que narra la historia del rey Gilgamesh, dividida en un total de 12.",
+        "rarity": "C",
+        "parts": 32,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_EST_003",
+        "name": "C\u00f3digo de Hammurabi",
+        "description": "Enorme estela con las leyes de la antigua Mesopotamia basadas en la ley del Tali\u00f3n.",
+        "rarity": "C",
+        "parts": 48,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_EST_004",
+        "name": "Estela de Ishtar",
+        "description": "Diosa alada del amor, la guerra, la vida y la fertilidad.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_EST_005",
+        "name": "Estela de Marduk",
+        "description": "Dios soberano de la humanidad representado como un drag\u00f3n.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_EST_006",
+        "name": "Estela de Nabu",
+        "description": "Dios alado de la escritura.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_EST_008",
+        "name": "Estela de Enki",
+        "description": "El se\u00f1or de la tierra, dios que cre\u00f3 a los hombres y les ense\u00f1\u00f3 los oficios y artes.",
+        "rarity": "C",
+        "parts": 96,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "SUM_FRA_001",
+        "name": "Cilindro-sello",
+        "description": "Cilindro de piedra tallado utilizado para estampar en arcilla un patr\u00f3n.",
+        "rarity": "I",
+        "parts": 10,
+        "points": 3,
+        "type": "FRA"
+    },
+    {
+        "code": "SUM_FRA_002",
+        "name": "Vaso de Warka",
+        "description": "Enorme vasija del periodo Uruk tallada en alabastro que narra el culto a los dioses.",
+        "rarity": "R",
+        "parts": 12,
+        "points": 5,
+        "type": "FRA"
+    },
+    {
+        "code": "SUM_FRA_003",
+        "name": "Vaso de Entemena",
+        "description": "Vaso de plata ofrecido al dios de la lluvia.",
+        "rarity": "R",
+        "parts": 18,
+        "points": 5,
+        "type": "FRA"
+    }
+]
