@@ -143,7 +143,9 @@ public class Excavation {
          * getTotalScanHints() devuelve casillas con '?'; cada suposición marca 3
          */
         applyGuesses(archeologist.getTotalScanHints() / Excavation.GUESSES_PER_SKILL);
-        this.actions = calcActions(terrain, archeologist.getTotalExtraActions(), archeologist.getActionsMultiplier());
+        this.actions = Excavation.calcActions(terrain,
+            archeologist.getTotalExtraActions(region.getCode()),
+            archeologist.getActionsMultiplier());
     }
 
     /**
@@ -336,7 +338,8 @@ public class Excavation {
      */
     private void generateTreasures() {
         ETerrainSize size = this.terrain.getSize();
-        int base = calculateBaseTreasure(this.terrain);
+        String regionCode = this.region.getCode();
+        int base = Excavation.calculateBaseTreasure(this.terrain);
         int uncommonProb = this.archeologist.getTotalUncommonProb();
         int rareProb = this.archeologist.getTotalRareProb();
 
@@ -360,11 +363,11 @@ public class Excavation {
          * 3) Extras del arqueólogo: raros (si el terreno los permite), infrecuentes, comunes y aleatorios
          */
         if (size.allowsRare()) {
-            addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures());
+            addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures(regionCode));
         }
-        addTreasures(ETreasureRarity.UNCOMMON, this.archeologist.getTotalUncommonTreasures());
-        addTreasures(ETreasureRarity.COMMON, this.archeologist.getTotalCommonTreasures());
-        for (int i = 0; i < this.archeologist.getTotalRandomTreasures(); i++) {
+        addTreasures(ETreasureRarity.UNCOMMON, this.archeologist.getTotalUncommonTreasures(regionCode));
+        addTreasures(ETreasureRarity.COMMON, this.archeologist.getTotalCommonTreasures(regionCode));
+        for (int i = 0; i < this.archeologist.getTotalRandomTreasures(regionCode); i++) {
             addTreasure(randomRarity(uncommonProb, rareProb));
         }
 

@@ -2,7 +2,6 @@ package commons;
 
 import commons.repositories.RegionRepository;
 import commons.repositories.SkillRepository;
-import commons.repositories.TreasureRepository;
 import excavation.ETerrain;
 import excavation.ETerrainSize;
 import excavation.Excavation;
@@ -37,17 +36,16 @@ public class Archaios {
     private final Random random = new Random();
 
     /**
-     * Inicializa el catálogo de habilidades y registra las regiones disponibles junto con sus tesoros.
+     * Prepara los catálogos antes de arrancar la partida.
      */
-    public Archaios() {
+    private void preInit() {
         SkillRepository.register();
-        
-        regions.add(new Grecia());
 
+        regions.add(new Grecia());
         regions.sort(java.util.Comparator.comparing(Region::getCode));
+
         for (Region region : regions) {
             RegionRepository.registerRegion(region);
-            TreasureRepository.registerRegionTreasures(region);
         }
     }
 
@@ -58,8 +56,8 @@ public class Archaios {
     public static void main(String[] args) {
 
         Archaios game = new Archaios();
+        game.preInit();
 
-        
         if (args.length > 0 && "--pruebas".equals(args[0])) {
             game.archeologists = DatosPrueba.createArcheologists();
             game.stats = DatosPrueba.createStats();

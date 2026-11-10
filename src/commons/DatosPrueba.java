@@ -22,20 +22,19 @@ public final class DatosPrueba {
      * @return Lista de Arqueólogos con habilidades y niveles de prueba.
      */
     public static List<Archeologist> createArcheologists() {
-        SkillRepository.register();
         List<Archeologist> archeologists = new ArrayList<>();
         
-        archeologists.add(createArcheologist("Comun", 0));
-        archeologists.add(createArcheologist("Infrecuente", 0, "Excavación I"));
-        archeologists.add(createArcheologist("Raro", 0, "Escaneo A", "Investigación"));
-        archeologists.add(createArcheologist("LicenciaA", 150,
+        archeologists.add(DatosPrueba.createArcheologist("Comun", 0));
+        archeologists.add(DatosPrueba.createArcheologist("Infrecuente", 0, "Excavación I"));
+        archeologists.add(DatosPrueba.createArcheologist("Raro", 0, "Escaneo A", "Investigación"));
+        archeologists.add(DatosPrueba.createArcheologist("LicenciaA", 150,
             "Licencia A", "Aprendiz", "Excavación I"));
-        archeologists.add(createArcheologist("LicenciaB", 500,
+        archeologists.add(DatosPrueba.createArcheologist("LicenciaB", 500,
             "Licencia B", "Excavación I", "Excavación II", "Experiencia I"));
         // Con 49 puntos queda a un punto de alcanzar el nivel 1.
-        archeologists.add(createArcheologist("SubirNivel", 49));
+        archeologists.add(DatosPrueba.createArcheologist("SubirNivel", 49));
         // 749 de experiencia acumulada dejan al personaje en nivel 4 con 249/250.
-        archeologists.add(createArcheologist("Especializar", 749,
+        archeologists.add(DatosPrueba.createArcheologist("Especializar", 749,
             "Excavación I", "Excavación II", "Experiencia I", "Investigación"));
         return archeologists;
     }
