@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Archaios en modo pruebas",
+            "request": "launch",
+            "mainClass": "${workspaceFolder}/src/commons/Archaios.java",
+            "args": ["--pruebas"],
+            "console": "integratedTerminal"
+        }
+    ]
+}
