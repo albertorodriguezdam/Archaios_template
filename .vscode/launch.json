@@ -6,8 +6,15 @@
             "name": "Archaios en modo pruebas",
             "request": "launch",
             "mainClass": "${workspaceFolder}/src/commons/Archaios.java",
-            "args": ["--pruebas"],
-            "console": "integratedTerminal"
+            "args": [
+                "--pruebas"
+            ],
+            "console": "integratedTerminal",
+            "classPaths": [
+                "${workspaceFolder}/bin",
+                "${workspaceFolder}/lib/gson-2.15.0.jar",
+                "${workspaceFolder}/lib/Terra.v1.0.0.jar"
+            ]
         }
     ]
 }

@@ -1,3 +1,10 @@
 {
-    "java.project.referencedLibraries": ["lib/gson-2.15.0.jar"]
+    "java.project.referencedLibraries": [
+        "lib/gson-2.15.0.jar",
+        "lib/Terra.v1.0.0.jar"
+    ],
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "bin"
 }
