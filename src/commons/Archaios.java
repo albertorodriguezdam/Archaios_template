@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import people.Archeologist;
-import regions.Grecia;
 import regions.Region;
 import skills.ESkillType;
 import skills.Skill;
@@ -40,7 +39,7 @@ public class Archaios {
      */
     private static void preInit() {
         SkillRepository.register();
-        RegionRepository.registerRegion(new Grecia());
+        RegionRepository.registerRegions();
     }
 
     /**
