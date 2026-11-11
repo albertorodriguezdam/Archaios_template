@@ -4,6 +4,12 @@ import java.util.List;
 
 import treasures.Treasure;
 
+/**
+ * Representa la región básica de Roma, identificada por el código ROM,
+ * con el catálogo de tesoros recibido al crearla.
+ *
+ * @author Javier A. Goldar Picón
+ */
 public class Roma extends Region {
     /**El código único identificativo de la región */
     private static final String CODE = "ROM";

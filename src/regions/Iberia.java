@@ -4,6 +4,12 @@ import java.util.List;
 
 import treasures.Treasure;
 
+/**
+ * Representa la región básica de Iberia, identificada por el código IBR,
+ * con el catálogo de tesoros recibido al crearla.
+ *
+ * @author Javier A. Goldar Picón
+ */
 public class Iberia extends Region {
     /**El código único identificativo de la región */
     private static final String CODE = "IBR";
