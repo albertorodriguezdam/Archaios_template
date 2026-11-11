@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import regions.IDifficultRegion;
 import regions.Region;
 
 /**
@@ -51,5 +52,43 @@ public class RegionRepository {
         List<Region> regions = new ArrayList<>(RegionRepository.regions.values());
         regions.sort(Comparator.comparing(Region::getCode));
         return regions;
+    }
+
+    /**
+     * Obtiene las regiones registradas que implementan IDifficultRegion,
+     * ordenadas por su código.
+     *
+     * @return La nueva lista de regiones difíciles, vacía si no hay ninguna registrada.
+     */
+    public static List<Region> getDifficultRegions() {
+
+        List<Region> difficultRegions = new ArrayList<>();
+
+        for (Region region : RegionRepository.getRegionsByCode()) {
+            if (region instanceof IDifficultRegion) {
+                difficultRegions.add(region);
+            }
+        }
+
+        return difficultRegions;
+    }
+
+    /**
+     * Obtiene las regiones registradas que no implementan IDifficultRegion,
+     * ordenadas por su código.
+     *
+     * @return La nueva lista de regiones básicas, vacía si no hay ninguna.
+     */
+    public static List<Region> getBasicRegions() {
+        
+        List<Region> basicRegions = new ArrayList<>();
+
+        for (Region region : RegionRepository.getRegionsByCode()) {
+            if (!(region instanceof IDifficultRegion)) {
+                basicRegions.add(region);
+            }
+        }
+
+        return basicRegions;
     }
 }
