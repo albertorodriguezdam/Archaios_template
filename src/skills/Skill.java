@@ -3,12 +3,13 @@ package skills;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import repositories.IRegistrable;
 
 /**
  * @author Alberto Rodríguez Domínguez
  * Clase base de todas las habilidades de Archaios 
  * */
-public abstract class Skill {
+public abstract class Skill implements IRegistrable {
 
     /**Nombre de la habilidad. */
     private String name; 
@@ -52,6 +53,12 @@ public abstract class Skill {
      */
     public String getName() {
         return name;
+    }
+
+    /** @return Clave de la habilidad en el repositorio de Terra. */
+    @Override
+    public String getCode() {
+        return getName();
     }
 
     /**

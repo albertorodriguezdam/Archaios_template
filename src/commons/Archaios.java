@@ -6,13 +6,22 @@ import excavation.ETerrain;
 import excavation.ETerrainSize;
 import excavation.Excavation;
 import helpers.InputValidator;
+import helpers.LogHelper;
 import helpers.MenuHelper;
+import helpers.TreasureLoader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import people.Archeologist;
+import regions.Egipto;
+import regions.Grecia;
+import regions.Iberia;
+import regions.Petra;
 import regions.Region;
+import regions.Roma;
+import regions.Sumeria;
 import skills.ESkillType;
 import skills.Skill;
 import treasures.Treasure;
@@ -23,6 +32,8 @@ import treasures.Treasure;
  * @author Constantin Laurentiu
  */
 public class Archaios {
+    /**Indica que los catálogos ya están disponibles para cualquier partida. */
+    private static boolean initialized;
     /**Arqueólogos disponibles en esta partida. */
     private List<Archeologist> archeologists = new ArrayList<>();
     /**Contadores de visitas y de tesoros encontrados. */ 
@@ -37,9 +48,47 @@ public class Archaios {
     /**
      * Prepara los catálogos antes de arrancar la partida.
      */
-    private static void preInit() {
+    private static void preInit() throws IOException {
+        if (Archaios.initialized) return;
+
+        // Carga todos los catálogos antes de registrar ninguna región.
+        List<Region> regions = List.of(
+            new Grecia(Archaios.loadCatalog("GRC")),
+            new Roma(Archaios.loadCatalog("ROM")),
+            new Iberia(Archaios.loadCatalog("IBR")),
+            new Egipto(Archaios.loadCatalog("EGP")),
+            new Petra(Archaios.loadCatalog("PTR")),
+            new Sumeria(Archaios.loadCatalog("SUM"))
+        );
         SkillRepository.register();
-        RegionRepository.registerRegions();
+        for (Region region : regions) {
+            RegionRepository.registerRegion(region);
+        }
+        Archaios.initialized = true;
+    }
+
+    private static List<Treasure> loadCatalog(String regionCode) throws IOException {
+        String path = "resources/regions/" + regionCode + ".json";
+        List<Treasure> treasures;
+        try {
+            treasures = TreasureLoader.loadTreasuresFromJson(path);
+        } catch (IOException | RuntimeException exception) {
+            throw new IOException("No se pudo cargar el catálogo " + path + ". "
+                + exception.getMessage(), exception);
+        }
+        if (treasures.isEmpty()) {
+            throw new IOException("El catálogo " + path + " está vacío.");
+        }
+        return treasures;
+    }
+
+    private static void reportError(Exception exception) {
+        System.err.println(exception.getMessage());
+        try {
+            LogHelper.logError(exception);
+        } catch (IOException | SecurityException logException) {
+            System.err.println("No se pudo escribir en log/errors.log. " + logException.getMessage());
+        }
     }
 
     /**
@@ -47,7 +96,12 @@ public class Archaios {
      * @param args Argumentos de ejecución. Si el primero es {@code --pruebas}, carga arqueólogos, estadísticas y puntos de ejemplo.
      */
     public static void main(String[] args) {
-        Archaios.preInit();
+        try {
+            Archaios.preInit();
+        } catch (IOException exception) {
+            Archaios.reportError(exception);
+            return;
+        }
         Archaios game = new Archaios();
 
         if (args.length > 0 && "--pruebas".equals(args[0])) {
