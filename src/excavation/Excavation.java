@@ -6,6 +6,7 @@ import helpers.UtilsHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import people.Archeologist;
 import regions.Region;
 import treasures.ETreasureRarity;
@@ -571,6 +572,14 @@ public class Excavation {
      * notifica.
      */
     public void excavate() {
+        excavate(null);
+    }
+
+    /**
+     * Ejecuta la excavación y avisa al llamador cuando se encuentra una pieza.
+     * @param onTreasure Recibe el código completo del hallazgo, o null para omitir el aviso.
+     */
+    public void excavate(Consumer<String> onTreasure) {
         while (!isFinished()) {
             // Muestra la rejilla y los datos del turno antes de pedir coordenadas.
             System.out.print(this.rejilla.render());
@@ -590,7 +599,7 @@ public class Excavation {
             }
             // Procesa las coordenadas y se detiene si ya se ha terminado la excavación.
             for (Coordinate coord : coords) {
-                digAt(coord);
+                digAt(coord, onTreasure);
                 if (isFinished()) break;
             }
             if (!isFinished()) System.out.println("----------------------------------------");
@@ -605,17 +614,20 @@ public class Excavation {
      * encontrado junto con su código completo con número de parte.
      *
      * @param coord La casilla a excavar.
+     * @param onTreasure Recibe el código completo del hallazgo, si se proporcionó.
      */
-    private void digAt(Coordinate coord) {
+    private void digAt(Coordinate coord, Consumer<String> onTreasure) {
         this.actions--;
         ETreasureRarity rarity = this.rejilla.dig(coord);
 
         // Los hallazgos se guardan aquí y se presentan juntos al terminar.
         if (rarity != null) {
             Treasure treasure = this.hiddenTreasures[coord.getRow()][coord.getColumn()];
+            String code = this.hiddenCodes[coord.getRow()][coord.getColumn()];
             this.foundTreasuresList.add(treasure);
-            this.foundCodes.add(this.hiddenCodes[coord.getRow()][coord.getColumn()]);
+            this.foundCodes.add(code);
             this.foundTreasures++;
+            if (onTreasure != null) onTreasure.accept(code);
         }
     }
 

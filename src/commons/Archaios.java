@@ -10,6 +10,7 @@ import helpers.LogHelper;
 import helpers.MenuHelper;
 import helpers.TreasureLoader;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,6 +42,8 @@ public class Archaios {
     private Stats stats = new Stats();
     /**Puntos disponibles para contratar arqueólogos y comprar licencias. */ 
     private int points = 0;
+    /**Nombre del registro de la partida normal. En --pruebas no se crea registro de hallazgos. */
+    private String gameName;
     /**Generador que se usa para los sorteos del menú. */ 
     private final Random random = new Random();
 
@@ -109,8 +112,8 @@ public class Archaios {
             game.archeologists = DatosPrueba.createArcheologists();
             game.stats = DatosPrueba.createStats();
             game.points = DatosPrueba.INITIAL_POINTS;
-        } else {
-            game.init();
+        } else if (!game.init()) {
+            return;
         }
         game.menu();
     }
@@ -341,11 +344,49 @@ public class Archaios {
     }
 
     /**
-     * Solicita el nombre y crea el primer arqueólogo de la partida, sin coste de contratación ni habilidades iniciales.
+     * Crea el registro de la partida y el primer arqueólogo.
+     * @return true cuando la partida se ha inicializado.
      */
-    private void init() {
+    private boolean init() {
+        String gameName = Archaios.readGameName();
+        if (gameName == null) return false;
+
         String name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
-        archeologists.add(new Archeologist(name));
+        while (name != null && name.isBlank()) {
+            System.out.println("Introduce un nombre para el arqueólogo.");
+            name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
+        }
+        if (name == null) return false;
+
+        while (gameName != null) {
+            try {
+                LogHelper.createGameLog(gameName);
+                this.gameName = gameName;
+                archeologists.add(new Archeologist(name.strip()));
+                return true;
+            } catch (FileAlreadyExistsException exception) {
+                System.out.println("Ya existe un registro con ese nombre. Elige otro nombre de partida.");
+                gameName = Archaios.readGameName();
+            } catch (IOException | SecurityException exception) {
+                Archaios.reportError(new IOException("No se pudo crear el registro de " + gameName + ".", exception));
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private static String readGameName() {
+        String name = InputValidator.inputExtra("Introduce el nombre de la partida: ");
+        while (name != null) {
+            name = name.strip();
+            if (!name.isEmpty() && !name.equals(".") && !name.equals("..")
+                    && !name.matches(".*[\\\\/:*?\"<>|\\p{Cntrl}].*")) {
+                return name;
+            }
+            System.out.println("Introduce un nombre de partida válido, sin caracteres de ruta.");
+            name = InputValidator.inputExtra("Introduce el nombre de la partida: ");
+        }
+        return null;
     }
 
 
@@ -529,7 +570,11 @@ public class Archaios {
      */
     private void finishExcavation(Excavation excavation, Region region, Archeologist selected) {
         MenuHelper.header("Excavación en " + region.getClass().getSimpleName());
-        excavation.excavate();
+        if (gameName == null) {
+            excavation.excavate();
+        } else {
+            excavation.excavate(this::logFoundTreasure);
+        }
         System.out.println("::::::::::::::::::::::::::::::::::::::::");
         List<String> foundCodes = excavation.finish();
         List<Treasure> found = excavation.getFoundTreasures();
@@ -568,6 +613,15 @@ public class Archaios {
             int choice = InputValidator.inputOptionQuest(1, regions.size(), "Región en la que especializarse: ");
            
             selected.setSpecialization(regions.get(choice - 1).getCode());
+        }
+    }
+
+    /** Registra el código de la pieza en el momento en que se encuentra. */
+    private void logFoundTreasure(String code) {
+        try {
+            LogHelper.logTreasure(gameName, code);
+        } catch (IOException | SecurityException exception) {
+            Archaios.reportError(new IOException("No se pudo registrar el hallazgo " + code + ".", exception));
         }
     }
 

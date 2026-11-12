@@ -1,9 +1,12 @@
 package helpers;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -29,27 +32,21 @@ public class LogHelper {
     }
 
     /**
-     * Añade una entrada con fecha y hora a un archivo de registro, conservando su contenido anterior. 
-     * Crea el archivo y las carpetas necesarias si no existen.
+     * Escribe una entrada con fecha y hora y crea las carpetas necesarias.
      *
      * @param filePath La ruta del archivo de registro.
      * @param message El mensaje que se añade al registro.
+     * @param options Indica si se crea un registro nuevo o se añade al existente.
      * @throws IOException Si falla la creación de las carpetas o la apertura, escritura o cierre del archivo.
      */
-    private static void appendLog(String filePath, String message) throws IOException {
-
-        File logFile = new File(filePath);
-        File parentDirectory = logFile.getParentFile();
-
-        if ((parentDirectory != null) && (!parentDirectory.exists())) {
-            boolean directoryCreated = parentDirectory.mkdirs();
-
-            if (!directoryCreated) {
-                throw new IOException("No se ha podido crear la carpeta: " + parentDirectory);
-            }
+    private static void writeLog(String filePath, String message, StandardOpenOption... options) throws IOException {
+        Path logFile = Path.of(filePath);
+        try {
+            Files.createDirectories(logFile.getParent());
+        } catch (FileAlreadyExistsException exception) {
+            throw new IOException("La ruta " + logFile.getParent() + " no es una carpeta.", exception);
         }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
+        try (BufferedWriter writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, options)) {
             writer.write("[" + LogHelper.getTimestamp() + "] " + message);
             writer.newLine();
         }
@@ -57,7 +54,7 @@ public class LogHelper {
 
     /**
      * Añade una entrada de inicio con fecha y hora al registro de la partida.
-     * Crea el archivo en log/register y las carpetas necesarias si no existen.
+     * Crea un archivo nuevo en log/register. Si ya existe, informa al llamador.
      *
      * @param gameName El nombre de la partida que identifica el archivo de registro.
      * @throws IOException Si falla la preparación, escritura o cierre del registro.
@@ -65,7 +62,8 @@ public class LogHelper {
     public static void createGameLog(String gameName) throws IOException {
         
         String filePath = "log/register/" + gameName + ".log";
-        LogHelper.appendLog(filePath, "Inicio de la partida.");
+        LogHelper.writeLog(filePath, "Inicio de la partida.",
+            StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
     }
 
     /**
@@ -79,7 +77,7 @@ public class LogHelper {
     public static void logTreasure(String gameName, String treasureCode) throws IOException {
         
         String filePath = "log/register/" + gameName + ".log";
-        LogHelper.appendLog(filePath, treasureCode);
+        LogHelper.writeLog(filePath, treasureCode, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
     /**
@@ -103,6 +101,6 @@ public class LogHelper {
             .append("\n");
         }
 
-        LogHelper.appendLog(filePath, errorText.toString());
+        LogHelper.writeLog(filePath, errorText.toString(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 }
