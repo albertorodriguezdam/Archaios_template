@@ -12,6 +12,7 @@ import helpers.TreasureLoader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import people.Archeologist;
@@ -268,47 +269,50 @@ public class Archaios {
      */
     private void excavateMenu() {
         MenuHelper.header("Excavación");
-        while (true) {
-            Archeologist selected = selectArcheologist("Arqueólogo que realiza la excavación: ");
-            if (selected == null) return;
-            List<Region> available = new ArrayList<>();
-            List<String> owned = selected.getLicenses();
-            for (Region region : RegionRepository.getRegionsByCode()) {
-                
-                if (!List.of("EGP", "PTR", "SUM").contains(region.getCode()) || owned.contains(region.getCode())) available.add(region);
-            }
-            while (true) {
-                MenuHelper.subHeader("Regiones");
-                for (int i = 0; i < available.size(); i++) {
-                    System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
-                }
-                System.out.println("0.- Volver");
-                int regionNumber = InputValidator.inputOptionQuest(0, available.size(), "Región en la que realizar la excavación: ");
-                if (regionNumber == 0) return;
-                Region region = available.get(regionNumber - 1);
-                
-                List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);
-                
-                List<ETerrainSize> sizes = new ArrayList<>();
-                for (ETerrain terrain : terrains) {
-                    if (!sizes.contains(terrain.getSize())) sizes.add(terrain.getSize());
-                }
-                MenuHelper.subHeader("Terreno");
-                for (int i = 0; i < sizes.size(); i++) System.out.println((i + 1) + ".- " + capitalise(sizes.get(i).toString()));
-                System.out.println("0.- Volver");
-                int sizeNumber = InputValidator.inputOptionQuest(0, sizes.size(), "Tamaño del terreno a excavar: ");
-                
-                if (sizeNumber == 0) continue;
-                List<ETerrain> candidates = new ArrayList<>();
-                for (ETerrain terrain : terrains) {
-                    if (terrain.getSize() == sizes.get(sizeNumber - 1)) candidates.add(terrain);
-                }
-                
-                ETerrain terrain = candidates.get(random.nextInt(candidates.size()));
-                finishExcavation(new Excavation(terrain, region, selected), region, selected);
-                return;
+        Archeologist selected = selectArcheologist("Arqueólogo que realiza la excavación: ");
+        if (selected == null) return;
+
+        List<Region> available = RegionRepository.getBasicRegions();
+        for (Region region : RegionRepository.getDifficultRegions()) {
+            if (selected.hasLicense(region.getCode())) {
+                available.add(region);
             }
         }
+        available.sort(Comparator.comparing(Region::getCode));
+
+        List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);
+        List<ETerrainSize> sizes = new ArrayList<>();
+        for (ETerrain terrain : terrains) {
+            if (!sizes.contains(terrain.getSize())) sizes.add(terrain.getSize());
+        }
+
+        int sizeNumber;
+        do {
+            MenuHelper.subHeader("Regiones");
+            for (int i = 0; i < available.size(); i++) {
+                System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
+            }
+            System.out.println("0.- Volver");
+            int regionNumber = InputValidator.inputOptionQuest(0, available.size(), "Región en la que realizar la excavación: ");
+            if (regionNumber == 0) return;
+            Region region = available.get(regionNumber - 1);
+
+            MenuHelper.subHeader("Terreno");
+            for (int i = 0; i < sizes.size(); i++) {
+                System.out.println((i + 1) + ".- " + capitalise(sizes.get(i).toString()));
+            }
+            System.out.println("0.- Volver");
+            sizeNumber = InputValidator.inputOptionQuest(0, sizes.size(), "Tamaño del terreno a excavar: ");
+            if (sizeNumber == 0) continue;
+
+            List<ETerrain> candidates = new ArrayList<>();
+            for (ETerrain terrain : terrains) {
+                if (terrain.getSize() == sizes.get(sizeNumber - 1)) candidates.add(terrain);
+            }
+
+            ETerrain terrain = candidates.get(random.nextInt(candidates.size()));
+            finishExcavation(new Excavation(terrain, region, selected), region, selected);
+        } while (sizeNumber == 0);
     }
 
     /**
@@ -479,21 +483,22 @@ public class Archaios {
      */
     private void buyLicenses() {
         MenuHelper.header("Licencias");
-        while (true) {
+        int option = 0;
+        do {
             Archeologist selected = selectArcheologist("Arqueólogo para el que comprar licencias: ");
             if (selected == null) return;
-            List<String> owned = selected.getLicenses();
             List<Region> available = new ArrayList<>();
-            for (Region region : RegionRepository.getRegionsByCode()) {
-                
-                if (List.of("EGP", "PTR", "SUM").contains(region.getCode()) && !owned.contains(region.getCode())) available.add(region);
+            for (Region region : RegionRepository.getDifficultRegions()) {
+                if (!selected.hasLicense(region.getCode())) {
+                    available.add(region);
+                }
             }
             if (available.isEmpty()) {
                 System.out.println(selected.getName() + " ya dispone de todas las licencias.");
                 continue;
             }
             
-            int cost = 20 + 10 * owned.size();
+            int cost = 20 + 10 * selected.getLicenses().size();
             MenuHelper.subHeader(selected.getName());
             System.out.println("Puntos disponibles: " + points);
             System.out.println("Comprar una licencia para " + selected.getName() + " cuesta " + cost + " puntos.");
@@ -505,14 +510,13 @@ public class Archaios {
                 System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
             }
             System.out.println("0.- Volver");
-            int option = InputValidator.inputOptionQuest(0, available.size(), "Comprar licencia para la región: ");
+            option = InputValidator.inputOptionQuest(0, available.size(), "Comprar licencia para la región: ");
            
             if (option == 0) continue;
             selected.addLicense(available.get(option - 1).getCode());
             points -= cost;
             System.out.println("Licencia comprada.");
-            return;
-        }
+        } while (option == 0);
     }
 
 

@@ -5,6 +5,7 @@ import helpers.InputValidator;
 import helpers.MenuHelper;
 import java.util.ArrayList;
 import java.util.List;
+import regions.IDifficultRegion;
 import regions.Region;
 import treasures.ETreasureRarity;
 import treasures.ETreasureType;
@@ -19,16 +20,19 @@ public class Atlas {
      * Consulta una región del Atlas y permite elegir otra al terminar.
      */
     public void show() {
-        while (true) {
+        int again;
+        do {
             Region region = chooseRegion("Atlas", "Consultar región: ");
             if (region == null) return;
             MenuHelper.subHeader(region.getClass().getSimpleName());
-            if (List.of("EGP", "PTR", "SUM").contains(region.getCode())) System.out.println("Región difícil. " + "Imperio de las arenas");
+            if (region instanceof IDifficultRegion difficult) {
+                System.out.println("Región difícil. " + difficult.getExpansionName());
+            }
             for (Treasure treasure : getTreasures(region)) {
                 System.out.println("-" + treasure.getTxt() + " - " + Atlas.typeAndRarity(treasure));
             }
-            if (MenuHelper.returnMenu("Consultar otra región") == 0) return;
-        }
+            again = MenuHelper.returnMenu("Consultar otra región");
+        } while (again != 0);
     }
 
     /**
