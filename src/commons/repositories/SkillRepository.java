@@ -32,6 +32,10 @@ public final class SkillRepository extends Repositorio<Skill> {
         this.register(new SkillExcavation("Escaneo B", "Marca tres posiciones entre las que se encuentra un tesoro y dos lugares vacíos.", 0, 0, 0, 3, false));
         this.register(new SkillExcavation("Escaneo C", "Marca tres posiciones entre las que se encuentra un tesoro y dos lugares vacíos.", 0, 0, 0, 3, false));
         this.register(new SkillExcavation("Escaneo D", "Marca tres posiciones entre las que se encuentra un tesoro y dos lugares vacíos.", 0, 0, 0, 3, false));
+        this.registerTerrainSpecialist(new SkillTerrainSpecialist("Especialización en desierto",
+            "Fija en 1 el coste de excavar arena.", '~', 1));
+        this.register(new SkillDemolition("Especialista en demoliciones A",
+            "Convierte hasta 5 piedras al azar en tierra antes de la limpieza y el escaneo.", '^', 5));
         this.register(new SkillTreasures("Especialista M", "Aumenta la probabilidad de aparición de tesoros infrecuentes en un 5% y raros en un 5% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 5, 5));
         this.register(new SkillTreasures("Especialista R", "Aumenta la probabilidad de aparición de tesoros raros en un 10% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 0, 10));
         this.register(new SkillTreasures("Especialista U", "Aumenta la probabilidad de aparición de tesoros infrecuentes en un 10% a costa de una reducción de aparición de los comunes.", 0, 0, 0, 0, 10, 0));
@@ -64,7 +68,16 @@ public final class SkillRepository extends Repositorio<Skill> {
         this.getElement("Maestro").addDependency(this.getElement("Experto"));
     }
 
-    
+    /** Registra una especialización incompatible con las demás especializaciones de terreno. */
+    private void registerTerrainSpecialist(SkillTerrainSpecialist specialist) {
+        for (Skill skill : this.getAllElements()) {
+            if (skill instanceof SkillTerrainSpecialist) {
+                specialist.addIncompatibility(skill);
+            }
+        }
+        this.register(specialist);
+    }
+
     /**
      * Recupera la misma instancia del catálogo a partir de su nombre.
      * @param name Nombre de la habilidad.
@@ -98,9 +111,7 @@ public final class SkillRepository extends Repositorio<Skill> {
         List<Skill> result = new ArrayList<>();
 
         for (Skill skill : SkillRepository.INSTANCE.getAllElements()) {
-            
-            if (!ESkillType.EXPERT.toString().equals(skill.getType())
-                    && archeologist.canLearn(skill)) {
+            if (archeologist.canLearn(skill)) {
                 result.add(skill);
             }
         }
