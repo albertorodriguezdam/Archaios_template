@@ -33,10 +33,13 @@ public class Coordinate {
         return column;
     }
 
-    @Override
-    /**
+        /**
      * Compara por fila y columna. Sirve para detectar coordenadas repetidas
-     en una misma entrada.*/
+     * en una misma entrada.
+     * @param obj El objeto con el que se compara.
+     * @return Si es una coordenada con la misma fila y columna.
+     */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -48,11 +51,19 @@ public class Coordinate {
         return this.row == other.row && this.column == other.column;
     }
 
+    /**
+     * Calcula el hash a partir de la fila y la columna, para que dos
+     * coordenadas iguales den el mismo valor.
+     * @return El código hash de la coordenada.
+     */
     @Override
     public int hashCode(){
         return 31 * this.row + this.column;
     }
 
+    /**
+     * @return La coordenada en formato (fila,columna), empezando en 0.
+     */
     @Override
     public String toString(){
         return "(" + this.row + "," + this.column + ")";
