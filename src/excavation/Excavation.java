@@ -1,10 +1,13 @@
 package excavation;
 
+import commons.repositories.TreasureRepository;
 import helpers.CoordinateValidator;
 import helpers.InputValidator;
 import helpers.UtilsHelper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 import people.Archeologist;
@@ -80,10 +83,10 @@ public class Excavation {
      */
     private Rejilla rejilla;
     /**
-     * El tesoro escondido en cada casilla, o null si está vacía.
+     * El código completo (con número de parte) del tesoro escondido en cada
+     * casilla con tesoro. Las casillas que no están en el mapa son vacías.
      */
-    private Treasure[][] hiddenTreasures;
-    private String[][] hiddenCodes;
+    private Map<Coordinate, String> hiddenCodes = new HashMap<>();
     /**
      * Los tesoros generados que hay que esconder en la rejilla.
      */
@@ -127,9 +130,6 @@ public class Excavation {
         this.archeologist = archeologist;
         this.terrain = terrain;
         this.rejilla = new Rejilla(terrain);
-        this.hiddenTreasures = new Treasure[terrain.getRows()][terrain.getColumns()];
-        this.hiddenCodes = new String[terrain.getRows()][terrain.getColumns()];
-
         /*El orden importa: primero los tesoros, luego la limpieza y por último las suposiciones*/
         generateTreasures();
         placeTreasures();
@@ -371,13 +371,11 @@ public class Excavation {
         List<Integer> positions = UtilsHelper.genRandomIdxs(this.treasuresToPlace.size(), this.terrain.getCells());
 
         for (int i = 0; i < positions.size(); i++) {
-            int row = positions.get(i) / columns;
-            int column = positions.get(i) % columns;
+            Coordinate coord = new Coordinate(positions.get(i) / columns, positions.get(i) % columns);
             Treasure treasure = this.treasuresToPlace.get(i);
 
-            this.hiddenTreasures[row][column] = treasure;
-            this.hiddenCodes[row][column] = treasure.getRandomPartCode();
-            this.rejilla.placeTreasure(new Coordinate(row, column), treasure.getRarity());
+            this.hiddenCodes.put(coord, treasure.getRandomPartCode());
+            this.rejilla.placeTreasure(coord, treasure.getRarity());
         }
     }
 
@@ -581,8 +579,8 @@ public class Excavation {
 
         // Los hallazgos se guardan aquí y se presentan juntos al terminar.
         if (rarity != null) {
-            Treasure treasure = this.hiddenTreasures[coord.getRow()][coord.getColumn()];
-            String code = this.hiddenCodes[coord.getRow()][coord.getColumn()];
+            String code = this.hiddenCodes.get(coord);
+            Treasure treasure = TreasureRepository.getTreasure(code);
             this.foundTreasuresList.add(treasure);
             this.foundCodes.add(code);
             this.foundTreasures++;
