@@ -316,7 +316,7 @@ public class Rejilla {
 			return;
 		}
 		// Caso recursivo: añadimos cada letra del alfabeto y seguimos
-		for (int i = 0; i < ALPHABET.length(); i++) {
+		for (int i = 0; i < Rejilla.ALPHABET.length(); i++) {
 			Rejilla.generateLetters(current + Rejilla.ALPHABET.charAt(i), length, amount, result);
 		}
 	}
