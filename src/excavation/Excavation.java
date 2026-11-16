@@ -112,7 +112,7 @@ public class Excavation {
      * El número de casillas reveladas por las habilidades (limpieza y
      * suposición).
      */
-    private int revealedBySkills;
+    private int revealedBySkills = 0;
 
     /**
      * Prepara una excavación nueva: crea la rejilla, genera y esconde los
@@ -159,7 +159,7 @@ public class Excavation {
      * terreno (2, 5 o 10).
      */
     public int getEarnedXp() {
-        return getEarnedPoints() + this.terrain.getSize().getExtraExp();
+        return getEarnedPoints() + this.terrain.getExtraExp();
     }
 
     /**
@@ -172,7 +172,7 @@ public class Excavation {
     public static List<ETerrain> getAvailableTerrains(Archeologist archeologist) {
         List<ETerrain> result = new ArrayList<>();
         for (ETerrain t : ETerrain.values()) {
-            boolean levelOk = t.getSize().isAllowedFor(archeologist.getLevel());
+            boolean levelOk = t.isAllowedFor(archeologist.getLevel());
             boolean sizeOk = Excavation.containsIgnoreCase(archeologist.getTerrainsSize(), t.getSize().toString());
             boolean shapeOk = Excavation.containsIgnoreCase(archeologist.getTerrainsFormats(), t.getShape());
             if (levelOk && sizeOk && shapeOk) {
@@ -214,8 +214,8 @@ public class Excavation {
         if (base < 1) {
             base = 1;
         }
-        if (base < this.terrain.getSize().getMinTotal()) {
-            base = this.terrain.getSize().getMinTotal();
+        if (base < this.terrain.getMinTotal()) {
+            base = this.terrain.getMinTotal();
         }
         return base;
     }
@@ -266,7 +266,7 @@ public class Excavation {
     private ETreasureRarity randomRarity(int extraUncommonProb, int extraRareProb) {
         int rareProb = Excavation.PROB_RARE + extraRareProb;
         int uncommonProb = Excavation.PROB_UNCOMMON + extraUncommonProb;
-        if (!this.terrain.getSize().allowsRare()) {
+        if (!this.terrain.allowsRare()) {
             rareProb = 0;
         }
 
@@ -291,7 +291,6 @@ public class Excavation {
      * por último aleatorios.
      */
     private void generateTreasures() {
-        ETerrainSize size = this.terrain.getSize();
         String regionCode = this.region.getCode();
         int base = this.calculateBaseTreasure();
         int uncommonProb = this.archeologist.getTotalUncommonProb();
@@ -300,9 +299,9 @@ public class Excavation {
         /*
          * 1) Mínimos del tamaño
          */
-        addTreasures(ETreasureRarity.COMMON, size.getMinCommon());
-        addTreasures(ETreasureRarity.UNCOMMON, size.getMinUncommon());
-        addTreasures(ETreasureRarity.RARE, size.getMinRare());
+        addTreasures(ETreasureRarity.COMMON, this.terrain.getMinCommon());
+        addTreasures(ETreasureRarity.UNCOMMON, this.terrain.getMinUncommon());
+        addTreasures(ETreasureRarity.RARE, this.terrain.getMinRare());
 
         /*
          * 2) Aleatorios hasta llegar a los tesoros base
@@ -316,7 +315,7 @@ public class Excavation {
         /*
          * 3) Extras del arqueólogo: raros (si el terreno los permite), infrecuentes, comunes y aleatorios
          */
-        if (size.allowsRare()) {
+        if (this.terrain.allowsRare()) {
             addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures(regionCode));
         }
         addTreasures(ETreasureRarity.UNCOMMON, this.archeologist.getTotalUncommonTreasures(regionCode));
