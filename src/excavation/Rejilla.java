@@ -12,13 +12,13 @@ import treasures.ETreasureRarity;
  */
 public class Rejilla {
 	/** Casilla sin excavar. */
-	public static final char UNDUG = '·';
+	private static final char UNDUG = '·';
 	/** Casilla excavada sin tesoro (o limpiada por una habilidad). */
-	public static final char EMPTY = 'x';
+	private static final char EMPTY = 'x';
 	/** Casilla marcada por una habilidad de suposición. */
-	public static final char GUESS = '?';
+	private static final char GUESS = '?';
 	/** Las letras disponibles para las columnas. Pendiente de confirmar con el profesor el "abecedario (23)". */
-	public static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	/** El número de filas. */
 	private int rows;
@@ -54,35 +54,7 @@ public class Rejilla {
 				this.cells[r][c] = Rejilla.UNDUG;
 			}
 		}
-		this.columnLetters = generateLetters(columns);
-	}
-
-	/**
-	 * @return El número de filas.
-	 */
-	public int getRows() {
-		return this.rows;
-	}
-
-	/**
-	 * @return El número de columnas.
-	 */
-	public int getColumns() {
-		return this.columns;
-	}
-
-	/**
-	 * @return El número total de casillas.
-	 */
-	public int getCellCount() {
-		return this.rows * this.columns;
-	}
-
-	/**
-	 * @return Las letras de las columnas, en orden.
-	 */
-	public List<String> getColumnLetters() {
-		return this.columnLetters;
+		this.columnLetters = this.generateLetters(columns);
 	}
 
 	/**
@@ -227,9 +199,9 @@ public class Rejilla {
 		StringBuilder sb = new StringBuilder();
 
 		// Cabecera con las letras
-		sb.append(repeat(' ', numberWidth + 1));
+		sb.append(Rejilla.repeat(' ', numberWidth + 1));
 		for (int c = 0; c < this.columns; c++) {
-			sb.append(center(this.columnLetters.get(c), cellWidth));
+			sb.append(Rejilla.center(this.columnLetters.get(c), cellWidth));
 			if (c < this.columns - 1) {
 				sb.append(' ');
 			}
@@ -238,7 +210,7 @@ public class Rejilla {
 
 		// Una línea por cada fila
 		for (int r = 0; r < this.rows; r++) {
-			sb.append(padRight(String.valueOf(r + 1), numberWidth)).append(' ');
+			sb.append(Rejilla.padRight(String.valueOf(r + 1), numberWidth)).append(' ');
 			for (int c = 0; c < this.columns; c++) {
 				char symbol;
 				if (uncovered) {
@@ -246,7 +218,7 @@ public class Rejilla {
 				} else {
 					symbol = this.cells[r][c];
 				}
-				sb.append(center(String.valueOf(symbol), cellWidth));
+				sb.append(Rejilla.center(String.valueOf(symbol), cellWidth));
 				if (c < this.columns - 1) {
 					sb.append(' ');
 				}
@@ -280,7 +252,7 @@ public class Rejilla {
 		int spaces = width - text.length();
 		int left = spaces / 2;
 		int right = spaces - left;
-		return repeat(' ', left) + text + repeat(' ', right);
+		return Rejilla.repeat(' ', left) + text + Rejilla.repeat(' ', right);
 	}
 
 	/**
@@ -290,7 +262,7 @@ public class Rejilla {
 	 * @return El texto con los espacios añadidos.
 	 */
 	private static String padRight(String text, int width) {
-		return text + repeat(' ', width - text.length());
+		return text + Rejilla.repeat(' ', width - text.length());
 	}
 
 	/**
@@ -313,11 +285,11 @@ public class Rejilla {
 	 * @param amount El número de columnas.
 	 * @return La lista con exactamente <code>amount</code> letras, en orden.
 	 */
-	public static List<String> generateLetters(int amount) {
+	private List<String> generateLetters(int amount) {
 		List<String> result = new ArrayList<>();
 		int length = 1;
 		while (result.size() < amount) {
-			generateLetters("", length, amount, result);
+			Rejilla.generateLetters("", length, amount, result);
 			length++;
 		}
 		return result;
@@ -345,7 +317,7 @@ public class Rejilla {
 		}
 		// Caso recursivo: añadimos cada letra del alfabeto y seguimos
 		for (int i = 0; i < ALPHABET.length(); i++) {
-			generateLetters(current + ALPHABET.charAt(i), length, amount, result);
+			Rejilla.generateLetters(current + Rejilla.ALPHABET.charAt(i), length, amount, result);
 		}
 	}
 }
