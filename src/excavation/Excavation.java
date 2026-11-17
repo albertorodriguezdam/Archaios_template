@@ -130,6 +130,7 @@ public class Excavation {
         this.archeologist = archeologist;
         this.terrain = terrain;
         this.rejilla = new Rejilla(terrain);
+
         /*El orden importa: primero los tesoros, luego la limpieza y por último las suposiciones*/
         generateTreasures();
         placeTreasures();
@@ -500,7 +501,7 @@ public class Excavation {
                 }
             }
         }
-        // Presenta por rareza los tesoros que quedan sin excavar.
+        /** Presenta por rareza los tesoros que quedan sin excavar.*/
         System.out.println("Tesoros: " + common + " comunes, "
                 + uncommon + " infrecuentes y " + rare + " raros.");
     }
@@ -533,7 +534,7 @@ public class Excavation {
      */
     public void excavate(Consumer<String> onTreasure) {
         while (!isFinished()) {
-            // Muestra la rejilla y los datos del turno antes de pedir coordenadas.
+            /** Muestra la rejilla y los datos del turno antes de pedir coordenadas.*/
             System.out.print(this.rejilla.render());
             System.out.println("Número de acciones restantes: " + this.actions);
             if (this.archeologist.hasInvestigation()) {
@@ -542,14 +543,14 @@ public class Excavation {
                 System.out.println("Tesoros: " + this.totalTreasures);
             }
 
-            // Una lista vacía significa que aún falta recibir una entrada válida.
+            /**  Una lista vacía significa que aún falta recibir una entrada válida.*/
             List<Coordinate> coords = new ArrayList<>();
             while (coords.isEmpty()) {
-                // Comparte el lector con los menús para que las lecturas no compitan entre sí.
+                /** Comparte el lector con los menús para que las lecturas no compitan entre sí.*/
                 String line = InputValidator.readLine("Conjunto de coordenadas a excavar separadas por espacios: ");
                 coords = CoordinateValidator.parseAll(line, this.rejilla, this.actions);
             }
-            // Procesa las coordenadas y se detiene si ya se ha terminado la excavación.
+            /** Procesa las coordenadas y se detiene si ya se ha terminado la excavación.*/
             for (Coordinate coord : coords) {
                 digAt(coord, onTreasure);
                 if (isFinished()) {
@@ -577,7 +578,7 @@ public class Excavation {
         this.actions--;
         ETreasureRarity rarity = this.rejilla.dig(coord);
 
-        // Los hallazgos se guardan aquí y se presentan juntos al terminar.
+        /**Los hallazgos se guardan aquí y se presentan juntos al terminar.*/
         if (rarity != null) {
             String code = this.hiddenCodes.get(coord);
             Treasure treasure = TreasureRepository.getTreasure(code);
