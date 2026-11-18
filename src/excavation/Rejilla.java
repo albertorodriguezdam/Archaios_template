@@ -225,6 +225,22 @@ public class Rejilla {
 	}
 
 	/**
+	 * Devuelve las casillas que tienen un terreno concreto, por ejemplo todas las piedras.
+	 * Lo usa la habilidad de demoliciones para elegir qué piedras convertir.
+	 * @param symbol El símbolo del terreno buscado.
+	 * @return La lista de casillas con ese terreno (vacía si no hay ninguna).
+	 */
+	public List<Coordinate> getTerrainCoordinates(char symbol) {
+		List<Coordinate> result = new ArrayList<>();
+		for (Map.Entry<Coordinate, Character> entry : this.terrain.entrySet()) {
+			if (entry.getValue() == symbol) {
+				result.add(entry.getKey());
+			}
+		}
+		return result;
+	}
+	
+	/**
 	 * Convierte el terreno de una casilla en tierra con coste 1. Se usa al romper
 	 * una piedra y con las demoliciones. No descubre la casilla ni su tesoro:
 	 * sigue sin excavar y se puede volver a elegir.
