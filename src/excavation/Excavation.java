@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 import people.Archeologist;
+import regions.IDifficultRegion;
 import regions.Region;
 import treasures.ETreasureRarity;
 import treasures.Treasure;
@@ -131,9 +132,14 @@ public class Excavation {
         this.terrain = terrain;
         this.rejilla = new Rejilla(terrain);
 
-        /*El orden importa: primero los tesoros, luego la limpieza y por último las suposiciones*/
+        /*
+         * El orden importa: primero el terreno y los tesoros, luego las
+         * demoliciones, después la limpieza y por último las suposiciones
+         */
+        initializeTerrain();
         generateTreasures();
         placeTreasures();
+        applyTerrainConversions();
         applyCleaning(archeologist.getTotalEmptyCellsReveled());
         /*
          * getTotalScanHints() devuelve casillas con '?'; cada suposición marca 3
@@ -379,13 +385,82 @@ public class Excavation {
             this.rejilla.placeTreasure(coord, treasure.getRarity());
         }
     }
+    /**
+     * Genera el terreno de la rejilla según la región. Las regiones básicas
+     * son todo tierra, así que no se hace nada. En las difíciles se usan los
+     * porcentajes de su distribución de terreno (por ejemplo, Petra: 75 %
+     * piedra y 25 % arena).
+     * Criterio de reparto: como las casillas son enteras, cada terreno recibe
+     * su porcentaje redondeado hacia abajo, y las casillas que sobran por el
+     * redondeo van al terreno con mayor porcentaje. Así se rellenan todas las
+     * casillas y ningún terreno recibe menos de lo que le toca. Después se
+     * colocan en casillas al azar.
+     */
+    private void initializeTerrain() {
+        if (!(this.region instanceof IDifficultRegion)) {
+            return;
+        }
+        Map<Character, Integer> distribution = ((IDifficultRegion) this.region).getTerrainDistribution();
+        int cells = this.terrain.getCells();
 
+        /* Casillas de cada terreno redondeando hacia abajo */
+        Map<Character, Integer> amounts = new HashMap<>();
+        int assigned = 0;
+        char mostCommon = ' ';
+        int maxPercent = -1;
+        for (Map.Entry<Character, Integer> entry : distribution.entrySet()) {
+            int amount = cells * entry.getValue() / 100;
+            amounts.put(entry.getKey(), amount);
+            assigned += amount;
+            if (entry.getValue() > maxPercent) {
+                maxPercent = entry.getValue();
+                mostCommon = entry.getKey();
+            }
+        }
+        /* Las casillas que sobran por el redondeo van al terreno más común */
+        amounts.put(mostCommon, amounts.get(mostCommon) + cells - assigned);
+
+        /* Se recorren todas las casillas en orden aleatorio y se van asignando */
+        List<Integer> order = UtilsHelper.genRandomIdxs(cells, cells);
+        int columns = this.terrain.getColumns();
+        int next = 0;
+        for (Map.Entry<Character, Integer> entry : amounts.entrySet()) {
+            for (int i = 0; i < entry.getValue() && next < cells; i++) {
+                int index = order.get(next);
+                this.rejilla.setTerrain(new Coordinate(index / columns, index % columns), entry.getKey());
+                next++;
+            }
+        }
+    }
+
+    /**
+     * Habilidades de demolición: convierten en tierra algunas casillas de un
+     * terreno (por ejemplo, Demoliciones A convierte hasta 5 piedras). Se
+     * aplican antes de la limpieza y el escaneo. Las casillas se eligen al azar
+     * y sin repetir. No gastan acciones, no descubren la casilla y no tocan el
+     * tesoro que haya debajo.
+     */
+    
+    private void applyTerrainConversions() {
+        if (!(this.region instanceof IDifficultRegion)) {
+            return;
+        }
+        for (char symbol : ((IDifficultRegion) this.region).getTerrainDistribution().keySet()) {
+            int conversions = this.archeologist.getTerrainConversions(symbol);
+            List<Coordinate> candidates = this.rejilla.getTerrainCoordinates(symbol);
+            int amount = Math.min(conversions, candidates.size());
+            if (amount <= 0) {
+                continue;
+            }
+            for (int index : UtilsHelper.genRandomIdxs(amount, candidates.size())) {
+                this.rejilla.convertToEarth(candidates.get(index));
+            }
+        }
+    }
     /**
      * Devuelve las coordenadas de la rejilla que tienen tesoro o que están
      * vacías.
-     *
-     * @param withTreasure true para las casillas con tesoro, false para las
-     * vacías.
+     * @param withTreasure true para las casillas con tesoro, false para las vacías.
      * @return La lista de coordenadas.
      */
     private List<Coordinate> getCoordinates(boolean withTreasure) {
