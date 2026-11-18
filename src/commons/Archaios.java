@@ -8,13 +8,18 @@ import excavation.Excavation;
 import helpers.InputValidator;
 import helpers.LogHelper;
 import helpers.MenuHelper;
+import helpers.SaveManager;
+import helpers.SaveManager.SavedGame;
 import helpers.TreasureLoader;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import people.Archeologist;
 import regions.Egipto;
@@ -42,8 +47,11 @@ public class Archaios {
     private Stats stats = new Stats();
     /**Puntos disponibles para contratar arqueólogos y comprar licencias. */ 
     private int points = 0;
-    /**Nombre del registro de la partida normal. En --pruebas no se crea registro de hallazgos. */
+    /**Identificador del usuario y nombre de la partida normal. */
+    private String uid;
     private String gameName;
+    /**Archivo de la partida activa. Es null en el modo de pruebas. */
+    private Path saveFile;
     /**Generador que se usa para los sorteos del menú. */ 
     private final Random random = new Random();
 
@@ -96,7 +104,7 @@ public class Archaios {
     }
 
     /**
-     * Inicia la aplicación con una partida nueva o con datos de prueba.
+     * Inicia la aplicación con una partida nueva, guardada o de prueba.
      * @param args Argumentos de ejecución. Si el primero es {@code --pruebas}, carga arqueólogos, estadísticas y puntos de ejemplo.
      */
     public static void main(String[] args) {
@@ -107,15 +115,25 @@ public class Archaios {
             return;
         }
         Archaios game = new Archaios();
-
-        if (args.length > 0 && "--pruebas".equals(args[0])) {
-            game.archeologists = DatosPrueba.createArcheologists();
-            game.stats = DatosPrueba.createStats();
-            game.points = DatosPrueba.INITIAL_POINTS;
-        } else if (!game.init()) {
-            return;
+        try {
+            if (args.length > 0 && "--pruebas".equals(args[0])) {
+                game.archeologists = DatosPrueba.createArcheologists();
+                game.stats = DatosPrueba.createStats();
+                game.points = DatosPrueba.INITIAL_POINTS;
+                game.menu();
+            } else if (game.init()) {
+                game.menu();
+            }
+        } catch (InputValidator.EndOfInputException exception) {
+            System.out.println("\nSe ha cerrado la entrada.");
+        } finally {
+            game.end();
         }
-        game.menu();
+    }
+
+    /** Libera el lector compartido cuando termina la aplicación. */
+    private void end() {
+        InputValidator.close();
     }
 
     /**
@@ -252,17 +270,23 @@ public class Archaios {
             System.out.println("No puedes licenciar tu último arqueólogo.");
             return;
         }
-        while (true) {
-            Archeologist selected = selectArcheologist("Arqueólogo a licenciar: ");
-            if (selected == null) return;
-           
+        Archeologist selected = selectArcheologist("Arqueólogo a licenciar: ");
+        while (selected != null) {
             int earned = selected.getLicensingPoints();
             System.out.println("Licenciar a " + selected.getName() + " otorga " + earned + " puntos.");
             if (MenuHelper.confirm("¿Quieres licenciarlo?")) {
-                archeologists.remove(selected);
+                int index = archeologists.indexOf(selected);
+                int previousPoints = points;
+                archeologists.remove(index);
                 points += earned;
+                if (!save()) {
+                    archeologists.add(index, selected);
+                    points = previousPoints;
+                    System.out.println("Se canceló el licenciamiento.");
+                }
                 return;
             }
+            selected = selectArcheologist("Arqueólogo a licenciar: ");
         }
     }
 
@@ -344,49 +368,137 @@ public class Archaios {
     }
 
     /**
-     * Crea el registro de la partida y el primer arqueólogo.
+     * Permite crear una partida o cargar un archivo guardado.
      * @return true cuando la partida se ha inicializado.
      */
     private boolean init() {
-        String gameName = Archaios.readGameName();
-        if (gameName == null) return false;
-
-        String name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
-        while (name != null && name.isBlank()) {
-            System.out.println("Introduce un nombre para el arqueólogo.");
-            name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
-        }
-        if (name == null) return false;
-
-        while (gameName != null) {
+        while (saveFile == null) {
+            List<Path> saves;
             try {
-                LogHelper.createGameLog(gameName);
-                this.gameName = gameName;
-                archeologists.add(new Archeologist(name.strip()));
-                return true;
-            } catch (FileAlreadyExistsException exception) {
-                System.out.println("Ya existe un registro con ese nombre. Elige otro nombre de partida.");
-                gameName = Archaios.readGameName();
+                saves = SaveManager.listSaves();
             } catch (IOException | SecurityException exception) {
-                Archaios.reportError(new IOException("No se pudo crear el registro de " + gameName + ".", exception));
+                Archaios.reportError(new IOException("No se pudieron consultar las partidas guardadas. "
+                    + exception.getMessage(), exception));
+                return false;
+            }
+            if (saves.isEmpty()) {
+                System.out.println("No hay partidas guardadas. Se creará una partida nueva.");
+                return createGame();
+            }
+
+            MenuHelper.header("Partidas");
+            System.out.println("1.- Nueva partida");
+            System.out.println("2.- Cargar partida");
+            System.out.println("0.- Salir");
+            int option = InputValidator.inputOptionQuest(0, 2, "Opción: ");
+            if (option == 0) return false;
+            if (option == 1) {
+                createGame();
+            } else {
+                loadGame(saves);
+            }
+        }
+        return true;
+    }
+
+    private boolean createGame() {
+        String user = Archaios.readRequiredText("Introduce tu UID: ");
+        String name = Archaios.readGameName();
+        String person = Archaios.readRequiredText("Introduce el nombre del primer arqueólogo: ");
+        List<Archeologist> firstArcheologists = List.of(new Archeologist(person));
+        while (saveFile == null) {
+            Path file = SaveManager.pathFor(name);
+            SavedGame data = new SavedGame(user, name, firstArcheologists, new Stats(), 0);
+            try {
+                Archaios.createGameFiles(file, data);
+                applyGame(file, data);
+                System.out.println("Partida creada. " + name);
+            } catch (FileAlreadyExistsException exception) {
+                System.out.println("Ya existe un guardado o un registro con ese nombre. Elige otro.");
+                name = Archaios.readGameName();
+            } catch (IOException | SecurityException exception) {
+                Archaios.reportError(new IOException("No se pudo crear la partida " + name + ". "
+                    + exception.getMessage(), exception));
                 return false;
             }
         }
-        return false;
+        return true;
+    }
+
+    /** Si falla el registro inicial, retira únicamente el guardado recién creado. */
+    private static void createGameFiles(Path file, SavedGame data) throws IOException {
+        SaveManager.write(file, data, true);
+        try {
+            LogHelper.createGameLog(data.name());
+        } catch (IOException | SecurityException exception) {
+            try {
+                Files.deleteIfExists(file);
+            } catch (IOException | SecurityException cleanupException) {
+                exception.addSuppressed(cleanupException);
+                throw new IOException("No se pudo retirar el archivo de la creación fallida. " + file, exception);
+            }
+            throw exception;
+        }
+    }
+
+    private void loadGame(List<Path> saves) {
+        MenuHelper.header("Cargar partida");
+        for (int i = 0; i < saves.size(); i++) {
+            System.out.println((i + 1) + ".- " + saves.get(i).getFileName());
+        }
+        System.out.println("0.- Volver");
+        int option = InputValidator.inputOptionQuest(0, saves.size(), "Partida a cargar: ");
+        if (option == 0) return;
+
+        Path file = saves.get(option - 1);
+        try {
+            SavedGame data = SaveManager.read(file);
+            applyGame(file, data);
+            System.out.println("Partida cargada. " + gameName);
+        } catch (IOException | SecurityException exception) {
+            Archaios.reportError(new IOException("No se pudo cargar " + file.getFileName() + ". "
+                + exception.getMessage(), exception));
+        }
+    }
+
+    private void applyGame(Path file, SavedGame data) {
+        uid = data.uid();
+        gameName = data.name();
+        archeologists = new ArrayList<>(data.archeologists());
+        stats = data.stats();
+        points = data.points();
+        saveFile = file;
+    }
+
+    /** Guarda el estado actual. El modo de pruebas continúa únicamente en memoria. */
+    private boolean save() {
+        if (saveFile == null) return true;
+        try {
+            SaveManager.write(saveFile, new SavedGame(uid, gameName, archeologists, stats, points), false);
+            return true;
+        } catch (IOException | SecurityException exception) {
+            Archaios.reportError(new IOException("No se pudo guardar " + gameName + ". "
+                + exception.getMessage(), exception));
+            return false;
+        }
+    }
+
+    private static String readRequiredText(String prompt) {
+        String text = InputValidator.inputExtra(prompt).strip();
+        while (text.isBlank()) {
+            System.out.println("Introduce un valor.");
+            text = InputValidator.inputExtra(prompt).strip();
+        }
+        return text;
     }
 
     private static String readGameName() {
-        String name = InputValidator.inputExtra("Introduce el nombre de la partida: ");
-        while (name != null) {
-            name = name.strip();
-            if (!name.isEmpty() && !name.equals(".") && !name.equals("..")
-                    && !name.matches(".*[\\\\/:*?\"<>|\\p{Cntrl}].*")) {
-                return name;
-            }
+        String name = InputValidator.inputExtra("Introduce el nombre de la partida: ").strip();
+        while (!SaveManager.isValidName(name)) {
             System.out.println("Introduce un nombre de partida válido, sin caracteres de ruta.");
-            name = InputValidator.inputExtra("Introduce el nombre de la partida: ");
+            name = InputValidator.inputExtra("Introduce el nombre de la partida: ").strip();
         }
-        return null;
+        return name;
     }
 
 
@@ -508,12 +620,18 @@ public class Archaios {
                 System.out.println("  " + skill.getDescription());
             }
         }
-        String name = InputValidator.inputExtra("Introduce el nombre del arqueólogo: ");
-       
+        String name = Archaios.readRequiredText("Introduce el nombre del arqueólogo: ");
+
         Archeologist hired = new Archeologist(name);
         for (Skill skill : generated.getSkills()) hired.learnSkill(skill);
+        int previousPoints = points;
         archeologists.add(hired);
         points -= 50;
+        if (!save()) {
+            archeologists.remove(hired);
+            points = previousPoints;
+            System.out.println("Se canceló la contratación.");
+        }
     }
 
 
@@ -554,9 +672,17 @@ public class Archaios {
             option = InputValidator.inputOptionQuest(0, available.size(), "Comprar licencia para la región: ");
            
             if (option == 0) continue;
+            List<String> previousLicenses = new ArrayList<>(selected.getLicenses());
+            int previousPoints = points;
             selected.addLicense(available.get(option - 1).getCode());
             points -= cost;
-            System.out.println("Licencia comprada.");
+            if (save()) {
+                System.out.println("Licencia comprada.");
+            } else {
+                selected.restoreRegionalData(previousLicenses, selected.getSpecialization());
+                points = previousPoints;
+                System.out.println("Se canceló la compra de licencia.");
+            }
         } while (option == 0);
     }
 
@@ -578,7 +704,10 @@ public class Archaios {
         System.out.println("::::::::::::::::::::::::::::::::::::::::");
         List<String> foundCodes = excavation.finish();
         List<Treasure> found = excavation.getFoundTreasures();
-        
+
+        Map<String, Integer> previousTreasureCounts = stats.getTreasureCounts();
+        Map<String, Integer> previousVisitCounts = stats.getVisitCounts();
+        int previousPoints = points;
         stats.registerVisit(region.getCode());
         MenuHelper.subHeader("Tesoros encontrados");
         for (int i = 0; i < foundCodes.size(); i++) {
@@ -594,7 +723,18 @@ public class Archaios {
         
         int earnedPoints = excavation.getEarnedPoints();
         points += earnedPoints;
+        // Primer guardado: conserva los resultados de la excavación antes de tocar la experiencia.
+        if (!save()) {
+            stats.restoreCounts(previousTreasureCounts, previousVisitCounts);
+            points = previousPoints;
+            System.out.println("La excavación no se pudo añadir a la partida guardada.");
+            return;
+        }
         System.out.println("Puntos conseguidos: " + earnedPoints);
+
+        Archeologist previousProgress = new Archeologist(selected.getName(), selected.getLevel(), selected.getXp());
+        previousProgress.restoreSkills(selected.getSkills());
+        previousProgress.restoreRegionalData(selected.getLicenses(), selected.getSpecialization());
         int earnedXp = excavation.getEarnedXp();
         System.out.println("El arqueólogo " + selected.getName() + " ha conseguido " + earnedXp + " puntos de experiencia.");
         int levelsGained = selected.addXp(earnedXp);
@@ -613,6 +753,11 @@ public class Archaios {
             int choice = InputValidator.inputOptionQuest(1, regions.size(), "Región en la que especializarse: ");
            
             selected.setSpecialization(regions.get(choice - 1).getCode());
+        }
+        // Segundo guardado: la experiencia y las elecciones ya están resueltas.
+        if (!save()) {
+            archeologists.set(archeologists.indexOf(selected), previousProgress);
+            System.out.println("Se conservaron los hallazgos y los puntos. La experiencia no se guardó.");
         }
     }
 

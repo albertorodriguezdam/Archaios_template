@@ -1,5 +1,6 @@
 package helpers;
 
+import java.io.Console;
 import java.nio.charset.Charset;
 import java.util.Scanner;
 
@@ -15,6 +16,11 @@ public final class InputValidator {
 
     private InputValidator() { }
 
+    /** Indica que la consola se cerró antes de completar una operación. */
+    public static final class EndOfInputException extends RuntimeException {
+        private EndOfInputException() { }
+    }
+
     /**
      * Solicita una línea de texto mediante la consola nativa o,
      * si no está disponible, mediante el Scanner compartido.
@@ -22,10 +28,20 @@ public final class InputValidator {
      * @return Línea introducida por el usuario, sin el salto de línea.
      */
     public static String readLine(String message) {
-        if (System.console() != null) return System.console().readLine("%s", message);
-       
-        System.out.print(message);
-        return InputValidator.scanner.nextLine();
+        Console console = System.console();
+        String line;
+        if (console != null) {
+            line = console.readLine("%s", message);
+        } else {
+            System.out.print(message);
+            line = InputValidator.scanner.hasNextLine() ? InputValidator.scanner.nextLine() : null;
+        }
+        if (line == null) throw new EndOfInputException();
+        return line;
+    }
+
+    public static void close() {
+        InputValidator.scanner.close();
     }
 
     /**
