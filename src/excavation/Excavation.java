@@ -501,19 +501,57 @@ public class Excavation {
                 }
             }
         }
-        /** Presenta por rareza los tesoros que quedan sin excavar.*/
+        /**
+         * Presenta por rareza los tesoros que quedan sin excavar.
+         */
         System.out.println("Tesoros: " + common + " comunes, "
                 + uncommon + " infrecuentes y " + rare + " raros.");
     }
 
     /**
-     * Indica si la excavación ha terminado: sin acciones o con todos los
-     * tesoros encontrados.
+     * Indica si la excavación ha terminado: sin acciones, con todos los tesoros
+     * encontrados o sin ninguna casilla que se pueda pagar con las acciones que
+     * quedan.
      *
      * @return Si ha terminado.
      */
     private boolean isFinished() {
-        return this.actions <= 0 || this.foundTreasures >= this.totalTreasures;
+        return this.actions <= 0 || this.foundTreasures >= this.totalTreasures || !hasAffordableMoves();
+    }
+
+    /**
+     * Calcula lo que cuesta de verdad excavar una casilla: el coste base de su
+     * terreno, rebajado por las habilidades del arqueólogo si tiene alguna para
+     * ese terreno (por ejemplo, la especialización en desierto deja la arena en
+     * 1). Se usa el mismo valor para comprobar si se puede pagar y para
+     * cobrarlo.
+     *
+     * @param coord La casilla.
+     * @return El número de acciones que cuesta excavarla.
+     */
+    private int getEffectiveCost(Coordinate coord) {
+        char terrainSymbol = this.rejilla.getTerrain(coord);
+        int baseCost = this.rejilla.getBaseCost(coord);
+        return this.archeologist.getExcavationCost(terrainSymbol, baseCost);
+    }
+
+    /**
+     * Indica si queda alguna casilla sin excavar que se pueda pagar con las
+     * acciones restantes. Por ejemplo, con 1 acción y solo agua por excavar, no
+     * queda ninguna.
+     *
+     * @return Si hay al menos una casilla pagable.
+     */
+    private boolean hasAffordableMoves() {
+        for (int r = 0; r < this.terrain.getRows(); r++) {
+            for (int c = 0; c < this.terrain.getColumns(); c++) {
+                Coordinate coord = new Coordinate(r, c);
+                if (!this.rejilla.isRevealed(coord) && getEffectiveCost(coord) <= this.actions) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -534,7 +572,10 @@ public class Excavation {
      */
     public void excavate(Consumer<String> onTreasure) {
         while (!isFinished()) {
-            /** Muestra la rejilla y los datos del turno antes de pedir coordenadas.*/
+            /**
+             * Muestra la rejilla y los datos del turno antes de pedir
+             * coordenadas.
+             */
             System.out.print(this.rejilla.render());
             System.out.println("Número de acciones restantes: " + this.actions);
             if (this.archeologist.hasInvestigation()) {
@@ -543,14 +584,23 @@ public class Excavation {
                 System.out.println("Tesoros: " + this.totalTreasures);
             }
 
-            /**  Una lista vacía significa que aún falta recibir una entrada válida.*/
+            /**
+             * Una lista vacía significa que aún falta recibir una entrada
+             * válida.
+             */
             List<Coordinate> coords = new ArrayList<>();
             while (coords.isEmpty()) {
-                /** Comparte el lector con los menús para que las lecturas no compitan entre sí.*/
+                /**
+                 * Comparte el lector con los menús para que las lecturas no
+                 * compitan entre sí.
+                 */
                 String line = InputValidator.readLine("Conjunto de coordenadas a excavar separadas por espacios: ");
                 coords = CoordinateValidator.parseAll(line, this.rejilla, this.actions);
             }
-            /** Procesa las coordenadas y se detiene si ya se ha terminado la excavación.*/
+            /**
+             * Procesa las coordenadas y se detiene si ya se ha terminado la
+             * excavación.
+             */
             for (Coordinate coord : coords) {
                 digAt(coord, onTreasure);
                 if (isFinished()) {
@@ -563,22 +613,45 @@ public class Excavation {
         }
         if (this.foundTreasures >= this.totalTreasures) {
             System.out.println("-------------------- ¡Se han encontrado todos los tesoros! --------------------");
+        } else if (this.actions > 0) {
+            /* Quedan acciones, pero ninguna casilla cuesta tan poco */
+            System.out.println("No quedan casillas que puedas pagar con " + this.actions + " "
+                    + (this.actions == 1 ? "acción." : "acciones."));
         }
     }
 
     /**
-     * Excava una casilla: gasta una acción y, si hay tesoro, lo guarda como
-     * encontrado junto con su código completo con número de parte.
+     * Excava una casilla cobrando su coste real. Si no hay acciones
+     * suficientes, no cobra nada ni cambia la casilla. Si es piedra, la rompe:
+     * pasa a tierra y la casilla sigue sin excavar, así que hay que volver a
+     * excavarla para ver qué hay debajo. Si no, la descubre y, si hay tesoro,
+     * lo guarda como encontrado junto con su código completo con número de
+     * parte.
      *
      * @param coord La casilla a excavar.
      * @param onTreasure Recibe el código completo del hallazgo, si se
      * proporcionó.
      */
     private void digAt(Coordinate coord, Consumer<String> onTreasure) {
-        this.actions--;
+        int cost = getEffectiveCost(coord);
+        if (cost > this.actions) {
+            System.out.println("No tienes acciones suficientes para excavar " + this.rejilla.getLabel(coord)
+                    + " (cuesta " + cost + ").");
+            return;
+        }
+        this.actions -= cost;
+
+        /* La piedra necesita dos pasos: primero se rompe y se queda en tierra */
+        if (this.rejilla.isStone(coord)) {
+            this.rejilla.convertToEarth(coord);
+            System.out.println("Has roto la piedra de " + this.rejilla.getLabel(coord)
+                    + ". Ahora es tierra y puedes volver a excavarla.");
+            return;
+        }
+
         ETreasureRarity rarity = this.rejilla.dig(coord);
 
-        /**Los hallazgos se guardan aquí y se presentan juntos al terminar.*/
+        /* Los hallazgos se guardan aquí y se presentan juntos al terminar */
         if (rarity != null) {
             String code = this.hiddenCodes.get(coord);
             Treasure treasure = TreasureRepository.getTreasure(code);
