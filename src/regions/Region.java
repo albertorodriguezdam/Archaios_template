@@ -2,6 +2,7 @@ package regions;
 
 import java.util.ArrayList;
 import java.util.List;
+import repositories.IRegistrable;
 
 import treasures.ETreasureRarity;
 import treasures.Treasure;
@@ -11,7 +12,7 @@ import helpers.UtilsHelper;
  * Clase base para todas las regiones
  * @author Javier A. Goldar Picón.
  */
-public abstract class Region {
+public abstract class Region implements IRegistrable {
     /**La lista de tesoros que se encuentran en una región */
     protected List<Treasure> treasureList;
 
@@ -33,6 +34,7 @@ public abstract class Region {
     /**
      * @return Devuelve el código identificativo de la región
      */
+    @Override
     public abstract String getCode();
 
     /**
@@ -43,17 +45,17 @@ public abstract class Region {
     }
 
     /**
-     * Obtiene un tesoro de forma aleatoria de la lista de 
+     * Obtiene un tesoro de forma aleatoria de la lista de
      * tesoros disponibles en la región
-     * 
+     *
      * @return El tesoro ubicado en la posición obtenida.
      */
     public Treasure getRandomTreasure() {
-        
+
         if (treasureList == null || treasureList.isEmpty()) {
             return null;
         }
-        
+
         List<Integer> randomIdx = UtilsHelper.genRandomIdxs(1, treasureList.size());
         int index = randomIdx.get(0);
 
@@ -63,12 +65,12 @@ public abstract class Region {
     /**
      * Obtiene una lista con los tesoros de la región que coinciden
      * con la rareza especificada.
-     * 
+     *
      * @param rarity La rareza de los tesoros a buscar
      * @return La lista de tesoros que coinciden con la rareza especificada
      */
     public List<Treasure> getTreasuresByRarity(ETreasureRarity rarity) {
-        
+
         ArrayList<Treasure> rarityTreasuresList = new ArrayList<>();
 
         for (Treasure t : treasureList) {
@@ -81,14 +83,14 @@ public abstract class Region {
     }
 
     /**
-     * Obtiene un tesoro de forma aleatoria entre aquellos que 
+     * Obtiene un tesoro de forma aleatoria entre aquellos que
      * coinciden con una rareza especificada.
-     * 
+     *
      * @param rarity La rareza del tesoro a buscar
-     * @return El tesoro aleatorio que coincide con la rareza especificada
+     * @return El tesoro aleatorio que coincide con una rareza especificada
      */
     public Treasure getRandomTreasureByRarity(ETreasureRarity rarity) {
-        
+
         List<Treasure> filteredList = getTreasuresByRarity(rarity);
 
         if (filteredList.isEmpty()) {
@@ -97,7 +99,7 @@ public abstract class Region {
 
         List<Integer> randomIdx = UtilsHelper.genRandomIdxs(1, filteredList.size());
         int index = randomIdx.get(0);
-        
+
         return filteredList.get(index);
     }
 }
