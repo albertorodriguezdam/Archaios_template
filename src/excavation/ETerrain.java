@@ -9,7 +9,7 @@ package excavation;
  * @author Andrés.
  */
 public enum ETerrain {
-    // tamaño, forma, columnas, filas, nivel, comunes, infrecuentes, raros, permite raros, xp extra
+    /*Tamaño, forma, columnas, filas, nivel, comunes, infrecuentes, raros, permite raros, xp extra*/
     SMALL_ROW("pequeño", "fila", 5, 3, 0, 1, 0, 0, false, 2),
     SMALL_HORIZONTAL("pequeño", "horizontal", 10, 2, 0, 1, 0, 0, false, 2),
     SMALL_COLUMN("pequeño", "columna", 3, 5, 0, 1, 0, 0, false, 2),
