@@ -10,26 +10,26 @@ package excavation;
  */
 public enum ETerrain {
     // tamaño, forma, columnas, filas, nivel, comunes, infrecuentes, raros, permite raros, xp extra
-    SMALL_ROW(ETerrainSize.SMALL, "fila", 5, 3, 0, 1, 0, 0, false, 2),
-    SMALL_HORIZONTAL(ETerrainSize.SMALL, "horizontal", 10, 2, 0, 1, 0, 0, false, 2),
-    SMALL_COLUMN(ETerrainSize.SMALL, "columna", 3, 5, 0, 1, 0, 0, false, 2),
-    SMALL_VERTICAL(ETerrainSize.SMALL, "vertical", 2, 10, 0, 1, 0, 0, false, 2),
-    SMALL_SQUARE(ETerrainSize.SMALL, "cuadrado", 5, 5, 0, 1, 0, 0, false, 2),
+    SMALL_ROW("pequeño", "fila", 5, 3, 0, 1, 0, 0, false, 2),
+    SMALL_HORIZONTAL("pequeño", "horizontal", 10, 2, 0, 1, 0, 0, false, 2),
+    SMALL_COLUMN("pequeño", "columna", 3, 5, 0, 1, 0, 0, false, 2),
+    SMALL_VERTICAL("pequeño", "vertical", 2, 10, 0, 1, 0, 0, false, 2),
+    SMALL_SQUARE("pequeño", "cuadrado", 5, 5, 0, 1, 0, 0, false, 2),
 
-    MEDIUM_ROW(ETerrainSize.MEDIUM, "fila", 20, 5, 2, 3, 1, 0, true, 5),
-    MEDIUM_HORIZONTAL(ETerrainSize.MEDIUM, "horizontal", 30, 3, 2, 3, 1, 0, true, 5),
-    MEDIUM_COLUMN(ETerrainSize.MEDIUM, "columna", 5, 20, 2, 3, 1, 0, true, 5),
-    MEDIUM_VERTICAL(ETerrainSize.MEDIUM, "vertical", 3, 30, 2, 3, 1, 0, true, 5),
-    MEDIUM_SQUARE(ETerrainSize.MEDIUM, "cuadrado", 10, 10, 2, 3, 1, 0, true, 5),
+    MEDIUM_ROW("mediano", "fila", 20, 5, 2, 3, 1, 0, true, 5),
+    MEDIUM_HORIZONTAL("mediano", "horizontal", 30, 3, 2, 3, 1, 0, true, 5),
+    MEDIUM_COLUMN("mediano", "columna", 5, 20, 2, 3, 1, 0, true, 5),
+    MEDIUM_VERTICAL("mediano", "vertical", 3, 30, 2, 3, 1, 0, true, 5),
+    MEDIUM_SQUARE("mediano", "cuadrado", 10, 10, 2, 3, 1, 0, true, 5),
 
-    LARGE_ROW(ETerrainSize.LARGE, "fila", 20, 10, 4, 5, 3, 1, true, 10),
-    LARGE_HORIZONTAL(ETerrainSize.LARGE, "horizontal", 40, 5, 4, 5, 3, 1, true, 10),
-    LARGE_COLUMN(ETerrainSize.LARGE, "columna", 10, 20, 4, 5, 3, 1, true, 10),
-    LARGE_VERTICAL(ETerrainSize.LARGE, "vertical", 5, 40, 4, 5, 3, 1, true, 10),
-    LARGE_SQUARE(ETerrainSize.LARGE, "cuadrado", 15, 15, 4, 5, 3, 1, true, 10);
+    LARGE_ROW("grande", "fila", 20, 10, 4, 5, 3, 1, true, 10),
+    LARGE_HORIZONTAL("grande", "horizontal", 40, 5, 4, 5, 3, 1, true, 10),
+    LARGE_COLUMN("grande", "columna", 10, 20, 4, 5, 3, 1, true, 10),
+    LARGE_VERTICAL("grande", "vertical", 5, 40, 4, 5, 3, 1, true, 10),
+    LARGE_SQUARE("grande", "cuadrado", 15, 15, 4, 5, 3, 1, true, 10);
 
-    /** El tamaño al que pertenece el terreno. */
-    private ETerrainSize size;
+    /** El nombre del tamaño (pequeño, mediano o grande). */
+    private String size;
     /** El nombre de la forma (fila, horizontal, columna, vertical o cuadrado). */
     private String shape;
     /** El número de columnas (eje horizontal, letras). */
@@ -52,7 +52,7 @@ public enum ETerrain {
     /**
      * Constructor básico.
      *
-     * @param size          El tamaño del terreno.
+     * @param size          El nombre del tamaño.
      * @param shape         El nombre de la forma.
      * @param columns       El número de columnas.
      * @param rows          El número de filas.
@@ -63,7 +63,7 @@ public enum ETerrain {
      * @param allowsRare    Si pueden aparecer tesoros raros.
      * @param extraExp      La experiencia extra al terminar la excavación.
      */
-    private ETerrain(ETerrainSize size, String shape, int columns, int rows, int requiredLevel,
+    private ETerrain(String size, String shape, int columns, int rows, int requiredLevel,
             int minCommon, int minUncommon, int minRare, boolean allowsRare, int extraExp) {
         this.size = size;
         this.shape = shape;
@@ -78,9 +78,9 @@ public enum ETerrain {
     }
 
     /**
-     * @return El tamaño al que pertenece el terreno.
+     * @return El nombre del tamaño (pequeño, mediano o grande).
      */
-    public ETerrainSize getSize() {
+    public String getSize() {
         return this.size;
     }
 
