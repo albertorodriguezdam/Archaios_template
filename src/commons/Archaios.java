@@ -318,7 +318,7 @@ public class Archaios {
             }
         }
         available.sort(Comparator.comparing(Region::getCode));
-
+        List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);    
         List<String> sizes = new ArrayList<>();
         for (ETerrain terrain : terrains) {
             if (!sizes.contains(terrain.getSize().toString())) {
