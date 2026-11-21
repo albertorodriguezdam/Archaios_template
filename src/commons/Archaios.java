@@ -7,6 +7,7 @@ import excavation.Excavation;
 import helpers.InputValidator;
 import helpers.LogHelper;
 import helpers.MenuHelper;
+import helpers.MuseoHelper;
 import helpers.SaveManager;
 import helpers.SaveManager.SavedGame;
 import helpers.TreasureLoader;
@@ -773,6 +774,11 @@ public class Archaios {
             points = previousPoints;
             System.out.println("La excavación no se pudo añadir a la partida guardada.");
             return;
+        }
+        // Envía solo los hallazgos de esta excavación, después de conservarlos en disco.
+        // El modo --pruebas no tiene un UID de partida y no abre conexiones externas.
+        if (saveFile != null) {
+            MuseoHelper.send(uid, foundCodes, Path.of("backup", "museo"));
         }
         System.out.println("Puntos conseguidos: " + earnedPoints);
 
