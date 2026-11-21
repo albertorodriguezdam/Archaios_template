@@ -6,8 +6,8 @@ import java.util.List;
 import repositories.IRegistrable;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * Clase base de todas las habilidades de Archaios 
+ * @author Alberto Rodríguez Domínguez
  * */
 public abstract class Skill implements IRegistrable {
 

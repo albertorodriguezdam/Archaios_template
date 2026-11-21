@@ -1,8 +1,8 @@
 package skills;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * Habilidad que convierte una cantidad de casillas de un terreno a tierra.
+ * @author Alberto Rodríguez Domínguez
  */
 public class SkillDemolition extends Skill{
 

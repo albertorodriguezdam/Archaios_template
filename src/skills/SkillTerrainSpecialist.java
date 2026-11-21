@@ -1,8 +1,8 @@
 package skills;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * Habilidad que modifica excavar un tipo de terreno.
+ * @author Alberto Rodríguez Domínguez
  */
 public class SkillTerrainSpecialist extends Skill{
 

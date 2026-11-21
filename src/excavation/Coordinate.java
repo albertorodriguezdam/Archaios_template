@@ -1,5 +1,8 @@
 package excavation;
 
+/**
+ * Representa una posición de la rejilla mediante índices de fila y columna que comienzan en cero.
+ */
 public class Coordinate {
     /**
      * Fila

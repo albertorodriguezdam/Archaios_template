@@ -48,19 +48,26 @@ public class Archaios {
     private Stats stats = new Stats();
     /** Puntos disponibles para contratar arqueólogos y comprar licencias. */
     private int points = 0;
-    /** Identificador del usuario y nombre de la partida normal. */
+    /** Identificador del usuario de la partida activa. */
     private String uid;
+    /** Nombre de la partida activa. */
     private String gameName;
     /** Archivo de la partida activa. Es null en el modo de pruebas. */
     private Path saveFile;
     /** Generador que se usa para los sorteos del menú. */
     private final Random random = new Random();
 
+    /**
+     * Crea el coordinador de una partida con sus valores iniciales.
+     */
     private Archaios() {
     }
 
     /**
-     * Prepara los catálogos antes de arrancar la partida.
+     * Prepara los catálogos y los repositorios antes de iniciar la partida.
+     *
+     * @throws IOException si algún catálogo no puede cargarse, es inválido o está
+     *                     vacío.
      */
     private static void preInit() throws IOException {
         if (Archaios.initialized)
@@ -81,6 +88,14 @@ public class Archaios {
         Archaios.initialized = true;
     }
 
+    /**
+     * Carga el catálogo JSON de una región y comprueba que contiene tesoros.
+     *
+     * @param regionCode Código de la región cuyo catálogo se carga.
+     * @return Lista de tesoros del catálogo regional.
+     * @throws IOException si falla la carga del catálogo, sus datos son inválidos o
+     *                     no contiene tesoros.
+     */
     private static List<Treasure> loadCatalog(String regionCode) throws IOException {
         String path = "resources/regions/" + regionCode + ".json";
         List<Treasure> treasures;
@@ -96,6 +111,12 @@ public class Archaios {
         return treasures;
     }
 
+    /**
+     * Muestra la descripción del error y solicita su registro; informa también si
+     * el registro falla.
+     *
+     * @param exception Excepción que se quiere comunicar y registrar.
+     */
     private static void reportError(Exception exception) {
         System.err.println(exception.getMessage());
         try {
@@ -218,9 +239,9 @@ public class Archaios {
     }
 
     /**
- * Muestra los nombres de los arqueólogos en una lista numerada
- * y añade la opción de volver.
- */
+     * Muestra los nombres de los arqueólogos en una lista numerada
+     * y añade la opción de volver.
+     */
     private void showArcheologists() {
         MenuHelper.subHeader("Arqueólogos");
         for (int i = 0; i < archeologists.size(); i++) {
@@ -319,7 +340,7 @@ public class Archaios {
             }
         }
         available.sort(Comparator.comparing(Region::getCode));
-        List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);    
+        List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);
         List<String> sizes = new ArrayList<>();
         for (ETerrain terrain : terrains) {
             if (!sizes.contains(terrain.getSize().toString())) {
@@ -349,12 +370,12 @@ public class Archaios {
             if (sizeNumber == 0)
                 continue;
 
-           List<ETerrain> candidates = new ArrayList<>();
+            List<ETerrain> candidates = new ArrayList<>();
             for (ETerrain terrain : terrains) {
-    if (terrain.getSize().toString().equals(sizes.get(sizeNumber - 1))) {
-        candidates.add(terrain);
-    }
-}
+                if (terrain.getSize().toString().equals(sizes.get(sizeNumber - 1))) {
+                    candidates.add(terrain);
+                }
+            }
             ETerrain terrain = candidates.get(random.nextInt(candidates.size()));
             finishExcavation(new Excavation(terrain, region, selected), region, selected);
         } while (sizeNumber == 0);
@@ -425,6 +446,13 @@ public class Archaios {
         return true;
     }
 
+    /**
+     * Solicita los datos iniciales y crea el guardado y el registro de una nueva
+     * partida.
+     *
+     * @return {@code true} si se crea la partida; {@code false} si un error impide
+     *         crearla.
+     */
     private boolean createGame() {
         String user = Archaios.readRequiredText("Introduce tu UID: ");
         String name = Archaios.readGameName();
@@ -450,7 +478,13 @@ public class Archaios {
     }
 
     /**
-     * Si falla el registro inicial, retira únicamente el guardado recién creado.
+     * Crea el guardado y el registro inicial. Si falla el registro, intenta retirar
+     * únicamente el guardado recién creado.
+     *
+     * @param file Ruta del nuevo archivo de partida.
+     * @param data Datos iniciales de la partida.
+     * @throws IOException si falla la creación del guardado, del registro o la
+     *                     retirada del archivo de una creación fallida.
      */
     private static void createGameFiles(Path file, SavedGame data) throws IOException {
         SaveManager.write(file, data, true);
@@ -467,6 +501,12 @@ public class Archaios {
         }
     }
 
+    /**
+     * Muestra los guardados disponibles y carga el seleccionado si sus datos son
+     * válidos.
+     *
+     * @param saves Archivos que se ofrecen al usuario para cargar una partida.
+     */
     private void loadGame(List<Path> saves) {
         MenuHelper.header("Cargar partida");
         for (int i = 0; i < saves.size(); i++) {
@@ -488,6 +528,12 @@ public class Archaios {
         }
     }
 
+    /**
+     * Incorpora a la partida activa los datos recibidos y su ruta de guardado.
+     *
+     * @param file Archivo asociado a la partida.
+     * @param data Estado que se aplica al coordinador.
+     */
     private void applyGame(Path file, SavedGame data) {
         uid = data.uid();
         gameName = data.name();
@@ -499,6 +545,9 @@ public class Archaios {
 
     /**
      * Guarda el estado actual. El modo de pruebas continúa únicamente en memoria.
+     *
+     * @return {@code true} si el guardado se completa o se ejecuta en modo de
+     *         pruebas; {@code false} si falla el guardado.
      */
     private boolean save() {
         if (saveFile == null)
@@ -513,6 +562,13 @@ public class Archaios {
         }
     }
 
+    /**
+     * Solicita un texto y repite la petición hasta recibir contenido distinto de
+     * espacios.
+     *
+     * @param prompt Mensaje que se muestra al solicitar el texto.
+     * @return Texto introducido sin espacios iniciales ni finales.
+     */
     private static String readRequiredText(String prompt) {
         String text = InputValidator.inputExtra(prompt).strip();
         while (text.isBlank()) {
@@ -522,6 +578,12 @@ public class Archaios {
         return text;
     }
 
+    /**
+     * Solicita un nombre de partida y lo comprueba con las reglas del gestor de
+     * guardado.
+     *
+     * @return Nombre válido de partida sin espacios iniciales ni finales.
+     */
     private static String readGameName() {
         String name = InputValidator.inputExtra("Introduce el nombre de la partida: ").strip();
         while (!SaveManager.isValidName(name)) {
@@ -775,7 +837,8 @@ public class Archaios {
             System.out.println("La excavación no se pudo añadir a la partida guardada.");
             return;
         }
-        // Envía solo los hallazgos de esta excavación, después de conservarlos en disco.
+        // Envía solo los hallazgos de esta excavación, después de conservarlos en
+        // disco.
         // El modo --pruebas no tiene un UID de partida y no abre conexiones externas.
         if (saveFile != null) {
             MuseoHelper.send(uid, foundCodes, Path.of("backup", "museo"));
@@ -813,7 +876,11 @@ public class Archaios {
         }
     }
 
-    /** Registra el código de la pieza en el momento en que se encuentra. */
+    /**
+     * Registra el código de la pieza en el momento en que se encuentra.
+     *
+     * @param code Código completo de la pieza encontrada.
+     */
     private void logFoundTreasure(String code) {
         try {
             LogHelper.logTreasure(gameName, code);

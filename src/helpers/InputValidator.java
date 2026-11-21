@@ -14,9 +14,14 @@ public final class InputValidator {
     /**Sistema único utilizado como lector de datos de entrada. */
     private static final Scanner scanner = new Scanner(System.in, Charset.defaultCharset());
 
+    /**
+     * Impide crear instancias de esta clase de utilidades estáticas.
+     */
     private InputValidator() { }
 
-    /** Indica que la consola se cerró antes de completar una operación. */
+    /**
+     * Crea la excepción que señala el cierre de la entrada.
+     */
     public static final class EndOfInputException extends RuntimeException {
         private EndOfInputException() { }
     }
@@ -40,6 +45,9 @@ public final class InputValidator {
         return line;
     }
 
+    /**
+     * Cierra el lector compartido de la entrada estándar.
+     */
     public static void close() {
         InputValidator.scanner.close();
     }
