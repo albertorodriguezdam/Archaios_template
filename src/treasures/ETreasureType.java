@@ -44,7 +44,7 @@ public enum ETreasureType {
 	 */
 	public static ETreasureType getByCode(String code) {
 		for (ETreasureType tType : ETreasureType.values()) {
-			if(tType.code == code) {
+			if(tType.code.equals(code)) {
 				return tType;
 			}
 		}

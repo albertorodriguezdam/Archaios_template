@@ -2,19 +2,33 @@ package commons;
 
 import commons.repositories.RegionRepository;
 import commons.repositories.SkillRepository;
-import commons.repositories.TreasureRepository;
 import excavation.ETerrain;
-import excavation.ETerrainSize;
 import excavation.Excavation;
 import helpers.InputValidator;
+import helpers.LogHelper;
 import helpers.MenuHelper;
+import helpers.MuseoHelper;
+import helpers.SaveManager;
+import helpers.SaveManager.SavedGame;
+import helpers.TreasureLoader;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import people.Archeologist;
+import regions.Egipto;
 import regions.Grecia;
+import regions.Iberia;
+import regions.Petra;
 import regions.Region;
+import regions.Roma;
+import regions.Sumeria;
 import skills.ESkillType;
 import skills.Skill;
 import treasures.Treasure;
@@ -22,58 +36,136 @@ import treasures.Treasure;
 /**
  * Mantiene el estado de la partida en memoria y coordina los menús,
  * las excavaciones y la actualización de resultados.
+ * 
  * @author Constantin Laurentiu
  */
 public class Archaios {
-    /**Arqueólogos disponibles en esta partida. */
+    /** Indica que los catálogos ya están disponibles para cualquier partida. */
+    private static boolean initialized;
+    /** Arqueólogos disponibles en esta partida. */
     private List<Archeologist> archeologists = new ArrayList<>();
-    /**Regiones que se han cargado para los menús y las excavaciones. */ 
-    private List<Region> regions = new ArrayList<>();
-    /**Contadores de visitas y de tesoros encontrados. */ 
+    /** Contadores de visitas y de tesoros encontrados. */
     private Stats stats = new Stats();
-    /**Puntos disponibles para contratar arqueólogos y comprar licencias. */ 
+    /** Puntos disponibles para contratar arqueólogos y comprar licencias. */
     private int points = 0;
-    /**Generador que se usa para los sorteos del menú. */ 
+    /** Identificador del usuario de la partida activa. */
+    private String uid;
+    /** Nombre de la partida activa. */
+    private String gameName;
+    /** Archivo de la partida activa. Es null en el modo de pruebas. */
+    private Path saveFile;
+    /** Generador que se usa para los sorteos del menú. */
     private final Random random = new Random();
 
     /**
-     * Inicializa el catálogo de habilidades y registra las regiones disponibles junto con sus tesoros.
+     * Crea el coordinador de una partida con sus valores iniciales.
      */
-    public Archaios() {
-        SkillRepository.register();
-        
-        regions.add(new Grecia());
+    private Archaios() {
+    }
 
-        regions.sort(java.util.Comparator.comparing(Region::getCode));
+    /**
+     * Prepara los catálogos y los repositorios antes de iniciar la partida.
+     *
+     * @throws IOException si algún catálogo no puede cargarse, es inválido o está
+     *                     vacío.
+     */
+    private static void preInit() throws IOException {
+        if (Archaios.initialized)
+            return;
+
+        // Carga todos los catálogos antes de registrar ninguna región.
+        List<Region> regions = List.of(
+                new Grecia(Archaios.loadCatalog("GRC")),
+                new Roma(Archaios.loadCatalog("ROM")),
+                new Iberia(Archaios.loadCatalog("IBR")),
+                new Egipto(Archaios.loadCatalog("EGP")),
+                new Petra(Archaios.loadCatalog("PTR")),
+                new Sumeria(Archaios.loadCatalog("SUM")));
+        SkillRepository.register();
         for (Region region : regions) {
             RegionRepository.registerRegion(region);
-            TreasureRepository.registerRegionTreasures(region);
+        }
+        Archaios.initialized = true;
+    }
+
+    /**
+     * Carga el catálogo JSON de una región y comprueba que contiene tesoros.
+     *
+     * @param regionCode Código de la región cuyo catálogo se carga.
+     * @return Lista de tesoros del catálogo regional.
+     * @throws IOException si falla la carga del catálogo, sus datos son inválidos o
+     *                     no contiene tesoros.
+     */
+    private static List<Treasure> loadCatalog(String regionCode) throws IOException {
+        String path = "resources/regions/" + regionCode + ".json";
+        List<Treasure> treasures;
+        try {
+            treasures = TreasureLoader.loadTreasuresFromJson(path);
+        } catch (IOException | RuntimeException exception) {
+            throw new IOException("No se pudo cargar el catálogo " + path + ". "
+                    + exception.getMessage(), exception);
+        }
+        if (treasures.isEmpty()) {
+            throw new IOException("El catálogo " + path + " está vacío.");
+        }
+        return treasures;
+    }
+
+    /**
+     * Muestra la descripción del error y solicita su registro; informa también si
+     * el registro falla.
+     *
+     * @param exception Excepción que se quiere comunicar y registrar.
+     */
+    private static void reportError(Exception exception) {
+        System.err.println(exception.getMessage());
+        try {
+            LogHelper.logError(exception);
+        } catch (IOException | SecurityException logException) {
+            System.err.println("No se pudo escribir en log/errors.log. " + logException.getMessage());
         }
     }
 
     /**
-     * Inicia la aplicación con una partida nueva o con datos de prueba.
-     * @param args Argumentos de ejecución. Si el primero es {@code --pruebas}, carga arqueólogos, estadísticas y puntos de ejemplo.
+     * Inicia la aplicación con una partida nueva, guardada o de prueba.
+     * 
+     * @param args Argumentos de ejecución. Si el primero es {@code --pruebas},
+     *             carga arqueólogos, estadísticas y puntos de ejemplo.
      */
     public static void main(String[] args) {
-
-        Archaios game = new Archaios();
-
-        
-        if (args.length > 0 && "--pruebas".equals(args[0])) {
-            game.archeologists = DatosPrueba.createArcheologists();
-            game.stats = DatosPrueba.createStats();
-            game.points = DatosPrueba.INITIAL_POINTS;
-        } else {
-            game.init();
+        try {
+            Archaios.preInit();
+        } catch (IOException exception) {
+            Archaios.reportError(exception);
+            return;
         }
-        game.menu();
+        Archaios game = new Archaios();
+        try {
+            if (args.length > 0 && "--pruebas".equals(args[0])) {
+                game.archeologists = DatosPrueba.createArcheologists();
+                game.stats = DatosPrueba.createStats();
+                game.points = DatosPrueba.INITIAL_POINTS;
+                game.menu();
+            } else if (game.init()) {
+                game.menu();
+            }
+        } catch (InputValidator.EndOfInputException exception) {
+            System.out.println("\nSe ha cerrado la entrada.");
+        } finally {
+            game.end();
+        }
+    }
+
+    /** Libera el lector compartido cuando termina la aplicación. */
+    private void end() {
+        InputValidator.close();
     }
 
     /**
-     * Muestra el menú principal y ejecuta las opciones seleccionadas hasta que el usuario elige salir.
+     * Muestra el menú principal y ejecuta las opciones seleccionadas hasta que el
+     * usuario elige salir.
      */
-    public void menu() {
+    private void menu() {
         int option;
 
         do {
@@ -88,8 +180,7 @@ public class Archaios {
             System.out.println("0.- Salir");
 
             option = InputValidator.inputOptionQuest(
-                0, 7, ""
-            );
+                    0, 7, "");
 
             switch (option) {
                 case 1:
@@ -102,10 +193,10 @@ public class Archaios {
                     buyLicenses();
                     break;
                 case 4:
-                    new Atlas(regions).show();
+                    new Atlas().show();
                     break;
                 case 5:
-                    new Atlas(regions).showCatalog();
+                    new Atlas().showCatalog();
                     break;
                 case 6:
                     excavateMenu();
@@ -120,7 +211,8 @@ public class Archaios {
     }
 
     /**
-     * Muestra las opciones de consulta, contratación y licenciamiento de arqueólogos hasta que el usuario elige volver.
+     * Muestra las opciones de consulta, contratación y licenciamiento de
+     * arqueólogos hasta que el usuario elige volver.
      */
     private void archeologistsMenu() {
         int option;
@@ -131,7 +223,7 @@ public class Archaios {
             System.out.println("3.- Licenciar");
             System.out.println("0.- Volver");
             option = InputValidator.inputOptionQuest(0, 3, "");
-            
+
             switch (option) {
                 case 1:
                     viewArcheologist();
@@ -147,7 +239,8 @@ public class Archaios {
     }
 
     /**
-     * Muestra los nombres de los arqueólogos en una lista numerada y añade la opción de volver.
+     * Muestra los nombres de los arqueólogos en una lista numerada
+     * y añade la opción de volver.
      */
     private void showArcheologists() {
         MenuHelper.subHeader("Arqueólogos");
@@ -158,7 +251,8 @@ public class Archaios {
     }
 
     /**
-     * Permite consultar las habilidades del catálogo por tipo. Muestra su descripción, dependencias e incompatibilidades.
+     * Permite consultar las habilidades del catálogo por tipo. Muestra su
+     * descripción, dependencias e incompatibilidades.
      */
     private void showSkills() {
         ESkillType[] types = ESkillType.values();
@@ -169,8 +263,9 @@ public class Archaios {
             }
             System.out.println("0.- Volver");
             int type = InputValidator.inputOptionQuest(0, types.length, "Tipo de habilidad: ");
-            
-            if (type == 0) return;
+
+            if (type == 0)
+                return;
             List<Skill> skills = SkillRepository.getByType(types[type - 1]);
             while (true) {
                 MenuHelper.subHeader(capitalise(types[type - 1].toString()));
@@ -179,96 +274,116 @@ public class Archaios {
                 }
                 System.out.println("0.- Volver");
                 int number = InputValidator.inputOptionQuest(0, skills.size(), "Habilidad a consultar: ");
-                
-                if (number == 0) break;
+
+                if (number == 0)
+                    break;
                 Skill selected = skills.get(number - 1);
                 MenuHelper.subHeader(selected.getName());
                 System.out.println(selected.getDescription());
                 System.out.println("Tipo: " + selected.getType());
                 showSkillRelations("Dependencias", selected.getDependencies());
                 showSkillRelations("Incompatibilidades", selected.getIncompatibilities());
-                
-                if (MenuHelper.returnMenu("Consultar otra habilidad") == 0) return;
+
+                if (MenuHelper.returnMenu("Consultar otra habilidad") == 0)
+                    return;
             }
         }
     }
 
     /**
-     * Permite seleccionar y licenciar un arqueólogo previa confirmación. Lo elimina de la partida y suma sus puntos de compensación al saldo.
+     * Permite seleccionar y licenciar un arqueólogo previa confirmación. Lo elimina
+     * de la partida y suma sus puntos de compensación al saldo.
      * Impide licenciar al último arqueólogo disponible.
      */
     private void licenseArcheologist() {
         System.out.println("Al licenciar un arqueólogo te deshaces de él otorgando puntos en compensación.");
-       
+
         if (archeologists.size() <= 1) {
             System.out.println("No puedes licenciar tu último arqueólogo.");
             return;
         }
-        while (true) {
-            Archeologist selected = selectArcheologist("Arqueólogo a licenciar: ");
-            if (selected == null) return;
-           
+        Archeologist selected = selectArcheologist("Arqueólogo a licenciar: ");
+        while (selected != null) {
             int earned = selected.getLicensingPoints();
             System.out.println("Licenciar a " + selected.getName() + " otorga " + earned + " puntos.");
             if (MenuHelper.confirm("¿Quieres licenciarlo?")) {
-                archeologists.remove(selected);
+                int index = archeologists.indexOf(selected);
+                int previousPoints = points;
+                archeologists.remove(index);
                 points += earned;
+                if (!save()) {
+                    archeologists.add(index, selected);
+                    points = previousPoints;
+                    System.out.println("Se canceló el licenciamiento.");
+                }
                 return;
             }
+            selected = selectArcheologist("Arqueólogo a licenciar: ");
         }
     }
 
     /**
      * Solicita el arqueólogo, la región y el tamaño del terreno para excavar.
-     * Filtra las opciones según los permisos del arqueólogo, sortea una forma de terreno válida y ejecuta la excavación.
+     * Filtra las opciones según los permisos del arqueólogo, sortea una forma de
+     * terreno válida y ejecuta la excavación.
      */
     private void excavateMenu() {
         MenuHelper.header("Excavación");
-        while (true) {
-            Archeologist selected = selectArcheologist("Arqueólogo que realiza la excavación: ");
-            if (selected == null) return;
-            List<Region> available = new ArrayList<>();
-            List<String> owned = selected.getLicenses();
-            for (Region region : regions) {
-                
-                if (!List.of("EGP", "PTR", "SUM").contains(region.getCode()) || owned.contains(region.getCode())) available.add(region);
-            }
-            while (true) {
-                MenuHelper.subHeader("Regiones");
-                for (int i = 0; i < available.size(); i++) {
-                    System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
-                }
-                System.out.println("0.- Volver");
-                int regionNumber = InputValidator.inputOptionQuest(0, available.size(), "Región en la que realizar la excavación: ");
-                if (regionNumber == 0) return;
-                Region region = available.get(regionNumber - 1);
-                
-                List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);
-                
-                List<ETerrainSize> sizes = new ArrayList<>();
-                for (ETerrain terrain : terrains) {
-                    if (!sizes.contains(terrain.getSize())) sizes.add(terrain.getSize());
-                }
-                MenuHelper.subHeader("Terreno");
-                for (int i = 0; i < sizes.size(); i++) System.out.println((i + 1) + ".- " + capitalise(sizes.get(i).toString()));
-                System.out.println("0.- Volver");
-                int sizeNumber = InputValidator.inputOptionQuest(0, sizes.size(), "Tamaño del terreno a excavar: ");
-                
-                if (sizeNumber == 0) continue;
-                List<ETerrain> candidates = new ArrayList<>();
-                for (ETerrain terrain : terrains) {
-                    if (terrain.getSize() == sizes.get(sizeNumber - 1)) candidates.add(terrain);
-                }
-                
-                ETerrain terrain = candidates.get(random.nextInt(candidates.size()));
-                finishExcavation(new Excavation(terrain, region, selected), region, selected);
-                return;
+        Archeologist selected = selectArcheologist("Arqueólogo que realiza la excavación: ");
+        if (selected == null)
+            return;
+
+        List<Region> available = RegionRepository.getBasicRegions();
+        for (Region region : RegionRepository.getDifficultRegions()) {
+            if (selected.hasLicense(region.getCode())) {
+                available.add(region);
             }
         }
+        available.sort(Comparator.comparing(Region::getCode));
+        List<ETerrain> terrains = Excavation.getAvailableTerrains(selected);
+        List<String> sizes = new ArrayList<>();
+        for (ETerrain terrain : terrains) {
+            if (!sizes.contains(terrain.getSize().toString())) {
+                sizes.add(terrain.getSize().toString());
+            }
+        }
+
+        int sizeNumber;
+        do {
+            MenuHelper.subHeader("Regiones");
+            for (int i = 0; i < available.size(); i++) {
+                System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
+            }
+            System.out.println("0.- Volver");
+            int regionNumber = InputValidator.inputOptionQuest(0, available.size(),
+                    "Región en la que realizar la excavación: ");
+            if (regionNumber == 0)
+                return;
+            Region region = available.get(regionNumber - 1);
+
+            MenuHelper.subHeader("Terreno");
+            for (int i = 0; i < sizes.size(); i++) {
+                System.out.println((i + 1) + ".- " + capitalise(sizes.get(i)));
+            }
+            System.out.println("0.- Volver");
+            sizeNumber = InputValidator.inputOptionQuest(0, sizes.size(), "Tamaño del terreno a excavar: ");
+            if (sizeNumber == 0)
+                continue;
+
+            List<ETerrain> candidates = new ArrayList<>();
+            for (ETerrain terrain : terrains) {
+                if (terrain.getSize().toString().equals(sizes.get(sizeNumber - 1))) {
+                    candidates.add(terrain);
+                }
+            }
+            ETerrain terrain = candidates.get(random.nextInt(candidates.size()));
+            finishExcavation(new Excavation(terrain, region, selected), region, selected);
+        } while (sizeNumber == 0);
     }
 
     /**
-     * Permite consultar las estadísticas de las regiones visitadas y de los tesoros encontrados, agrupados por región o por tipo.
+     * Permite consultar las estadísticas de las regiones visitadas y de los tesoros
+     * encontrados, agrupados por región o por tipo.
      */
     private void showStats() {
         while (true) {
@@ -277,7 +392,8 @@ public class Archaios {
             System.out.println("2.- Ver tesoros");
             System.out.println("0.- Volver");
             int option = InputValidator.inputOptionQuest(0, 2, "");
-            if (option == 0) return;
+            if (option == 0)
+                return;
             if (option == 1) {
                 stats.getStatsPlaces();
             } else {
@@ -286,23 +402,200 @@ public class Archaios {
                 System.out.println("2.- Por tipo");
                 System.out.println("0.- Volver");
                 int type = InputValidator.inputOptionQuest(0, 2, "");
-                if (type == 1) stats.showTreasuresByRegion();
-                if (type == 2) stats.showTreasuresByType();
+                if (type == 1)
+                    stats.showTreasuresByRegion();
+                if (type == 2)
+                    stats.showTreasuresByType();
             }
         }
     }
 
     /**
-     * Solicita el nombre y crea el primer arqueólogo de la partida, sin coste de contratación ni habilidades iniciales.
+     * Permite crear una partida o cargar un archivo guardado.
+     * 
+     * @return true cuando la partida se ha inicializado.
      */
-    private void init() {
-        String name = InputValidator.inputExtra("Introduce el nombre del primer arqueólogo: ");
-        archeologists.add(new Archeologist(name));
+    private boolean init() {
+        while (saveFile == null) {
+            List<Path> saves;
+            try {
+                saves = SaveManager.listSaves();
+            } catch (IOException | SecurityException exception) {
+                Archaios.reportError(new IOException("No se pudieron consultar las partidas guardadas. "
+                        + exception.getMessage(), exception));
+                return false;
+            }
+            if (saves.isEmpty()) {
+                System.out.println("No hay partidas guardadas. Se creará una partida nueva.");
+                return createGame();
+            }
+
+            MenuHelper.header("Partidas");
+            System.out.println("1.- Nueva partida");
+            System.out.println("2.- Cargar partida");
+            System.out.println("0.- Salir");
+            int option = InputValidator.inputOptionQuest(0, 2, "Opción: ");
+            if (option == 0)
+                return false;
+            if (option == 1) {
+                createGame();
+            } else {
+                loadGame(saves);
+            }
+        }
+        return true;
     }
 
+    /**
+     * Solicita los datos iniciales y crea el guardado y el registro de una nueva
+     * partida.
+     *
+     * @return {@code true} si se crea la partida; {@code false} si un error impide
+     *         crearla.
+     */
+    private boolean createGame() {
+        String user = Archaios.readRequiredText("Introduce tu UID: ");
+        String name = Archaios.readGameName();
+        String person = Archaios.readRequiredText("Introduce el nombre del primer arqueólogo: ");
+        List<Archeologist> firstArcheologists = List.of(new Archeologist(person));
+        while (saveFile == null) {
+            Path file = SaveManager.pathFor(name);
+            SavedGame data = new SavedGame(user, name, firstArcheologists, new Stats(), 0);
+            try {
+                Archaios.createGameFiles(file, data);
+                applyGame(file, data);
+                System.out.println("Partida creada. " + name);
+            } catch (FileAlreadyExistsException exception) {
+                System.out.println("Ya existe un guardado o un registro con ese nombre. Elige otro.");
+                name = Archaios.readGameName();
+            } catch (IOException | SecurityException exception) {
+                Archaios.reportError(new IOException("No se pudo crear la partida " + name + ". "
+                        + exception.getMessage(), exception));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Crea el guardado y el registro inicial. Si falla el registro, intenta retirar
+     * únicamente el guardado recién creado.
+     *
+     * @param file Ruta del nuevo archivo de partida.
+     * @param data Datos iniciales de la partida.
+     * @throws IOException si falla la creación del guardado, del registro o la
+     *                     retirada del archivo de una creación fallida.
+     */
+    private static void createGameFiles(Path file, SavedGame data) throws IOException {
+        SaveManager.write(file, data, true);
+        try {
+            LogHelper.createGameLog(data.name());
+        } catch (IOException | SecurityException exception) {
+            try {
+                Files.deleteIfExists(file);
+            } catch (IOException | SecurityException cleanupException) {
+                exception.addSuppressed(cleanupException);
+                throw new IOException("No se pudo retirar el archivo de la creación fallida. " + file, exception);
+            }
+            throw exception;
+        }
+    }
+
+    /**
+     * Muestra los guardados disponibles y carga el seleccionado si sus datos son
+     * válidos.
+     *
+     * @param saves Archivos que se ofrecen al usuario para cargar una partida.
+     */
+    private void loadGame(List<Path> saves) {
+        MenuHelper.header("Cargar partida");
+        for (int i = 0; i < saves.size(); i++) {
+            System.out.println((i + 1) + ".- " + saves.get(i).getFileName());
+        }
+        System.out.println("0.- Volver");
+        int option = InputValidator.inputOptionQuest(0, saves.size(), "Partida a cargar: ");
+        if (option == 0)
+            return;
+
+        Path file = saves.get(option - 1);
+        try {
+            SavedGame data = SaveManager.read(file);
+            applyGame(file, data);
+            System.out.println("Partida cargada. " + gameName);
+        } catch (IOException | SecurityException exception) {
+            Archaios.reportError(new IOException("No se pudo cargar " + file.getFileName() + ". "
+                    + exception.getMessage(), exception));
+        }
+    }
+
+    /**
+     * Incorpora a la partida activa los datos recibidos y su ruta de guardado.
+     *
+     * @param file Archivo asociado a la partida.
+     * @param data Estado que se aplica al coordinador.
+     */
+    private void applyGame(Path file, SavedGame data) {
+        uid = data.uid();
+        gameName = data.name();
+        archeologists = new ArrayList<>(data.archeologists());
+        stats = data.stats();
+        points = data.points();
+        saveFile = file;
+    }
+
+    /**
+     * Guarda el estado actual. El modo de pruebas continúa únicamente en memoria.
+     *
+     * @return {@code true} si el guardado se completa o se ejecuta en modo de
+     *         pruebas; {@code false} si falla el guardado.
+     */
+    private boolean save() {
+        if (saveFile == null)
+            return true;
+        try {
+            SaveManager.write(saveFile, new SavedGame(uid, gameName, archeologists, stats, points), false);
+            return true;
+        } catch (IOException | SecurityException exception) {
+            Archaios.reportError(new IOException("No se pudo guardar " + gameName + ". "
+                    + exception.getMessage(), exception));
+            return false;
+        }
+    }
+
+    /**
+     * Solicita un texto y repite la petición hasta recibir contenido distinto de
+     * espacios.
+     *
+     * @param prompt Mensaje que se muestra al solicitar el texto.
+     * @return Texto introducido sin espacios iniciales ni finales.
+     */
+    private static String readRequiredText(String prompt) {
+        String text = InputValidator.inputExtra(prompt).strip();
+        while (text.isBlank()) {
+            System.out.println("Introduce un valor.");
+            text = InputValidator.inputExtra(prompt).strip();
+        }
+        return text;
+    }
+
+    /**
+     * Solicita un nombre de partida y lo comprueba con las reglas del gestor de
+     * guardado.
+     *
+     * @return Nombre válido de partida sin espacios iniciales ni finales.
+     */
+    private static String readGameName() {
+        String name = InputValidator.inputExtra("Introduce el nombre de la partida: ").strip();
+        while (!SaveManager.isValidName(name)) {
+            System.out.println("Introduce un nombre de partida válido, sin caracteres de ruta.");
+            name = InputValidator.inputExtra("Introduce el nombre de la partida: ").strip();
+        }
+        return name;
+    }
 
     /**
      * Convierte a mayúscula la primera letra de un texto.
+     * 
      * @param text Texto no nulo ni vacío que se transforma.
      * @return Texto con la primera letra en mayúscula y el resto sin cambios.
      */
@@ -313,61 +606,66 @@ public class Archaios {
     /**
      * Muestra una lista de dependencias o incompatibilidades bajo un título.
      * Si la lista está vacía, no muestra información.
-     * @param title Título que identifica la relación mostrada.
+     * 
+     * @param title  Título que identifica la relación mostrada.
      * @param skills Habilidades que forman parte de la relación.
      */
     private void showSkillRelations(String title, List<Skill> skills) {
-        if (skills.isEmpty()) return;
+        if (skills.isEmpty())
+            return;
         System.out.println("--------------------");
         System.out.println(title + ":");
-        for (Skill skill : skills) System.out.println("-" + skill.getName());
+        for (Skill skill : skills)
+            System.out.println("-" + skill.getName());
     }
-
 
     /**
      * Permite consultar la ficha de un arqueólogo y seleccionar otro al terminar.
-     * Muestra su nivel, experiencia, tamaños de terreno, licencias y habilidades, así como su especialización cuando alcanza el nivel máximo.
+     * Muestra su nivel, experiencia, tamaños de terreno, licencias y habilidades,
+     * así como su especialización cuando alcanza el nivel máximo.
      */
     private void viewArcheologist() {
         int again = 1;
         while (again == 1) {
             Archeologist selected = selectArcheologist("Arqueólogo a consultar: ");
-            if (selected == null) return;
+            if (selected == null)
+                return;
             MenuHelper.subHeader(selected.getName());
             System.out.println("Nivel: " + selected.getLevel());
-            if (selected.getLevel() == selected.getMAX_LEVEL()) {
+            if (selected.getLevel() == Archeologist.MAX_LEVEL) {
                 System.out.println("Especialización: " + specializationReference(selected.getSpecialization()));
             }
             String experience = Integer.toString(selected.getXp());
-            
-            if (selected.getLevel() < selected.getMAX_LEVEL()) {
+
+            if (selected.getLevel() < Archeologist.MAX_LEVEL) {
                 experience += "/" + selected.getXpToNextLevel();
             }
             System.out.println("Exp: " + experience);
             System.out.println("Terrenos:");
             for (String terrain : selected.getTerrainsSize()) {
-                System.out.println(" -" + terrain);
+                System.out.println("  -" + terrain);
             }
             if (!selected.getLicenses().isEmpty()) {
                 System.out.println("Licencias:");
                 for (String code : selected.getLicenses()) {
-                    System.out.println(" -" + RegionRepository.getRegion(code).getClass().getSimpleName());
+                    Region region = RegionRepository.getRegion(code);
+                    System.out.println("  -" + (region == null ? code : region.getClass().getSimpleName()));
                 }
             }
             if (!selected.getSkills().isEmpty()) {
                 System.out.println("Habilidades:");
                 for (Skill skill : selected.getSkills()) {
-                    System.out.println(" -" + skill.getName() + ":");
-                    System.out.println("  " + skill.getDescription());
+                    System.out.println("  -" + skill.getName() + ":");
+                    System.out.println("   " + skill.getDescription());
                 }
             }
             again = MenuHelper.returnMenu("Consultar otro arqueólogo");
         }
     }
 
-
     /**
      * Muestra los arqueólogos disponibles y solicita una selección.
+     * 
      * @param question Mensaje para solicitar el arqueólogo.
      * @return Arqueólogo seleccionado; {@code null} si no hay arqueólogos
      *         disponibles o el usuario elige volver.
@@ -382,11 +680,12 @@ public class Archaios {
         return number == 0 ? null : archeologists.get(number - 1);
     }
 
-
     /**
      * Contrata un arqueólogo por 50 puntos, previa confirmación.
-     * Sortea su rareza con probabilidades del 70 % para común, 20 % para infrecuente y 10 % para raro, asignando respectivamente
-     * cero, una o dos habilidades iniciales compatibles.Solicita su nombre y lo incorpora a la partida.
+     * Sortea su rareza con probabilidades del 70 % para común, 20 % para
+     * infrecuente y 10 % para raro, asignando respectivamente
+     * cero, una o dos habilidades iniciales compatibles.Solicita su nombre y lo
+     * incorpora a la partida.
      */
     private void hireArcheologist() {
         System.out.println("Puntos disponibles: " + points);
@@ -399,11 +698,11 @@ public class Archaios {
             System.out.println("Contratación cancelada.");
             return;
         }
-       
+
         int roll = random.nextInt(100);
         int skillCount = roll < 70 ? 0 : roll < 90 ? 1 : 2;
         String rarity = skillCount == 0 ? "común" : skillCount == 1 ? "infrecuente" : "raro";
-        
+
         Archeologist generated = new Archeologist("");
         for (int i = 0; i < skillCount; i++) {
             List<Skill> possible = SkillRepository.getLearnable(generated);
@@ -418,77 +717,107 @@ public class Archaios {
                 System.out.println("  " + skill.getDescription());
             }
         }
-        String name = InputValidator.inputExtra("Introduce el nombre del arqueólogo: ");
-       
+        String name = Archaios.readRequiredText("Introduce el nombre del arqueólogo: ");
+
         Archeologist hired = new Archeologist(name);
-        for (Skill skill : generated.getSkills()) hired.learnSkill(skill);
+        for (Skill skill : generated.getSkills())
+            hired.learnSkill(skill);
+        int previousPoints = points;
         archeologists.add(hired);
         points -= 50;
+        if (!save()) {
+            archeologists.remove(hired);
+            points = previousPoints;
+            System.out.println("Se canceló la contratación.");
+        }
     }
-
 
     /**
      * Permite comprar una licencia regional para un arqueólogo.
-     * Ofrece las regiones difíciles cuya licencia todavía no posee y descuenta el coste del saldo al completar la compra.
-     * La primera licencia cuesta 20 puntos y cada licencia previa incrementa el coste en 10 puntos.
+     * Ofrece las regiones difíciles cuya licencia todavía no posee y descuenta el
+     * coste del saldo al completar la compra.
+     * La primera licencia cuesta 20 puntos y cada licencia previa incrementa el
+     * coste en 10 puntos.
      */
     private void buyLicenses() {
         MenuHelper.header("Licencias");
-        while (true) {
+        int option = 0;
+        do {
             Archeologist selected = selectArcheologist("Arqueólogo para el que comprar licencias: ");
-            if (selected == null) return;
-            List<String> owned = selected.getLicenses();
+            if (selected == null)
+                return;
             List<Region> available = new ArrayList<>();
-            for (Region region : regions) {
-                
-                if (List.of("EGP", "PTR", "SUM").contains(region.getCode()) && !owned.contains(region.getCode())) available.add(region);
+            for (Region region : RegionRepository.getDifficultRegions()) {
+                if (!selected.hasLicense(region.getCode())) {
+                    available.add(region);
+                }
             }
             if (available.isEmpty()) {
                 System.out.println(selected.getName() + " ya dispone de todas las licencias.");
                 continue;
             }
-            
-            int cost = 20 + 10 * owned.size();
+
+            int cost = 20 + 10 * selected.getLicenses().size();
             MenuHelper.subHeader(selected.getName());
             System.out.println("Puntos disponibles: " + points);
             System.out.println("Comprar una licencia para " + selected.getName() + " cuesta " + cost + " puntos.");
             if (points < cost) {
-                System.out.println("No dispones de puntos suficientes para comprarle una licencia a " + selected.getName());
+                System.out.println(
+                        "No dispones de puntos suficientes para comprarle una licencia a " + selected.getName());
                 continue;
             }
             for (int i = 0; i < available.size(); i++) {
                 System.out.println((i + 1) + ".- " + available.get(i).getClass().getSimpleName());
             }
             System.out.println("0.- Volver");
-            int option = InputValidator.inputOptionQuest(0, available.size(), "Comprar licencia para la región: ");
-           
-            if (option == 0) continue;
+            option = InputValidator.inputOptionQuest(0, available.size(), "Comprar licencia para la región: ");
+
+            if (option == 0)
+                continue;
+            List<String> previousLicenses = new ArrayList<>(selected.getLicenses());
+            int previousPoints = points;
             selected.addLicense(available.get(option - 1).getCode());
             points -= cost;
-            System.out.println("Licencia comprada.");
-            return;
-        }
+            if (save()) {
+                System.out.println("Licencia comprada.");
+            } else {
+                selected.restoreRegionalData(previousLicenses, selected.getSpecialization());
+                points = previousPoints;
+                System.out.println("Se canceló la compra de licencia.");
+            }
+        } while (option == 0);
     }
 
-
     /**
-     * Ejecuta la excavación, muestra los hallazgos y actualiza las estadísticas, el saldo de puntos y la experiencia del arqueólogo.
-     * Gestiona el aprendizaje por los niveles ganados y la elección de especialización al alcanzar el nivel máximo.
+     * Ejecuta la excavación, muestra los hallazgos y actualiza las estadísticas, el
+     * saldo de puntos y la experiencia del arqueólogo.
+     * Gestiona el aprendizaje por los niveles ganados y la elección de
+     * especialización al alcanzar el nivel máximo.
+     * 
      * @param excavation Excavación preparada que se ejecutará.
-     * @param region Región en la que se realiza la excavación.
-     * @param selected Arqueólogo que realiza la excavación y recibe la experiencia.
+     * @param region     Región en la que se realiza la excavación.
+     * @param selected   Arqueólogo que realiza la excavación y recibe la
+     *                   experiencia.
      */
     private void finishExcavation(Excavation excavation, Region region, Archeologist selected) {
         MenuHelper.header("Excavación en " + region.getClass().getSimpleName());
-        excavation.excavate();
+        if (gameName == null) {
+            excavation.excavate();
+        } else {
+            excavation.excavate(this::logFoundTreasure);
+        }
         System.out.println("::::::::::::::::::::::::::::::::::::::::");
         List<String> foundCodes = excavation.finish();
         List<Treasure> found = excavation.getFoundTreasures();
-        
+
+        Map<String, Integer> previousTreasureCounts = stats.getTreasureCounts();
+        Map<String, Integer> previousVisitCounts = stats.getVisitCounts();
+        int previousPoints = points;
         stats.registerVisit(region.getCode());
         MenuHelper.subHeader("Tesoros encontrados");
         for (int i = 0; i < foundCodes.size(); i++) {
-            if (i > 0) System.out.println("--------------------");
+            if (i > 0)
+                System.out.println("--------------------");
             stats.registerTreasure(foundCodes.get(i));
             Treasure treasure = found.get(i);
             System.out.println(treasure.getTxt());
@@ -497,38 +826,77 @@ public class Archaios {
             System.out.println(capitalise(Atlas.typeAndRarity(treasure)));
         }
         System.out.println("----------------------------------------");
-        
+
         int earnedPoints = excavation.getEarnedPoints();
         points += earnedPoints;
+        // Primer guardado: conserva los resultados de la excavación antes de tocar la
+        // experiencia.
+        if (!save()) {
+            stats.restoreCounts(previousTreasureCounts, previousVisitCounts);
+            points = previousPoints;
+            System.out.println("La excavación no se pudo añadir a la partida guardada.");
+            return;
+        }
+        // Envía solo los hallazgos de esta excavación, después de conservarlos en
+        // disco.
+        // El modo --pruebas no tiene un UID de partida y no abre conexiones externas.
+        if (saveFile != null) {
+            MuseoHelper.send(uid, foundCodes, Path.of("backup", "museo"));
+        }
         System.out.println("Puntos conseguidos: " + earnedPoints);
+
+        Archeologist previousProgress = new Archeologist(selected.getName(), selected.getLevel(), selected.getXp());
+        previousProgress.restoreSkills(selected.getSkills());
+        previousProgress.restoreRegionalData(selected.getLicenses(), selected.getSpecialization());
         int earnedXp = excavation.getEarnedXp();
-        System.out.println("El arqueólogo " + selected.getName() + " ha conseguido " + earnedXp + " puntos de experiencia.");
+        System.out.println(
+                "El arqueólogo " + selected.getName() + " ha conseguido " + earnedXp + " puntos de experiencia.");
         int levelsGained = selected.addXp(earnedXp);
-        
+
         for (int i = 0; i < levelsGained; i++) {
             int level = selected.getLevel() - levelsGained + i + 1;
             chooseLevelSkill(selected, level);
         }
-        if (levelsGained > 0 && selected.getLevel() == selected.getMAX_LEVEL()) {
+        if (levelsGained > 0 && selected.getLevel() == Archeologist.MAX_LEVEL) {
             MenuHelper.subHeader("Especialización");
-            System.out.println("El arqueólogo " + selected.getName() + " ha llegado al nivel máximo y se especializa en una región.");
+            System.out.println("El arqueólogo " + selected.getName()
+                    + " ha llegado al nivel máximo y se especializa en una región.");
+            List<Region> regions = RegionRepository.getRegionsByCode();
             for (int i = 0; i < regions.size(); i++) {
                 System.out.println((i + 1) + ".- " + regions.get(i).getClass().getSimpleName());
             }
             int choice = InputValidator.inputOptionQuest(1, regions.size(), "Región en la que especializarse: ");
-           
+
             selected.setSpecialization(regions.get(choice - 1).getCode());
+        }
+        // Segundo guardado: la experiencia y las elecciones ya están resueltas.
+        if (!save()) {
+            archeologists.set(archeologists.indexOf(selected), previousProgress);
+            System.out.println("Se conservaron los hallazgos y los puntos. La experiencia no se guardó.");
         }
     }
 
+    /**
+     * Registra el código de la pieza en el momento en que se encuentra.
+     *
+     * @param code Código completo de la pieza encontrada.
+     */
+    private void logFoundTreasure(String code) {
+        try {
+            LogHelper.logTreasure(gameName, code);
+        } catch (IOException | SecurityException exception) {
+            Archaios.reportError(new IOException("No se pudo registrar el hallazgo " + code + ".", exception));
+        }
+    }
 
     /**
      * Ofrece hasta tres habilidades que el arqueólogo puede aprender
      * y aplica la elección del usuario.
      * Prioriza como primera opción una habilidad con dependencias cumplidas,
      * si existe alguna disponible.
+     * 
      * @param selected Arqueólogo que aprenderá la habilidad.
-     * @param level Nivel alcanzado que se anuncia en el menú.
+     * @param level    Nivel alcanzado que se anuncia en el menú.
      */
     private void chooseLevelSkill(Archeologist selected, int level) {
         List<Skill> available = SkillRepository.getLearnable(selected);
@@ -539,16 +907,18 @@ public class Archaios {
         Collections.shuffle(available, random);
         List<Skill> choices = new ArrayList<>();
         for (Skill skill : available) {
-         
+
             if (!skill.getDependencies().isEmpty()) {
                 choices.add(skill);
                 break;
             }
         }
-       
+
         for (Skill skill : available) {
-            if (choices.size() == 3) break;
-            if (!choices.contains(skill)) choices.add(skill);
+            if (choices.size() == 3)
+                break;
+            if (!choices.contains(skill))
+                choices.add(skill);
         }
         System.out.println("::::::::::::::::::::");
         System.out.println("El arqueólogo " + selected.getName() + " ha subido al nivel " + level + ".");
@@ -560,24 +930,18 @@ public class Archaios {
         selected.learnSkill(choices.get(option - 1));
     }
 
-
     /**
-     * Genera el texto de la región de especialización utilizando el formato del programa de referencia.
+     * Obtiene el nombre que se muestra para la región de especialización.
+     * 
      * @param code Código de la región de especialización.
-     * @return Representación textual de la región o la cadena {@code "null"}
-     *         si la región no está registrada.
+     * @return Nombre de la región o su código si todavía no está registrada.
      */
     private String specializationReference(String code) {
-        Region region = RegionRepository.getRegion(code);
-        if (region == null) return "null";
-        String type;
-        switch (code) {
-            case "GRC": type = "Greece"; break;
-            
-            default: return region.toString();
+        if (code == null || code.isBlank()) {
+            return "Sin especialización";
         }
-        
-        return "regions.places." + type + "@" + Integer.toHexString(System.identityHashCode(region));
+        Region region = RegionRepository.getRegion(code);
+        return region == null ? code : region.getClass().getSimpleName();
     }
 
 }

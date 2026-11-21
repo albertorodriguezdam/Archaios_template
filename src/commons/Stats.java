@@ -233,4 +233,35 @@ public class Stats {
             System.out.println("Total de tesoros excavados: " + totalFound);
         }
     }
+
+    /**
+     * Devuelve una copia de los contadores de hallazgos por código de pieza.
+     *
+     * @return El mapa con los códigos completos de las piezas y sus cantidades.
+     */
+    public Map<String, Integer> getTreasureCounts() {
+        return new HashMap<>(this.treasures);
+    }
+
+    /**
+     * Devuelve una copia de los contadores de visitas por región.
+     *
+     * @return El mapa con los códigos de las regiones y sus cantidades de visitas.
+     */
+    public Map<String, Integer> getVisitCounts() {
+        return new HashMap<>(this.places);
+    }
+
+    /**
+     * Restaura los contadores de hallazgos y visitas, sustituyendo
+     * los datos actuales por copias de los mapas recibidos.
+     *
+     * @param treasureCounts Los hallazgos por código completo de pieza.
+     * @param visitCounts Las visitas por código de región.
+     */
+    public void restoreCounts(Map<String, Integer> treasureCounts, Map<String, Integer> visitCounts) {
+
+        this.treasures = new HashMap<>(treasureCounts);
+        this.places = new HashMap<>(visitCounts);
+    }
 }

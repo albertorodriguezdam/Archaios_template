@@ -1,12 +1,17 @@
 package excavation;
 
+import commons.repositories.TreasureRepository;
 import helpers.CoordinateValidator;
 import helpers.InputValidator;
 import helpers.UtilsHelper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 import people.Archeologist;
+import regions.IDifficultRegion;
 import regions.Region;
 import treasures.ETreasureRarity;
 import treasures.Treasure;
@@ -22,42 +27,41 @@ public class Excavation {
     /**
      * Proporción de casillas con tesoro (10 %, redondeando hacia arriba).
      */
-    public static final double RATIO_TREASURE = 0.10;
+    private static final double RATIO_TREASURE = 0.10;
     /**
      * Proporción máxima de casillas con tesoro, incluidas las habilidades (50
      * %).
      */
-    public static final double MAX_RATIO_TREASURE = 0.50;
+    private static final double MAX_RATIO_TREASURE = 0.50;
     /**
      * Proporción de casillas que dan las acciones base (25 %).
      */
-    public static final double BASE_ACTIONS_RATIO = 0.25;
+    private static final double BASE_ACTIONS_RATIO = 0.25;
     /**
      * Proporción máxima de acciones respecto a las casillas (75 %).
      */
-    public static final double MAX_ACTIONS_RATIO = 0.75;
+    private static final double MAX_ACTIONS_RATIO = 0.75;
     /**
      * Proporción máxima de casillas que pueden revelar las habilidades de
      * revelación (25 %).
      */
-    public static final double MAX_REVEAL_RATIO = 0.25;
+    private static final double MAX_REVEAL_RATIO = 0.25;
     /**
      * Probabilidad base de tesoro común.
      */
-    public static final int PROB_COMMON = 60;
+    private static final int PROB_COMMON = 60;
     /**
      * Probabilidad base de tesoro infrecuente.
      */
-    public static final int PROB_UNCOMMON = 30;
+    private static final int PROB_UNCOMMON = 30;
     /**
      * Probabilidad base de tesoro raro.
      */
-    public static final int PROB_RARE = 10;
+    private static final int PROB_RARE = 10;
     /**
      * Número de '?' que pone cada habilidad de suposición.
      */
-    public static final int GUESSES_PER_SKILL = 3;
-
+    private static final int GUESSES_PER_SKILL = 3;
     /**
      * Generador de números aleatorios de la excavación.
      */
@@ -80,22 +84,22 @@ public class Excavation {
      */
     private Rejilla rejilla;
     /**
-     * El tesoro escondido en cada casilla, o null si está vacía.
+     * El código completo (con número de parte) del tesoro escondido en cada
+     * casilla con tesoro. Las casillas que no están en el mapa son vacías.
      */
-    private Treasure[][] hiddenTreasures;
-    private String[][] hiddenCodes;
+    private Map<Coordinate, String> hiddenCodes = new HashMap<>();
     /**
      * Los tesoros generados que hay que esconder en la rejilla.
      */
-    private List<Treasure> treasuresToPlace;
+    private List<Treasure> treasuresToPlace = new ArrayList<>();
     /**
      * Los tesoros encontrados durante la excavación.
      */
-    private List<Treasure> foundTreasuresList;
+    private List<Treasure> foundTreasuresList = new ArrayList<>();
     /**
      * Los códigos completos (con parte) de los tesoros encontrados.
      */
-    private List<String> foundCodes;
+    private List<String> foundCodes = new ArrayList<>();
     /**
      * Las acciones que le quedan al arqueólogo.
      */
@@ -107,12 +111,12 @@ public class Excavation {
     /**
      * El número de tesoros encontrados.
      */
-    private int foundTreasures;
+    private int foundTreasures = 0;
     /**
      * El número de casillas reveladas por las habilidades (limpieza y
      * suposición).
      */
-    private int revealedBySkills;
+    private int revealedBySkills = 0;
 
     /**
      * Prepara una excavación nueva: crea la rejilla, genera y esconde los
@@ -127,60 +131,22 @@ public class Excavation {
         this.archeologist = archeologist;
         this.terrain = terrain;
         this.rejilla = new Rejilla(terrain);
-        this.hiddenTreasures = new Treasure[terrain.getRows()][terrain.getColumns()];
-        this.hiddenCodes = new String[terrain.getRows()][terrain.getColumns()];
-        this.treasuresToPlace = new ArrayList<>();
-        this.foundTreasuresList = new ArrayList<>();
-        this.foundCodes = new ArrayList<>();
-        this.foundTreasures = 0;
-        this.revealedBySkills = 0;
 
-        /*El orden importa: primero los tesoros, luego la limpieza y por último las suposiciones*/
+        /*
+         * El orden importa: primero el terreno y los tesoros, luego las
+         * demoliciones, después la limpieza y por último las suposiciones
+         */
+        initializeTerrain();
         generateTreasures();
         placeTreasures();
+        applyTerrainConversions();
         applyCleaning(archeologist.getTotalEmptyCellsReveled());
         /*
          * getTotalScanHints() devuelve casillas con '?'; cada suposición marca 3
          */
-        applyGuesses(archeologist.getTotalScanHints() / GUESSES_PER_SKILL);
-        this.actions = calcActions(terrain, archeologist.getTotalExtraActions(), archeologist.getActionsMultiplier());
-    }
-
-    /**
-     * @return El terreno de la excavación.
-     */
-    public ETerrain getTerrain() {
-        return this.terrain;
-    }
-
-    /**
-     * @return La rejilla de la excavación.
-     */
-    public Rejilla getRejilla() {
-        return this.rejilla;
-    }
-
-    /**
-     * @return Las acciones que le quedan al arqueólogo.
-     */
-    public int getActions() {
-        return this.actions;
-    }
-
-    /**
-     * @return El número de tesoros escondidos en la rejilla.
-     */
-    public int getTotalTreasures() {
-        return this.totalTreasures;
-    }
-
-    /**
-     * @return Los códigos completos (con número de parte) de los tesoros
-     * encontrados, listos para enviarlos al Museo y guardarlos en las
-     * estadísticas.
-     */
-    public List<String> getFoundCodes() {
-        return this.foundCodes;
+        applyGuesses(archeologist.getTotalScanHints() / Excavation.GUESSES_PER_SKILL);
+        this.actions = this.calcActions(archeologist.getTotalExtraActions(region.getCode()),
+                archeologist.getActionsMultiplier());
     }
 
     /**
@@ -200,7 +166,7 @@ public class Excavation {
      * terreno (2, 5 o 10).
      */
     public int getEarnedXp() {
-        return getEarnedPoints() + this.terrain.getSize().getExtraExp();
+        return getEarnedPoints() + this.terrain.getExtraExp();
     }
 
     /**
@@ -213,9 +179,9 @@ public class Excavation {
     public static List<ETerrain> getAvailableTerrains(Archeologist archeologist) {
         List<ETerrain> result = new ArrayList<>();
         for (ETerrain t : ETerrain.values()) {
-            boolean levelOk = t.getSize().isAllowedFor(archeologist.getLevel());
-            boolean sizeOk = containsIgnoreCase(archeologist.getTerrainsSize(), t.getSize().toString());
-            boolean shapeOk = containsIgnoreCase(archeologist.getTerrainsFormats(), t.getShape());
+            boolean levelOk = t.isAllowedFor(archeologist.getLevel());
+            boolean sizeOk = Excavation.containsIgnoreCase(archeologist.getTerrainsSize(), t.getSize().toString());
+            boolean shapeOk = Excavation.containsIgnoreCase(archeologist.getTerrainsFormats(), t.getShape());
             if (levelOk && sizeOk && shapeOk) {
                 result.add(t);
             }
@@ -241,36 +207,34 @@ public class Excavation {
     }
 
     /**
-     * Calcula los tesoros base de un terreno, el 10 % de las casillas
-     * redondeando hacia arriba, como mínimo 1. Los mínimos del tamaño van
-     * incluidos en esta cifra.
+     * Calcula los tesoros base del terreno, el 10 % de las casillas redondeando
+     * hacia arriba, como mínimo 1. Los mínimos del tamaño van incluidos en esta
+     * cifra.
      *
-     * @param terrain El terreno.
      * @return El número de tesoros base.
      */
-    public static int calculateBaseTreasure(ETerrain terrain) {
-        int base = (int) Math.ceil(terrain.getCells() * RATIO_TREASURE);
+    private int calculateBaseTreasure() {
+        int base = (int) Math.ceil(this.terrain.getCells() * Excavation.RATIO_TREASURE);
         /*
          * Como mínimo 1 y nunca menos que los mínimos del tamaño
          */
         if (base < 1) {
             base = 1;
         }
-        if (base < terrain.getSize().getMinTotal()) {
-            base = terrain.getSize().getMinTotal();
+        if (base < this.terrain.getMinTotal()) {
+            base = this.terrain.getMinTotal();
         }
         return base;
     }
 
     /**
-     * Calcula el máximo de tesoros de un terreno: el 50 % de las casillas.
+     * Calcula el máximo de tesoros del terreno: el 50 % de las casillas.
      *
-     * @param terrain El terreno.
      * @return El número máximo de tesoros, contando los extra de las
      * habilidades.
      */
-    public static int calculateMaxTreasure(ETerrain terrain) {
-        return (int) (terrain.getCells() * MAX_RATIO_TREASURE);
+    private int calculateMaxTreasure() {
+        return (int) (this.terrain.getCells() * Excavation.MAX_RATIO_TREASURE);
     }
 
     /**
@@ -278,16 +242,15 @@ public class Excavation {
      * factor de las habilidades, limitado a estar entre el 25 % y el 75 % de
      * las casillas.
      *
-     * @param terrain El terreno.
      * @param extraActions Las acciones extra del arqueólogo.
      * @param factor El factor multiplicador de las habilidades (1.0 si no tiene
      * ninguna).
      * @return El número de acciones.
      */
-    public static int calcActions(ETerrain terrain, int extraActions, double factor) {
-        int min = (int) (terrain.getCells() * BASE_ACTIONS_RATIO);
-        int max = (int) (terrain.getCells() * MAX_ACTIONS_RATIO);
-        int result = (int) ((terrain.getCells() * BASE_ACTIONS_RATIO + extraActions) * factor);
+    private int calcActions(int extraActions, double factor) {
+        int min = (int) (this.terrain.getCells() * Excavation.BASE_ACTIONS_RATIO);
+        int max = (int) (this.terrain.getCells() * Excavation.MAX_ACTIONS_RATIO);
+        int result = (int) ((this.terrain.getCells() * Excavation.BASE_ACTIONS_RATIO + extraActions) * factor);
 
         if (result < min) {
             result = min;
@@ -308,9 +271,9 @@ public class Excavation {
      * @return La rareza elegida.
      */
     private ETreasureRarity randomRarity(int extraUncommonProb, int extraRareProb) {
-        int rareProb = PROB_RARE + extraRareProb;
-        int uncommonProb = PROB_UNCOMMON + extraUncommonProb;
-        if (!this.terrain.getSize().allowsRare()) {
+        int rareProb = Excavation.PROB_RARE + extraRareProb;
+        int uncommonProb = Excavation.PROB_UNCOMMON + extraUncommonProb;
+        if (!this.terrain.allowsRare()) {
             rareProb = 0;
         }
 
@@ -318,7 +281,7 @@ public class Excavation {
          * Número entre 0 y 99: los primeros valores son raros, luego
          * infrecuentes y el resto comunes
          */
-        int number = RANDOM.nextInt(100);
+        int number = Excavation.RANDOM.nextInt(100);
         if (number < rareProb) {
             return ETreasureRarity.RARE;
         } else if (number < rareProb + uncommonProb) {
@@ -335,17 +298,17 @@ public class Excavation {
      * por último aleatorios.
      */
     private void generateTreasures() {
-        ETerrainSize size = this.terrain.getSize();
-        int base = calculateBaseTreasure(this.terrain);
+        String regionCode = this.region.getCode();
+        int base = this.calculateBaseTreasure();
         int uncommonProb = this.archeologist.getTotalUncommonProb();
         int rareProb = this.archeologist.getTotalRareProb();
 
         /*
          * 1) Mínimos del tamaño
          */
-        addTreasures(ETreasureRarity.COMMON, size.getMinCommon());
-        addTreasures(ETreasureRarity.UNCOMMON, size.getMinUncommon());
-        addTreasures(ETreasureRarity.RARE, size.getMinRare());
+        addTreasures(ETreasureRarity.COMMON, this.terrain.getMinCommon());
+        addTreasures(ETreasureRarity.UNCOMMON, this.terrain.getMinUncommon());
+        addTreasures(ETreasureRarity.RARE, this.terrain.getMinRare());
 
         /*
          * 2) Aleatorios hasta llegar a los tesoros base
@@ -359,12 +322,12 @@ public class Excavation {
         /*
          * 3) Extras del arqueólogo: raros (si el terreno los permite), infrecuentes, comunes y aleatorios
          */
-        if (size.allowsRare()) {
-            addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures());
+        if (this.terrain.allowsRare()) {
+            addTreasures(ETreasureRarity.RARE, this.archeologist.getTotalRareTreasures(regionCode));
         }
-        addTreasures(ETreasureRarity.UNCOMMON, this.archeologist.getTotalUncommonTreasures());
-        addTreasures(ETreasureRarity.COMMON, this.archeologist.getTotalCommonTreasures());
-        for (int i = 0; i < this.archeologist.getTotalRandomTreasures(); i++) {
+        addTreasures(ETreasureRarity.UNCOMMON, this.archeologist.getTotalUncommonTreasures(regionCode));
+        addTreasures(ETreasureRarity.COMMON, this.archeologist.getTotalCommonTreasures(regionCode));
+        for (int i = 0; i < this.archeologist.getTotalRandomTreasures(regionCode); i++) {
             addTreasure(randomRarity(uncommonProb, rareProb));
         }
 
@@ -392,7 +355,7 @@ public class Excavation {
      * @return Si se ha podido añadir.
      */
     private boolean addTreasure(ETreasureRarity rarity) {
-        if (this.treasuresToPlace.size() >= calculateMaxTreasure(this.terrain)) {
+        if (this.treasuresToPlace.size() >= this.calculateMaxTreasure()) {
             return false;
         }
         Treasure treasure = this.region.getRandomTreasureByRarity(rarity);
@@ -415,22 +378,89 @@ public class Excavation {
         List<Integer> positions = UtilsHelper.genRandomIdxs(this.treasuresToPlace.size(), this.terrain.getCells());
 
         for (int i = 0; i < positions.size(); i++) {
-            int row = positions.get(i) / columns;
-            int column = positions.get(i) % columns;
+            Coordinate coord = new Coordinate(positions.get(i) / columns, positions.get(i) % columns);
             Treasure treasure = this.treasuresToPlace.get(i);
 
-            this.hiddenTreasures[row][column] = treasure;
-            this.hiddenCodes[row][column] = treasure.getRandomPartCode();
-            this.rejilla.placeTreasure(new Coordinate(row, column), treasure.getRarity());
+            this.hiddenCodes.put(coord, treasure.getRandomPartCode());
+            this.rejilla.placeTreasure(coord, treasure.getRarity());
+        }
+    }
+    /**
+     * Genera el terreno de la rejilla según la región. Las regiones básicas
+     * son todo tierra, así que no se hace nada. En las difíciles se usan los
+     * porcentajes de su distribución de terreno (por ejemplo, Petra: 75 %
+     * piedra y 25 % arena).
+     * Criterio de reparto: como las casillas son enteras, cada terreno recibe
+     * su porcentaje redondeado hacia abajo, y las casillas que sobran por el
+     * redondeo van al terreno con mayor porcentaje. Así se rellenan todas las
+     * casillas y ningún terreno recibe menos de lo que le toca. Después se
+     * colocan en casillas al azar.
+     */
+    private void initializeTerrain() {
+        if (!(this.region instanceof IDifficultRegion)) {
+            return;
+        }
+        Map<Character, Integer> distribution = ((IDifficultRegion) this.region).getTerrainDistribution();
+        int cells = this.terrain.getCells();
+
+        /* Casillas de cada terreno redondeando hacia abajo */
+        Map<Character, Integer> amounts = new HashMap<>();
+        int assigned = 0;
+        char mostCommon = ' ';
+        int maxPercent = -1;
+        for (Map.Entry<Character, Integer> entry : distribution.entrySet()) {
+            int amount = cells * entry.getValue() / 100;
+            amounts.put(entry.getKey(), amount);
+            assigned += amount;
+            if (entry.getValue() > maxPercent) {
+                maxPercent = entry.getValue();
+                mostCommon = entry.getKey();
+            }
+        }
+        /* Las casillas que sobran por el redondeo van al terreno más común */
+        amounts.put(mostCommon, amounts.get(mostCommon) + cells - assigned);
+
+        /* Se recorren todas las casillas en orden aleatorio y se van asignando */
+        List<Integer> order = UtilsHelper.genRandomIdxs(cells, cells);
+        int columns = this.terrain.getColumns();
+        int next = 0;
+        for (Map.Entry<Character, Integer> entry : amounts.entrySet()) {
+            for (int i = 0; i < entry.getValue() && next < cells; i++) {
+                int index = order.get(next);
+                this.rejilla.setTerrain(new Coordinate(index / columns, index % columns), entry.getKey());
+                next++;
+            }
         }
     }
 
     /**
+     * Habilidades de demolición: convierten en tierra algunas casillas de un
+     * terreno (por ejemplo, Demoliciones A convierte hasta 5 piedras). Se
+     * aplican antes de la limpieza y el escaneo. Las casillas se eligen al azar
+     * y sin repetir. No gastan acciones, no descubren la casilla y no tocan el
+     * tesoro que haya debajo.
+     */
+    
+    private void applyTerrainConversions() {
+        if (!(this.region instanceof IDifficultRegion)) {
+            return;
+        }
+        for (char symbol : ((IDifficultRegion) this.region).getTerrainDistribution().keySet()) {
+            int conversions = this.archeologist.getTerrainConversions(symbol);
+            List<Coordinate> candidates = this.rejilla.getTerrainCoordinates(symbol);
+            int amount = Math.min(conversions, candidates.size());
+            if (amount <= 0) {
+                continue;
+            }
+            for (int index : UtilsHelper.genRandomIdxs(amount, candidates.size())) {
+                this.rejilla.convertToEarth(candidates.get(index));
+            }
+        }
+    }
+    /**
      * Devuelve las coordenadas de la rejilla que tienen tesoro o que están
      * vacías.
-     *
-     * @param withTreasure true para las casillas con tesoro, false para las
-     * vacías.
+     * @param withTreasure true para las casillas con tesoro, false para las vacías.
      * @return La lista de coordenadas.
      */
     private List<Coordinate> getCoordinates(boolean withTreasure) {
@@ -451,7 +481,7 @@ public class Excavation {
      * 25 %.
      */
     private int getRevealsLeft() {
-        int maxReveal = (int) (this.terrain.getCells() * MAX_REVEAL_RATIO);
+        int maxReveal = (int) (this.terrain.getCells() * Excavation.MAX_REVEAL_RATIO);
         return maxReveal - this.revealedBySkills;
     }
 
@@ -502,8 +532,8 @@ public class Excavation {
             }
 
             List<Coordinate> chosen = new ArrayList<>();
-            chosen.add(withTreasure.get(RANDOM.nextInt(withTreasure.size())));
-            List<Integer> emptyIdxs = UtilsHelper.genRandomIdxs(GUESSES_PER_SKILL - 1, empties.size());
+            chosen.add(withTreasure.get(Excavation.RANDOM.nextInt(withTreasure.size())));
+            List<Integer> emptyIdxs = UtilsHelper.genRandomIdxs(Excavation.GUESSES_PER_SKILL - 1, empties.size());
             for (int index : emptyIdxs) {
                 chosen.add(empties.get(index));
             }
@@ -546,19 +576,57 @@ public class Excavation {
                 }
             }
         }
-        // Presenta por rareza los tesoros que quedan sin excavar.
+        /**
+         * Presenta por rareza los tesoros que quedan sin excavar.
+         */
         System.out.println("Tesoros: " + common + " comunes, "
-            + uncommon + " infrecuentes y " + rare + " raros.");
+                + uncommon + " infrecuentes y " + rare + " raros.");
     }
 
     /**
-     * Indica si la excavación ha terminado: sin acciones o con todos los
-     * tesoros encontrados.
+     * Indica si la excavación ha terminado: sin acciones, con todos los tesoros
+     * encontrados o sin ninguna casilla que se pueda pagar con las acciones que
+     * quedan.
      *
      * @return Si ha terminado.
      */
-    public boolean isFinished() {
-        return this.actions <= 0 || this.foundTreasures >= this.totalTreasures;
+    private boolean isFinished() {
+        return this.actions <= 0 || this.foundTreasures >= this.totalTreasures || !hasAffordableMoves();
+    }
+
+    /**
+     * Calcula lo que cuesta de verdad excavar una casilla: el coste base de su
+     * terreno, rebajado por las habilidades del arqueólogo si tiene alguna para
+     * ese terreno (por ejemplo, la especialización en desierto deja la arena en
+     * 1). Se usa el mismo valor para comprobar si se puede pagar y para
+     * cobrarlo.
+     *
+     * @param coord La casilla.
+     * @return El número de acciones que cuesta excavarla.
+     */
+    private int getEffectiveCost(Coordinate coord) {
+        char terrainSymbol = this.rejilla.getTerrain(coord);
+        int baseCost = this.rejilla.getBaseCost(coord);
+        return this.archeologist.getExcavationCost(terrainSymbol, baseCost);
+    }
+
+    /**
+     * Indica si queda alguna casilla sin excavar que se pueda pagar con las
+     * acciones restantes. Por ejemplo, con 1 acción y solo agua por excavar, no
+     * queda ninguna.
+     *
+     * @return Si hay al menos una casilla pagable.
+     */
+    private boolean hasAffordableMoves() {
+        for (int r = 0; r < this.terrain.getRows(); r++) {
+            for (int c = 0; c < this.terrain.getColumns(); c++) {
+                Coordinate coord = new Coordinate(r, c);
+                if (!this.rejilla.isRevealed(coord) && getEffectiveCost(coord) <= this.actions) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -568,8 +636,21 @@ public class Excavation {
      * notifica.
      */
     public void excavate() {
+        excavate(null);
+    }
+
+    /**
+     * Ejecuta la excavación y avisa al llamador cuando se encuentra una pieza.
+     *
+     * @param onTreasure Recibe el código completo del hallazgo, o null para
+     * omitir el aviso.
+     */
+    public void excavate(Consumer<String> onTreasure) {
         while (!isFinished()) {
-            // Muestra la rejilla y los datos del turno antes de pedir coordenadas.
+            /**
+             * Muestra la rejilla y los datos del turno antes de pedir
+             * coordenadas.
+             */
             System.out.print(this.rejilla.render());
             System.out.println("Número de acciones restantes: " + this.actions);
             if (this.archeologist.hasInvestigation()) {
@@ -578,41 +659,83 @@ public class Excavation {
                 System.out.println("Tesoros: " + this.totalTreasures);
             }
 
-            // Una lista vacía significa que aún falta recibir una entrada válida.
+            /**
+             * Una lista vacía significa que aún falta recibir una entrada
+             * válida.
+             */
             List<Coordinate> coords = new ArrayList<>();
             while (coords.isEmpty()) {
-                // Comparte el lector con los menús para que las lecturas no compitan entre sí.
+                /**
+                 * Comparte el lector con los menús para que las lecturas no
+                 * compitan entre sí.
+                 */
                 String line = InputValidator.readLine("Conjunto de coordenadas a excavar separadas por espacios: ");
                 coords = CoordinateValidator.parseAll(line, this.rejilla, this.actions);
             }
-            // Procesa las coordenadas y se detiene si ya se ha terminado la excavación.
+            /**
+             * Procesa las coordenadas y se detiene si ya se ha terminado la
+             * excavación.
+             */
             for (Coordinate coord : coords) {
-                digAt(coord);
-                if (isFinished()) break;
+                digAt(coord, onTreasure);
+                if (isFinished()) {
+                    break;
+                }
             }
-            if (!isFinished()) System.out.println("----------------------------------------");
+            if (!isFinished()) {
+                System.out.println("----------------------------------------");
+            }
         }
         if (this.foundTreasures >= this.totalTreasures) {
             System.out.println("-------------------- ¡Se han encontrado todos los tesoros! --------------------");
+        } else if (this.actions > 0) {
+            /* Quedan acciones, pero ninguna casilla cuesta tan poco */
+            System.out.println("No quedan casillas que puedas pagar con " + this.actions + " "
+                    + (this.actions == 1 ? "acción." : "acciones."));
         }
     }
 
     /**
-     * Excava una casilla: gasta una acción y, si hay tesoro, lo guarda como
-     * encontrado junto con su código completo con número de parte.
+     * Excava una casilla cobrando su coste real. Si no hay acciones
+     * suficientes, no cobra nada ni cambia la casilla. Si es piedra, la rompe:
+     * pasa a tierra y la casilla sigue sin excavar, así que hay que volver a
+     * excavarla para ver qué hay debajo. Si no, la descubre y, si hay tesoro,
+     * lo guarda como encontrado junto con su código completo con número de
+     * parte.
      *
      * @param coord La casilla a excavar.
+     * @param onTreasure Recibe el código completo del hallazgo, si se
+     * proporcionó.
      */
-    private void digAt(Coordinate coord) {
-        this.actions--;
+    private void digAt(Coordinate coord, Consumer<String> onTreasure) {
+        int cost = getEffectiveCost(coord);
+        if (cost > this.actions) {
+            System.out.println("No tienes acciones suficientes para excavar " + this.rejilla.getLabel(coord)
+                    + " (cuesta " + cost + ").");
+            return;
+        }
+        this.actions -= cost;
+
+        /* La piedra necesita dos pasos: primero se rompe y se queda en tierra */
+        if (this.rejilla.isStone(coord)) {
+            this.rejilla.convertToEarth(coord);
+            System.out.println("Has roto la piedra de " + this.rejilla.getLabel(coord)
+                    + ". Ahora es tierra y puedes volver a excavarla.");
+            return;
+        }
+
         ETreasureRarity rarity = this.rejilla.dig(coord);
 
-        // Los hallazgos se guardan aquí y se presentan juntos al terminar.
+        /* Los hallazgos se guardan aquí y se presentan juntos al terminar */
         if (rarity != null) {
-            Treasure treasure = this.hiddenTreasures[coord.getRow()][coord.getColumn()];
+            String code = this.hiddenCodes.get(coord);
+            Treasure treasure = TreasureRepository.getTreasure(code);
             this.foundTreasuresList.add(treasure);
-            this.foundCodes.add(this.hiddenCodes[coord.getRow()][coord.getColumn()]);
+            this.foundCodes.add(code);
             this.foundTreasures++;
+            if (onTreasure != null) {
+                onTreasure.accept(code);
+            }
         }
     }
 
