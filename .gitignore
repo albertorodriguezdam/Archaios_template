@@ -3,7 +3,8 @@ bin/
 *.class
 log/
 saves/
-config/
+config/*
+!/config/Zeraf.conf
 lib/
 backup/
 *.jar
