@@ -16,6 +16,8 @@ El sistema necesita las librerías:
 
 -Gson v2.14.0 o superior.<br>
 -Terra v1.x.x o superior.
+En `lib/` ya vienen Gson 2.15.0 y Terra 1.0.0. Para usar Terra hace falta un JDK 23 o superior.
+Tambien está configurado el modo pruebas en VS Code. En **Ejecutar y depurar**, elige **Archaios en modo pruebas** y dale a **F5**.
 
 ## Museo
 El sistema está conformado por dos partes, el cliente, presente en este repositorio, y el servidor, localizado en el repositorio Archaios_Museo.

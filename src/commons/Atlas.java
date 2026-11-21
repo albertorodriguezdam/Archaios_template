@@ -1,9 +1,11 @@
 package commons;
 
+import commons.repositories.RegionRepository;
 import helpers.InputValidator;
 import helpers.MenuHelper;
 import java.util.ArrayList;
 import java.util.List;
+import regions.IDifficultRegion;
 import regions.Region;
 import treasures.ETreasureRarity;
 import treasures.ETreasureType;
@@ -14,32 +16,23 @@ import treasures.Treasure;
  * @author Constantin Laurentiu.
  */
 public class Atlas {
-    private List<Region> regions;
-
-    /**
-     * Constructor básico de Atlas.
-     * @param regions Lista de regiones.
-     */
-    public Atlas(List<Region> regions) {
-        this.regions = new ArrayList<>(regions);
-        this.regions.sort(java.util.Comparator.comparing(Region::getCode));
-    }
-
     /**
      * Consulta una región del Atlas y permite elegir otra al terminar.
      */
     public void show() {
-        while (true) {
-            int option = chooseRegion("Atlas", "Consultar región: ");
-            if (option == 0) return;
-            Region region = regions.get(option - 1);
+        int again;
+        do {
+            Region region = chooseRegion("Atlas", "Consultar región: ");
+            if (region == null) return;
             MenuHelper.subHeader(region.getClass().getSimpleName());
-            if (List.of("EGP", "PTR", "SUM").contains(region.getCode())) System.out.println("Región difícil. " + "Imperio de las arenas");
-            for (Treasure treasure : getTreasures(region)) {
-                System.out.println("-" + treasure.getTxt() + " - " + typeAndRarity(treasure));
+            if (region instanceof IDifficultRegion difficult) {
+                System.out.println("Región difícil. " + difficult.getExpansionName());
             }
-            if (MenuHelper.returnMenu("Consultar otra región") == 0) return;
-        }
+            for (Treasure treasure : getTreasures(region)) {
+                System.out.println("-" + treasure.getTxt() + " - " + Atlas.typeAndRarity(treasure));
+            }
+            again = MenuHelper.returnMenu("Consultar otra región");
+        } while (again != 0);
     }
 
     /**
@@ -47,9 +40,8 @@ public class Atlas {
      */
     public void showCatalog() {
         while (true) {
-            int option = chooseRegion("Catálogo de tesoros", "Consultar tesoros de la región: ");
-            if (option == 0) return;
-            Region region = regions.get(option - 1);
+            Region region = chooseRegion("Catálogo de tesoros", "Consultar tesoros de la región: ");
+            if (region == null) return;
             List<Treasure> treasures = getTreasures(region);
             if (treasures.isEmpty()) {
                 System.out.println("No hay tesoros en esta región.");
@@ -64,7 +56,8 @@ public class Atlas {
                 int number = InputValidator.inputOptionQuest(0, treasures.size(), "Consultar tesoro: ");
                 
                 if (number == 0) break;
-                showTreasure(treasures.get(number - 1), treasures.get(number - 1).getCode());
+                Treasure selected = treasures.get(number - 1);
+                Atlas.showTreasure(selected, selected.getCode());
                 
                 if (MenuHelper.returnMenu("Consultar otro tesoro") == 0) return;
             }
@@ -76,15 +69,17 @@ public class Atlas {
      * Muestra las regiones disponibles y solicita una opción al usuario.
      * @param title Título de la pantalla.
      * @param question Mensaje para solicitar la selección.
-     * @return Número de la región seleccionada, comenzando en 1; 0 para volver.
+     * @return Región seleccionada o null si el usuario elige volver.
      */
-    private int chooseRegion(String title, String question) {
+    private Region chooseRegion(String title, String question) {
+        List<Region> regions = RegionRepository.getRegionsByCode();
         MenuHelper.header(title);
         for (int i = 0; i < regions.size(); i++) {
             System.out.println((i + 1) + ".- " + regions.get(i).getClass().getSimpleName());
         }
         System.out.println("0.- Volver");
-        return InputValidator.inputOptionQuest(0, regions.size(), question);
+        int option = InputValidator.inputOptionQuest(0, regions.size(), question);
+        return option == 0 ? null : regions.get(option - 1);
     }
 
     /**
@@ -124,7 +119,7 @@ public class Atlas {
      */
     public static String typeAndRarity(Treasure treasure) {
         String rarity = treasure.getRarity().toString();
-        if (treasure.getRarity() == ETreasureRarity.RARE && isFeminine(treasure)) rarity = "rara";
+        if (treasure.getRarity() == ETreasureRarity.RARE && Atlas.isFeminine(treasure)) rarity = "rara";
         return treasure.getType() + " " + rarity;
     }
 
@@ -136,15 +131,15 @@ public class Atlas {
      * @param treasure Tesoro cuya ficha se muestra.
      * @param code Código que se mostrará, base del tesoro o completo de una pieza.
      */
-    public static void showTreasure(Treasure treasure, String code) {
+    private static void showTreasure(Treasure treasure, String code) {
         MenuHelper.subHeader(treasure.getTxt());
         System.out.println(treasure.getDescription());
         System.out.println("Código: " + code);
-        String info = typeAndRarity(treasure);
+        String info = Atlas.typeAndRarity(treasure);
         info = Character.toUpperCase(info.charAt(0)) + info.substring(1);
         
         if (treasure.getParts() > 1) {
-            info += (isFeminine(treasure) ? " dividida" : " dividido") + " en " + treasure.getParts() + " partes";
+            info += (Atlas.isFeminine(treasure) ? " dividida" : " dividido") + " en " + treasure.getParts() + " partes";
         }
         System.out.println(info);
     }

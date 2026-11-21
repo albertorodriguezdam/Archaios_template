@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * SkillTerrain
+ * @author Alberto Rodríguez Domínguez
  */
 public class SkillTerrain extends Skill{
 

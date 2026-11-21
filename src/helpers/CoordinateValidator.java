@@ -22,7 +22,7 @@ public class CoordinateValidator {
      * @return La coordenada (fila y columna empezando en 0), o null si el
      * formato no es válido o se sale de la rejilla.
      */
-    public static Coordinate parse(String text, Rejilla rejilla) {
+    private static Coordinate parse(String text, Rejilla rejilla) {
         if (text == null) {
             return null;
         }
@@ -100,7 +100,7 @@ public class CoordinateValidator {
         }
 
         for (String part : parts) {
-            Coordinate coord = parse(part, rejilla);
+            Coordinate coord = CoordinateValidator.parse(part, rejilla);
 
             if (coord == null) {
                 System.out.println("La coordenada \"" + part + "\" no es válida.");

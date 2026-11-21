@@ -1,0 +1,236 @@
+[
+    {
+        "code": "IBR_MON_001",
+        "name": "Denario ib\u00e9rico",
+        "description": "Moneda de plata con influencia griega y fenicia",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "IBR_CUE_001",
+        "name": "Cuentas de hueso",
+        "description": "Hueso pulido con diversas formas y tama\u00f1os para formar parte de un colgante.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "IBR_JOY_001",
+        "name": "F\u00edbula La T\u00e8ne",
+        "description": "Hebilla para sujetar la ropa con forma de arco con un lado vuelto sobre s\u00ed mismo.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_002",
+        "name": "F\u00edbula anular",
+        "description": "Hebilla para sujetar la ropa con forma de anillo.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_003",
+        "name": "F\u00edbula de caballito",
+        "description": "Hebilla con forma de caballo que presumiblemente llevaban los guerreros.",
+        "rarity": "R",
+        "parts": 6,
+        "points": 6,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_004",
+        "name": "Brazaletes",
+        "description": "Brazaletes de plata decorados con animales.",
+        "rarity": "I",
+        "parts": 5,
+        "points": 2,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_005",
+        "name": "Torques \u00c1rtabro",
+        "description": "Torques de oro y plata con remates piriformes t\u00edpico de Gallaecia.",
+        "rarity": "I",
+        "parts": 5,
+        "points": 3,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_006",
+        "name": "Torques de carrete",
+        "description": "Torques de oro con remates en forma de carrete t\u00edpico de Gallaecia.",
+        "rarity": "R",
+        "parts": 5,
+        "points": 5,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_007",
+        "name": "Torques castrense",
+        "description": "Torques de oro con filigrana decorativa y terminado en formas trapezoidales. T\u00edpico de los castros de Gallaecia.",
+        "rarity": "R",
+        "parts": 5,
+        "points": 6,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_JOY_008",
+        "name": "T\u00e9sera de hospitalidad",
+        "description": "Pieza met\u00e1lica con forma de janal\u00ed que simbolizaba un pacto de hospitalidad entre grupos.",
+        "rarity": "R",
+        "parts": 6,
+        "points": 6,
+        "type": "JOY"
+    },
+    {
+        "code": "IBR_CER_001",
+        "name": "K\u00e1lathos \u00cdbero",
+        "description": "Vasija recta con forma de sombrero de copa que se usaba como recipiente para el transporte de mercanc\u00eda.",
+        "rarity": "C",
+        "parts": 25,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "IBR_CER_002",
+        "name": "Urna de orejetas",
+        "description": "Urna emblem\u00e1tica de la cer\u00e1mica ib\u00e9rica utilizada como urna funeraria gracias a su cierre herm\u00e9tico.",
+        "rarity": "C",
+        "parts": 21,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "IBR_CER_003",
+        "name": "Vaso bitroc\u00f3nico",
+        "description": "Urna funearia encontrada en los t\u00famulos de la Edad de Bronce.",
+        "rarity": "I",
+        "parts": 14,
+        "points": 2,
+        "type": "CER"
+    },
+    {
+        "code": "IBR_CER_004",
+        "name": "Olla castre\u00f1a",
+        "description": "Olla amplia adornada con relieves geom\u00e9tricos t\u00edpica de los castros del noroeste de la pen\u00ednsula.",
+        "rarity": "I",
+        "parts": 20,
+        "points": 3,
+        "type": "CER"
+    },
+    {
+        "code": "IBR_CER_005",
+        "name": "\u00c1nfora ib\u00e9rica",
+        "description": "\u00c1nfora ib\u00e9rica con influencia fenicia usada para el transporte de l\u00edquidos.",
+        "rarity": "C",
+        "parts": 24,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "IBR_CER_006",
+        "name": "Vaso campaniforme",
+        "description": "Cer\u00e1mica arcaica con forma de campana y decorada con diversas l\u00edneas talladas.",
+        "rarity": "I",
+        "parts": 20,
+        "points": 2,
+        "type": "CER"
+    },
+    {
+        "code": "IBR_EQP_001",
+        "name": "Falcata",
+        "description": "La espada \u00edbera por escelencia. Filo de hierro con una caracter\u00edstica curvatura y mango con forma de animal.",
+        "rarity": "I",
+        "parts": 23,
+        "points": 4,
+        "type": "EQP"
+    },
+    {
+        "code": "IBR_EQP_002",
+        "name": "Espada de antenas",
+        "description": "Espada celt\u00edbera de la Edad de Bronce con un caracter\u00edstico mango terminado en dos espirales o antenas.",
+        "rarity": "I",
+        "parts": 25,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "IBR_EQP_003",
+        "name": "Soliferrum",
+        "description": "Lanza \u00edbera hecha de hierro en su totalidad para una alta penetraci\u00f3n de las protecciones del enemigo.",
+        "rarity": "R",
+        "parts": 10,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "IBR_EQP_004",
+        "name": "Cardiophylax",
+        "description": "Armadura primitiva hecha de una plancha de bronze que cubre el coraz\u00f3n y unas correas de cuero que la sujetan.",
+        "rarity": "R",
+        "parts": 8,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "IBR_EST_001",
+        "name": "Estela funeraria",
+        "description": "Estela de piedra tallada con inscripciones que se pon\u00eda en los enterramientos nobles.",
+        "rarity": "I",
+        "parts": 48,
+        "points": 5,
+        "type": "EST"
+    },
+    {
+        "code": "IBR_FRA_001",
+        "name": "\u00cddolo cil\u00edndrico oculado",
+        "description": "Estatuilla con grandes ojos tallada en alabastro que representa a una deidad.",
+        "rarity": "I",
+        "parts": 4,
+        "points": 3,
+        "type": "FRA"
+    },
+    {
+        "code": "IBR_FRA_002",
+        "name": "\u00cddolo oculado simple",
+        "description": "Estatuilla oculada de piedra tallada con simples rasgos representando una deidad.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 3,
+        "type": "FRA"
+    },
+    {
+        "code": "IBR_FRA_003",
+        "name": "\u00cddolo de Garrovillas",
+        "description": "Placa antropom\u00f3rfica y oculada tallada en piedra que representa a una deidad antigua.",
+        "rarity": "R",
+        "parts": 4,
+        "points": 6,
+        "type": "FRA"
+    },
+    {
+        "code": "IBR_FRA_004",
+        "name": "\u00cddolo de placa",
+        "description": "Placa de pizarra, trapezoidal, oculada y tallada con motivos geom\u00e9tricos.",
+        "rarity": "I",
+        "parts": 3,
+        "points": 2,
+        "type": "FRA"
+    },
+    {
+        "code": "IBR_TES_001",
+        "name": "Mosaico punteado",
+        "description": "Mosaico punteado en dos colores creando formas geom\u00e9tricas. Inspirado en el de la Casa de Likine.",
+        "rarity": "C",
+        "parts": 625,
+        "points": 1,
+        "type": "TES"
+    }
+]

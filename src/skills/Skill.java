@@ -3,12 +3,13 @@ package skills;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import repositories.IRegistrable;
 
 /**
- * @author Alberto Rodríguez Domínguez
  * Clase base de todas las habilidades de Archaios 
+ * @author Alberto Rodríguez Domínguez
  * */
-public abstract class Skill {
+public abstract class Skill implements IRegistrable {
 
     /**Nombre de la habilidad. */
     private String name; 
@@ -52,6 +53,12 @@ public abstract class Skill {
      */
     public String getName() {
         return name;
+    }
+
+    /** @return Clave de la habilidad en el repositorio de Terra. */
+    @Override
+    public String getCode() {
+        return getName();
     }
 
     /**
@@ -120,8 +127,6 @@ public abstract class Skill {
     public List<String> getTerrains(){
         return Collections.emptyList();
     }
-
-    /**Bonos de tesoros (Skill tesoros)*/
 
     /**
      * Devuelve la cantidad adicional de tesoros aleatorios que se deben generar en el tablero.
@@ -192,6 +197,25 @@ public abstract class Skill {
      */
     public int getEmptyCellsReveled(){
         return 0; 
+    }
+
+    /**
+     * Obtiene el coste de excavación aplicable a un terreno.
+     * @param terrainSymbol Símbolo del terreno que se va a excavar.
+     * @param baseCost Coste positivo calculado por el motor de excavación.
+     * @return Coste base, salvo que una subclase aplique una modificación.
+     */
+    public int getExcavationCost(char terrainSymbol, int baseCost) {
+        return baseCost;
+    }
+
+    /**
+     * Obtiene cuántas casillas de un terreno convierte a tierra.
+     * @param terrainSymbol Símbolo del terreno que se quiere transformar.
+     * @return Número de conversiones aportadas por la habilidad; 0 por defecto.
+     */
+    public int getTerrainConversions(char terrainSymbol) {
+        return 0;
     }
 
     /**

@@ -1,0 +1,173 @@
+[
+    {
+        "code": "PTR_MON_001",
+        "name": "S\u00e9quel",
+        "description": "Moneda de bronce acu\u00f1ada por los nabateos durante el reinado de Areta IV y Shaqilat.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "PTR_MON_002",
+        "name": "Sela",
+        "description": "Moneda de plata nabatea acu\u00f1ada por el general Syllaeus que representaba 1\/4 de S\u00e9quel.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "PTR_MON_003",
+        "name": "Ma'ah",
+        "description": "Moneda de plata nabatea acu\u00f1ada por el rey Obodas II que representaba 1\/24 de S\u00e9quel.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "MON"
+    },
+    {
+        "code": "PTR_CUE_001",
+        "name": "Cuenta de cristal",
+        "description": "Cuentas de cristal transparente.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "PTR_CUE_002",
+        "name": "Cuenta de turquesa",
+        "description": "Fragmentos de turquesa usados para decorar joyas.",
+        "rarity": "C",
+        "parts": 1,
+        "points": 1,
+        "type": "CUE"
+    },
+    {
+        "code": "PTR_JOY_001",
+        "name": "Collar de Jamila",
+        "description": "Collar hecho con cuentas de de n\u00e1car, piedra caliza roja, turquesas y hematita.",
+        "rarity": "R",
+        "parts": 10,
+        "points": 5,
+        "type": "JOY"
+    },
+    {
+        "code": "PTR_CER_001",
+        "name": "Plato decorado",
+        "description": "Plato cer\u00e1mico adornado al estilo nabateo.",
+        "rarity": "C",
+        "parts": 20,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "PTR_CER_002",
+        "name": "Cuenco decorado",
+        "description": "Cuenco cer\u00e1mico adornado con dibujos al estilo nabateo.",
+        "rarity": "C",
+        "parts": 14,
+        "points": 1,
+        "type": "CER"
+    },
+    {
+        "code": "PTR_CER_003",
+        "name": "Olla dos asas",
+        "description": "Jarra nabatea con dos asas procedente de la ciudad de Petra.",
+        "rarity": "R",
+        "parts": 22,
+        "points": 5,
+        "type": "CER"
+    },
+    {
+        "code": "PTR_CER_004",
+        "name": "Tuber\u00eda de agua",
+        "description": "Tuber\u00eda cer\u00e1mica utilizada para transportar el agua largas distancias.",
+        "rarity": "I",
+        "parts": 23,
+        "points": 3,
+        "type": "CER"
+    },
+    {
+        "code": "PTR_EQP_001",
+        "name": "Arco compuesto",
+        "description": "Arco utilizado por los nabateos para disparar desde camellos.",
+        "rarity": "I",
+        "parts": 15,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "PTR_EQP_002",
+        "name": "Escudo nabateo",
+        "description": "Escudo de bronce utilizado por la infanter\u00eda nabatea.",
+        "rarity": "R",
+        "parts": 35,
+        "points": 6,
+        "type": "EQP"
+    },
+    {
+        "code": "PTR_EQP_003",
+        "name": "Spatha",
+        "description": "Espada utilizada durante el periodo romano de nabatea.",
+        "rarity": "R",
+        "parts": 25,
+        "points": 5,
+        "type": "EQP"
+    },
+    {
+        "code": "PTR_EQP_004",
+        "name": "Azagaya",
+        "description": "Lanza peque\u00f1a que se arrojaba mediante un palo propulsor.",
+        "rarity": "I",
+        "parts": 20,
+        "points": 3,
+        "type": "EQP"
+    },
+    {
+        "code": "PTR_EST_001",
+        "name": "Betilo Hayyan",
+        "description": "Piedra sagrada rectangular tallada con rasgos humanos representando a la diosa Hayyan.",
+        "rarity": "C",
+        "parts": 24,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "PTR_EST_002",
+        "name": "Betilo Al-Uzza",
+        "description": "Betilo con ojos estrellados representando a una diosa celeste.",
+        "rarity": "C",
+        "parts": 24,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "PTR_EST_003",
+        "name": "Inscripci\u00f3n de Namara",
+        "description": "Inscripci\u00f3n nabatea en piedra, posiblemente una l\u00e1pida.",
+        "rarity": "C",
+        "parts": 48,
+        "points": 1,
+        "type": "EST"
+    },
+    {
+        "code": "PTR_FRA_001",
+        "name": "Reloj de sol",
+        "description": "Reloj de sol tallado de un bloque de arenisca.",
+        "rarity": "I",
+        "parts": 20,
+        "points": 3,
+        "type": "FRA"
+    },
+    {
+        "code": "PTR_TES_001",
+        "name": "Mosaico Maqueronte",
+        "description": "Mosaico inspirado en el de los ba\u00f1os de la fortaleza de Maqueronte.",
+        "rarity": "C",
+        "parts": 625,
+        "points": 1,
+        "type": "TES"
+    }
+]

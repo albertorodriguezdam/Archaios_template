@@ -40,7 +40,7 @@ public enum ETreasureRarity {
 	 */
 	public static ETreasureRarity getByCode(String code) {
 		for (ETreasureRarity tRare : ETreasureRarity.values()) {
-			if(tRare.code == code) {
+			if(tRare.code.equals(code)) {
 				return tRare;
 			}
 		}
