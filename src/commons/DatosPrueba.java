@@ -18,7 +18,7 @@ public final class DatosPrueba {
 
     
     /**
-     * Prepara casos independientes usando los métodos del modelo existente.
+     * Conserva los siete casos originales y añade demostraciones de la entrega II.
      * @return Lista de Arqueólogos con habilidades y niveles de prueba.
      */
     public static List<Archeologist> createArcheologists() {
@@ -36,6 +36,32 @@ public final class DatosPrueba {
         // 749 de experiencia acumulada dejan al personaje en nivel 4 con 249/250.
         archeologists.add(DatosPrueba.createArcheologist("Especializar", 749,
             "Excavación I", "Excavación II", "Experiencia I", "Investigación"));
+
+        // Entrega II: todos estos casos de nivel 2 pueden usar el cuadrado mediano.
+        // Se comparan los mismos terrenos con y sin las habilidades de la expansión.
+        archeologists.add(DatosPrueba.createLicensedArcheologist("EgiptoBase", 150,
+            List.of("EGP"), "Investigación", "Excavación I"));
+        archeologists.add(DatosPrueba.createLicensedArcheologist("EgiptoDesierto", 150,
+            List.of("EGP"), "Investigación", "Excavación I", "Especialización en desierto"));
+        archeologists.add(DatosPrueba.createLicensedArcheologist("PetraBase", 150,
+            List.of("PTR"), "Investigación", "Excavación I"));
+        archeologists.add(DatosPrueba.createLicensedArcheologist("PetraDemoliciones", 150,
+            List.of("PTR"), "Investigación", "Excavación I", "Especialista en demoliciones A"));
+        archeologists.add(DatosPrueba.createLicensedArcheologist("SumeriaCombinado", 150,
+            List.of("SUM"), "Investigación", "Especialización en desierto",
+            "Especialista en demoliciones A"));
+
+        // Con dos licencias previas solo falta Sumeria y la siguiente cuesta 40 puntos.
+        archeologists.add(DatosPrueba.createLicensedArcheologist("DosLicencias", 150,
+            List.of("EGP", "PTR"), "Investigación", "Excavación I"));
+
+        // 950 acumulados: nivel 5 y 200 XP adicionales. Los bonos regionales solo
+        // se activan en Sumeria; dispone de todas las licencias para poder comparar.
+        Archeologist specialist = DatosPrueba.createLicensedArcheologist("EspecialistaSumeria", 950,
+            List.of("EGP", "PTR", "SUM"), "Investigación", "Excavación I", "Excavación II",
+            "Especialización en desierto", "Especialista en demoliciones A");
+        specialist.setSpecialization("SUM");
+        archeologists.add(specialist);
         return archeologists;
     }
 
@@ -54,6 +80,24 @@ public final class DatosPrueba {
         stats.registerTreasure("GRC_TES_001_0002");
         stats.registerTreasure("GRC_CER_001_0001");
         return stats;
+    }
+
+    /**
+     * Añade permisos regionales a un personaje preparado con habilidades del catálogo.
+     * Estas licencias de ejemplo no descuentan puntos del saldo de pruebas.
+     * @param name Nombre del arqueólogo.
+     * @param xp Experiencia acumulada que se entrega al modelo.
+     * @param licenses Códigos de las regiones difíciles autorizadas.
+     * @param skillNames Nombres de habilidades del catálogo.
+     * @return Arqueólogo independiente con sus licencias regionales.
+     */
+    private static Archeologist createLicensedArcheologist(String name, int xp,
+            List<String> licenses, String... skillNames) {
+        Archeologist archeologist = DatosPrueba.createArcheologist(name, xp, skillNames);
+        for (String code : licenses) {
+            archeologist.addLicense(code);
+        }
+        return archeologist;
     }
 
     /**
