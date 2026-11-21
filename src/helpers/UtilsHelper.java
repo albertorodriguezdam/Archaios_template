@@ -27,7 +27,7 @@ public class UtilsHelper {
 	public static String ucfirstAll(String text) {
 		String[] words = text.split(" ");
 		for(int i = 0; i < words.length; i++) {
-			words[i] = ucfirst(words[i]);
+			words[i] = UtilsHelper.ucfirst(words[i]);
 		}
 		return String.join(" ", words);
 	}

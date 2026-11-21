@@ -218,7 +218,7 @@ public class Archaios {
     }
 
     /**
-     * Muestra los nombres de los arqueólogos en una lista numerada y añade la
+     * Muestra los nombres y niveles de los arqueólogos en una lista numerada y añade la
      * opción de volver.
      */
     private void showArcheologists() {
@@ -581,20 +581,20 @@ public class Archaios {
             System.out.println("Exp: " + experience);
             System.out.println("Terrenos:");
             for (String terrain : selected.getTerrainsSize()) {
-                System.out.println(" -" + terrain);
+                System.out.println("  -" + terrain);
             }
             if (!selected.getLicenses().isEmpty()) {
                 System.out.println("Licencias:");
                 for (String code : selected.getLicenses()) {
                     Region region = RegionRepository.getRegion(code);
-                    System.out.println(" -" + (region == null ? code : region.getClass().getSimpleName()));
+                    System.out.println("  -" + (region == null ? code : region.getClass().getSimpleName()));
                 }
             }
             if (!selected.getSkills().isEmpty()) {
                 System.out.println("Habilidades:");
                 for (Skill skill : selected.getSkills()) {
-                    System.out.println(" -" + skill.getName() + ":");
-                    System.out.println("  " + skill.getDescription());
+                    System.out.println("  -" + skill.getName() + ":");
+                    System.out.println("   " + skill.getDescription());
                 }
             }
             again = MenuHelper.returnMenu("Consultar otro arqueólogo");

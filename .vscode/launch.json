@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Archaios",
+            "request": "launch",
+            "mainClass": "commons.Archaios",
+            "projectName": "Archaios_template_cdcfe413"
+        },
+        {
+            "type": "java",
             "name": "Archaios en modo pruebas",
             "request": "launch",
             "mainClass": "${workspaceFolder}/src/commons/Archaios.java",

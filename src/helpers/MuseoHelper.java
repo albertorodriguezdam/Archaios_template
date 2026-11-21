@@ -58,20 +58,20 @@ public final class MuseoHelper {
                 System.out.println("Museo: no hay tesoros nuevos que enviar.");
                 return;
             }
-            pendingFile = pendingDirectory.resolve(fileKey(uid) + ".json");
-            List<PendingSend> pending = readPending(pendingFile, uid);
+            pendingFile = pendingDirectory.resolve(MuseoHelper.fileKey(uid) + ".json");
+            List<PendingSend> pending = MuseoHelper.readPending(pendingFile, uid);
 
             Configuration configuration = null;
             Exception preparationError = null;
             Path terraBackup = null;
             boolean previousTerraBackup = false;
             try {
-                configuration = readConfiguration();
-                terraBackup = terraBackupPath(uid, configuration.group());
+                configuration = MuseoHelper.readConfiguration();
+                terraBackup = MuseoHelper.terraBackupPath(uid, configuration.group());
                 previousTerraBackup = Files.exists(terraBackup);
                 if (previousTerraBackup) {
-                    List<String> previousCodes = readTerraBackup(terraBackup, uid, configuration.group());
-                    if (!containsBackup(pending, configuration.group(), previousCodes)) {
+                    List<String> previousCodes = MuseoHelper.readTerraBackup(terraBackup, uid, configuration.group());
+                    if (!MuseoHelper.containsBackup(pending, configuration.group(), previousCodes)) {
                         pending.add(new PendingSend(configuration.group(), previousCodes));
                     }
                 }
@@ -90,7 +90,7 @@ public final class MuseoHelper {
                     }
                 }
             }
-            writePending(pendingFile, new PendingData(uid, pending));
+            MuseoHelper.writePending(pendingFile, new PendingData(uid, pending));
             stored = true;
             if (preparationError != null) {
                 throw new IOException("No se pudo preparar el envío: " + preparationError.getMessage(), preparationError);
@@ -116,9 +116,12 @@ public final class MuseoHelper {
             if (response.getContent() != null && !response.getContent().isBlank()) {
                 System.out.println(response.getContent());
             }
+            if (response.getCode() != EMsgCodes.CORRECT) {
+                MuseoHelper.logStatus(response.getCode());
+            }
 
             if (Files.exists(terraBackup)) {
-                List<String> backedUpCodes = readTerraBackup(terraBackup, uid, group);
+                List<String> backedUpCodes = MuseoHelper.readTerraBackup(terraBackup, uid, group);
                 if (!backedUpCodes.equals(allCodes)) {
                     throw new IOException("El respaldo de Terra no coincide con el envío; se conserva para revisarlo.");
                 }
@@ -127,7 +130,7 @@ public final class MuseoHelper {
             }
             if (response.getCode() == EMsgCodes.CORRECT) {
                 pending.removeIf(batch -> group.equals(batch.group()));
-                writePending(pendingFile, new PendingData(uid, pending));
+                MuseoHelper.writePending(pendingFile, new PendingData(uid, pending));
             } else {
                 System.out.println("Los códigos completos siguen pendientes en " + pendingFile + ".");
             }
@@ -146,24 +149,34 @@ public final class MuseoHelper {
         }
     }
 
+    /** Registra el estado de error que Terra devuelve sin lanzar una excepción. */
+    private static void logStatus(EMsgCodes code) {
+        IOException status = new IOException("Estado devuelto por Museo [" + code.name()
+                + "]: " + code.getMessage());
+        try {
+            LogHelper.logError(status);
+        } catch (IOException | RuntimeException exception) {
+            System.err.println("No se pudo registrar el resultado del Museo: " + exception.getMessage());
+        }
+    }
+
     /** Valida antes de usar la factoría para que no abra otro Scanner ni pida datos. */
     private static Configuration readConfiguration() throws IOException {
-        JsonObject object = JsonParser.parseString(Files.readString(CONFIG_FILE, StandardCharsets.UTF_8))
+        JsonObject object = JsonParser.parseString(Files.readString(MuseoHelper.CONFIG_FILE, StandardCharsets.UTF_8))
                 .getAsJsonObject();
-        String url = requiredText(object.get("URL"));
-        String group = requiredText(object.get("Group"));
+        String url = MuseoHelper.requiredText(object.get("URL"));
+        String group = MuseoHelper.requiredText(object.get("Group"));
         URI destination;
         try {
             destination = URI.create(url);
         } catch (IllegalArgumentException exception) {
-            throw new IOException("La URL de " + CONFIG_FILE + " no es válida.", exception);
+            throw new IOException("La URL de " + MuseoHelper.CONFIG_FILE + " no es válida.", exception);
         }
         if (!("http".equalsIgnoreCase(destination.getScheme()) || "https".equalsIgnoreCase(destination.getScheme()))
                 || destination.getHost() == null) {
-            throw new IOException("La URL de " + CONFIG_FILE + " debe ser una dirección HTTP o HTTPS completa.");
+            throw new IOException("La URL de " + MuseoHelper.CONFIG_FILE + " debe ser una dirección HTTP o HTTPS completa.");
         }
-        // TODO DOCENTE: confirmar si Group del archivo facilitado es el grupo asignado al equipo.
-        // TODO ENTREGA: comprobar la respuesta real desde una red con acceso al Museo.
+
         return new Configuration(group);
     }
 
@@ -172,15 +185,15 @@ public final class MuseoHelper {
         if (!Files.exists(file)) return new ArrayList<>();
         try {
             JsonObject object = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
-            if (!uid.equals(requiredText(object.get("uid")))) {
+            if (!uid.equals(MuseoHelper.requiredText(object.get("uid")))) {
                 throw new IOException("El UID del respaldo del Museo no coincide.");
             }
             List<PendingSend> batches = new ArrayList<>();
             for (JsonElement element : object.getAsJsonArray("batches")) {
                 JsonObject batch = element.getAsJsonObject();
                 JsonElement group = batch.get("group");
-                batches.add(new PendingSend(group == null || group.isJsonNull() ? null : requiredText(group),
-                        readCodes(batch.getAsJsonArray("codes"))));
+                batches.add(new PendingSend(group == null || group.isJsonNull() ? null : MuseoHelper.requiredText(group),
+                        MuseoHelper.readCodes(batch.getAsJsonArray("codes"))));
             }
             return batches;
         } catch (RuntimeException exception) {
@@ -192,7 +205,7 @@ public final class MuseoHelper {
         Files.createDirectories(file.getParent());
         Path temporary = Files.createTempFile(file.getParent(), "museo-", ".tmp");
         try {
-            Files.writeString(temporary, JSON.toJson(data), StandardCharsets.UTF_8);
+            Files.writeString(temporary, MuseoHelper.JSON.toJson(data), StandardCharsets.UTF_8);
             try {
                 Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
             } catch (AtomicMoveNotSupportedException exception) {
@@ -208,10 +221,10 @@ public final class MuseoHelper {
         try {
             byte[] decoded = Base64.getDecoder().decode(Files.readString(file, StandardCharsets.UTF_8));
             JsonObject message = JsonParser.parseString(new String(decoded, StandardCharsets.UTF_8)).getAsJsonObject();
-            if (!uid.equals(requiredText(message.get("uid"))) || !group.equals(requiredText(message.get("group")))) {
+            if (!uid.equals(MuseoHelper.requiredText(message.get("uid"))) || !group.equals(MuseoHelper.requiredText(message.get("group")))) {
                 throw new IOException("El respaldo de Terra pertenece a otro usuario o grupo.");
             }
-            return readCodes(message.getAsJsonArray("data"));
+            return MuseoHelper.readCodes(message.getAsJsonArray("data"));
         } catch (RuntimeException exception) {
             throw new IOException("No se pudo leer el respaldo de Terra; se conserva sin sobrescribir.", exception);
         }
@@ -230,7 +243,7 @@ public final class MuseoHelper {
 
     private static List<String> readCodes(JsonArray array) {
         List<String> codes = new ArrayList<>();
-        for (JsonElement element : array) codes.add(requiredText(element));
+        for (JsonElement element : array) codes.add(MuseoHelper.requiredText(element));
         return List.copyOf(codes);
     }
 
