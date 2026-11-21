@@ -101,12 +101,14 @@ public final class DatosPrueba {
     }
 
     /**
-     * Prepara un personaje usando los métodos del modelo y las habilidades del catálogo.
-     * @param name Nombre del arqueólogo.
-     * @param xp Experiencia del arqueólogo.
-     * @param skillNames Lista de habilidades por nombre.
-     * @return Instancia de arqueólogo de prueba.
-     */
+ * Prepara un arqueólogo con experiencia acumulada y habilidades del catálogo.
+ *
+ * @param name Nombre del arqueólogo.
+ * @param xp Experiencia total que se añade desde el nivel inicial.
+ * @param skillNames Nombres de las habilidades, en orden de aprendizaje.
+ * @return Arqueólogo preparado para las pruebas.
+ * @throws IllegalStateException si alguna habilidad no existe o no puede aprenderse.
+ */
     private static Archeologist createArcheologist(String name, int xp, String... skillNames) {
         Archeologist archeologist = new Archeologist(name);
         archeologist.addXp(xp);

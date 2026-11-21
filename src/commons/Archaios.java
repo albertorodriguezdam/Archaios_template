@@ -218,9 +218,9 @@ public class Archaios {
     }
 
     /**
-     * Muestra los nombres y niveles de los arqueólogos en una lista numerada y añade la
-     * opción de volver.
-     */
+ * Muestra los nombres de los arqueólogos en una lista numerada
+ * y añade la opción de volver.
+ */
     private void showArcheologists() {
         MenuHelper.subHeader("Arqueólogos");
         for (int i = 0; i < archeologists.size(); i++) {
