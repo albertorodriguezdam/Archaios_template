@@ -128,8 +128,6 @@ public abstract class Skill implements IRegistrable {
         return Collections.emptyList();
     }
 
-    /**Bonos de tesoros (Skill tesoros)*/
-
     /**
      * Devuelve la cantidad adicional de tesoros aleatorios que se deben generar en el tablero.
      * @return catidad de tesoros aleatorios extra, 0 por defecto.

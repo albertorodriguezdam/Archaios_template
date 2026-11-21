@@ -36,7 +36,7 @@ public class Rejilla {
 	private static final int WATER_COST = 2;
 	/** Generador de números aleatorios para el coste de la arena. */
 	private static final Random RANDOM = new Random();
-	/** Las letras disponibles para las columnas. Pendiente de confirmar con el profesor el "abecedario (23)". */
+	/** Letras A-Z utilizadas para generar las etiquetas de las columnas. */
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	/** El número de filas. */

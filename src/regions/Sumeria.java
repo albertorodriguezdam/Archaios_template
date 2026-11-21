@@ -43,8 +43,8 @@ public class Sumeria extends Region implements IDifficultRegion {
     }
 
     /**
-     * Describe el terreno de Sumeria con un 75% de piedra y un 25% de arena.
-     *
+     * Describe el terreno de Sumeria con un 30 % de piedra, un 50 % de arena
+     * y un 20 % de tierra.
      * @return El mapa inmodificable que asocia cada símbolo de terreno con su porcentaje.
      */
     @Override

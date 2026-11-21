@@ -42,7 +42,7 @@ public class Egipto extends Region implements IDifficultRegion {
     }
 
     /**
-     * Describe el terreno de Petra con un 10 % de agua, un 35 % de tierra
+     * Describe el terreno de Egipto con un 10 % de agua, un 35 % de tierra
      * y un 55 % de arena.
      *
      * @return El mapa inmodificable que asocia cada símbolo de terreno con su porcentaje.
