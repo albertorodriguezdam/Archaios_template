@@ -47,10 +47,6 @@ public class Excavation {
      */
     private static final double MAX_REVEAL_RATIO = 0.25;
     /**
-     * Probabilidad base de tesoro común.
-     */
-    private static final int PROB_COMMON = 60;
-    /**
      * Probabilidad base de tesoro infrecuente.
      */
     private static final int PROB_UNCOMMON = 30;
